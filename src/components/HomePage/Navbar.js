@@ -2,27 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Home, Bell, Settings, Grid, LogOut, User } from "lucide-react";
 
 const Navbar = () => {
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScroll, setLastScroll] = useState(0);
+ 
 
   // Function to handle scroll events
-  const handleScroll = () => {
-    if (window.scrollY < lastScroll) {
-      setIsVisible(true);  // Show navbar when scrolling up
-    } else {
-      setIsVisible(false); // Hide navbar when scrolling down
-    }
-
-    setLastScroll(window.scrollY); // Update last scroll position
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+ 
 
   return (
     <>
@@ -77,9 +60,7 @@ const Navbar = () => {
 
       {/* Mobile Navbar */}
       <div
-        className={`md:hidden fixed bottom-0 left-0 w-full bg-white shadow-lg flex justify-around py-3 border-t border-gray-200 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "translate-y-full"
-        }`}
+        className="md:hidden fixed bottom-0 left-0 w-full bg-white shadow-lg flex justify-around py-3 border-t border-gray-200 transition-transform duration-300 "
       >
         {[{ icon: Home, label: "Home", active: true }, { icon: Grid, label: "Dashboard" }, { icon: Bell, label: "Alerts" }, { icon: Settings, label: "Settings" }].map(
           (item, index) => (

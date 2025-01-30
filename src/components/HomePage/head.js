@@ -9,9 +9,9 @@ const Head = ({ toggleSidebar }) => {
   };
 
   return (
-    <div className="sticky md:w-full gap-4 mb-4 top-0 z-10 flex items-center justify-between p-4 backdrop-blur-md  bg-white md:bg-transparent ">
+    <div className="sticky md:w-full gap-2 mb-4 top-0 z-10 flex items-center justify-between p-4 backdrop-blur-md  bg-white md:bg-transparent ">
       {/* Left Section - Company Logo & Sidebar Toggle */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
           {/* Sidebar Toggle Button */}
           <button
           onClick={toggleSidebar}
@@ -31,14 +31,14 @@ const Head = ({ toggleSidebar }) => {
 
       {/* Center Section - Search Bar */}
       
-      <div className="flex items-center gap-2 flex-grow justify-end md:justify-start">
+      <div className="flex items-center gap-2 flex-grow justify-end md:justify-start w-[50%] ">
         {/* Desktop Search Bar (always visible on desktop) */}
         <div className="hidden md:flex items-center gap-2">
           <input 
             placeholder="Search..." 
-            className="p-2 rounded-full shadow-md pl-6" 
+            className="p-2 rounded-full border border-gray-300 pl-6" 
           />
-          <button className="shadow-md bg-white p-3 rounded-full">
+          <button className="border border-gray-200 bg-white p-2 rounded-full">
             <Search />
           </button>
         </div>
@@ -48,16 +48,16 @@ const Head = ({ toggleSidebar }) => {
 
         {/* Mobile Search Bar */}
         {showSearch && (
-          <div className="md:hidden flex  items-center gap-2  w-full">
+          <div className="md:hidden flex flex-row  items-center justify-end gap-0   w-[100%]">
             <input 
               placeholder="Search..." 
-              className="p-2 rounded-full shadow-md pl-6 w-full" 
+              className="p-2 rounded-full  pl-6 w-[100%] border border-gray-20" 
             />
           </div>
         )}
          <button 
           onClick={handleSearchClick} 
-          className="md:hidden shadow-md bg-white p-2 rounded-full">
+          className="md:hidden  bg-white p-2 border border-gray-200 rounded-full">
           <Search />
         </button>
       </div>

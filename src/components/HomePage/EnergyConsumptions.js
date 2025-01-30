@@ -3,10 +3,10 @@ import { Sun, Battery, Zap, ArrowUp } from "lucide-react";
 
 const EnergyConsumption = () => {
   return (
-    <div className="flex flex-col p-3 md:p-4 md:mb-4 mb-2 mx-4 md:mx-0 bg-white shadow-md rounded-2xl md:rounded-3xl gap-3">
+    <div className="flex flex-col p-4 md:p-4 md:mb-4 mb-2 mx-4 md:mx-0 bg-white shadow-md rounded-2xl md:rounded-3xl gap-3">
       <h1 className="text-xl md:text-xl font-bold">Energy Consumptions</h1>
       
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-evenly md:gap-16 gap-2 px-6 sm:gap-4 sm:w-full">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-evenly md:gap-16 gap-2 px-2 sm:gap-4 sm:w-full">
         
         {/* Solar Card */}
         <div className="bg-gradient-to-br from-[#fcc287] to-[#FF8000] rounded-2xl md:rounded-3xl px-3 py-2 md:pl-4 md:pt-4 md:pr-4 sm:w-1/4 w-full min-h-[120px] md:min-h-[140px] shadow-md hover:shadow-lg transition-shadow">

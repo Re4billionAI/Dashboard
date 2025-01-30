@@ -12,7 +12,7 @@ const data = [
 
 const Card = ({ icon, color }) => {
   return (
-    <div className="bg-white w-[90%] shadow-lg border border-gray-300  rounded-xl p-4 flex flex-col  min-w-0 "> {/* Changed to full width */}
+    <div className="bg-white w-[100%] shadow-lg border border-gray-300  rounded-xl p-4 flex flex-col  min-w-0 "> {/* Changed to full width */}
       <div className="flex justify-between items-center">
         <span className="text-gray-700 text-sm">Load Consumption</span>
         <span className="text-2xl">{icon}</span>
