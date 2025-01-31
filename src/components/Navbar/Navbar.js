@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Home, Bell, Settings, Grid, LogOut, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
- 
+ const [currentTab, setCurrentTab] = useState("Home");
 
   // Function to handle scroll events
  
@@ -10,7 +11,7 @@ const Navbar = () => {
   return (
     <>
       {/* Sidebar for larger screens */}
-      <nav className="hidden md:flex w-80 h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col rounded-r-3xl shadow-xl border-r border-gray-100">
+      <nav className="hidden md:flex w-80 h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
         <div className="px-6 py-8 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <img
@@ -24,19 +25,21 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col p-6 gap-1">
-          {[{ icon: Home, label: "Home", active: true }, { icon: Grid, label: "Dashboard" }, { icon: Bell, label: "Alerts" }, { icon: Settings, label: "Settings" }].map(
+        <div className="flex-1 flex flex-col p-6 gap-1 ">
+          {[{ icon: Home, label: "Home", active: true, link:"" }, { icon: Grid, label: "Dashboard", link:"Dashboard" }, { icon: Bell, label: "Alerts", link:"Alerts" }, { icon: Settings, label: "Location", link:"Location" }].map(
             (item, index) => (
+              <Link to={`/${item.link}`}>
               <button
                 key={index}
-                className={`flex items-center gap-3 px-6 py-3.5 rounded-xl text-sm font-medium transition-all
-                ${item.active
+                onClick={() => setCurrentTab(item.label)}
+                className={`flex items-center gap-3 px-6 py-3.5 rounded-xl text-sm font-medium w-full transition-all
+                ${(currentTab===item.label)
                   ? "bg-blue-600 text-white shadow-lg"
                   : "text-gray-600 hover:bg-white hover:shadow-md hover:text-blue-600"}`}
               >
-                <item.icon size={20} className={item.active ? "text-white" : "text-current"} />
+                <item.icon size={20}  />
                 <span>{item.label}</span>
-              </button>
+              </button></Link>
             )
           )}
         </div>
@@ -60,14 +63,20 @@ const Navbar = () => {
 
       {/* Mobile Navbar */}
       <div
-        className="md:hidden fixed bottom-0 left-0 w-full bg-white shadow-lg flex justify-around py-3 border-t border-gray-200 transition-transform duration-300 "
+        className="md:hidden fixed bottom-0 left-0  bg-white shadow-lg flex flex-row-1 p-2 justify-around py-3 border-t border-gray-200 transition-transform duration-300 w-full"
       >
-        {[{ icon: Home, label: "Home", active: true }, { icon: Grid, label: "Dashboard" }, { icon: Bell, label: "Alerts" }, { icon: Settings, label: "Settings" }].map(
+        {[{ icon: Home, label: "Home", active: true, link:"" }, { icon: Grid, label: "Dashboard" , link:"Dashboard"}, { icon: Bell, label: "Alerts", link:"Alerts" }, { icon: Settings, label: "Location", link:"Location" }].map(
           (item, index) => (
-            <button key={index} className="flex flex-col items-center text-gray-600 hover:text-blue-600">
+            <Link to={`/${item.link}`} className="w-full   ">
+            <button key={index}
+            onClick={() => setCurrentTab(item.label)}
+            className={` w-[90%] m-auto flex flex-col items-center justify-center py-2   rounded-xl ${(currentTab===item.label)
+              ? "bg-blue-500 text-white shadow-lg"
+              : "text-gray-600 hover:bg-white hover:shadow-md hover:text-blue-600"}`}>
               <item.icon size={24} />
               <span className="text-xs">{item.label}</span>
             </button>
+            </Link>
           )
         )}
       </div>
