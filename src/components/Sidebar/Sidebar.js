@@ -12,7 +12,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Sidebar for larger screens */}
-      <nav className="hidden absolute z-100  md:flex w-[265px] h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
+      <nav className="hidden absolute   md:flex w-[265px] h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
         <div className="px-6 py-8 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <img
@@ -27,9 +27,9 @@ const Sidebar = () => {
         </div>
 
         <div className="flex-1 flex flex-col p-6 gap-1 ">
-          {[{ icon: Home, label: "Home", active: true, link:"" }, { icon: Grid, label: "Dashboard", link:"Dashboard" }, { icon: Bell, label: "Alerts", link:"Alerts" }, { icon: Settings, label: "Location", link:"Location" }].map(
+          {[{ icon: Home, label: "Home",  link:"" }, { icon: Grid, label: "Dashboard", link:"Dashboard" }, { icon: Bell, label: "Alerts", link:"Alerts" }, { icon: Settings, label: "Location", link:"Location" }].map(
             (item, index) => (
-              <Link to={`/${item.link}`}>
+              <Link to={`/${item.link}`} key={item.label}  >
               <button
                 key={index}
                 onClick={() => setCurrentTab(item.label)}
@@ -39,7 +39,7 @@ const Sidebar = () => {
                   : "text-gray-600 hover:bg-white hover:shadow-md hover:text-blue-600"}`}
               >
                 <item.icon size={20}  />
-                <span>{item.label}</span>
+                <span  key={index}>{item.label}</span>
               </button></Link>
             )
           )}
@@ -68,7 +68,7 @@ const Sidebar = () => {
       >
         {[{ icon: Home, label: "Home", active: true, link:"" }, { icon: Grid, label: "Dashboard" , link:"Dashboard"}, { icon: Bell, label: "Alerts", link:"Alerts" }, { icon: Settings, label: "Location", link:"Location" }].map(
           (item, index) => (
-            <Link to={`/${item.link}`} className="w-full   ">
+            <Link to={`/${item.link}`} className="w-full" key={item.label}>
             <button key={index}
             onClick={() => setCurrentTab(item.label)}
             className={` w-[90%] m-auto flex flex-col items-center justify-center py-2   rounded-xl ${(currentTab===item.label)
