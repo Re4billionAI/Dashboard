@@ -308,7 +308,7 @@ const calculateYDomain = (category, keys) => {
                 <Maximize2 className="h-4 w-4" />
               </button>
             </div>
-            <div className="p-2 pb-5 ">
+            <div className="p-2 pb-5 relative z-1 ">
           <ResponsiveContainer width="100%" height={350}>
             <LineChart
               data={dataCharts}

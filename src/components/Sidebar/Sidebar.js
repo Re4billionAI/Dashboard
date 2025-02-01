@@ -77,7 +77,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Mobile Navbar */}
-      <div className="md:hidden fixed bottom-0 left-0  bg-white shadow-lg flex flex-row-1 p-2 justify-around py-3 border-t border-gray-200 transition-transform duration-300 w-full">
+      <div className="md:hidden  bottom-0 fixed z-10 left-0  bg-white shadow-lg flex flex-row-1 p-2 justify-around py-3 border-t border-gray-200 transition-transform duration-300 w-full">
         {[{ icon: Home, label: "Home", active: true, link: "" }, { icon: Grid, label: "Dashboard", link: "Dashboard" }, { icon: Bell, label: "Alerts", link: "Alerts" }, { icon: Settings, label: "Location", link: "Location" }].map(
           (item, index) => (
             <button
