@@ -1,84 +1,89 @@
 import React, { useState, useCallback } from "react";
-
 import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    Brush,
-    ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  Brush,
+  ResponsiveContainer,
 } from "recharts";
-import { Download, Maximize2  } from 'lucide-react'
+import { Download, Maximize2 } from 'lucide-react';
+import { FiX } from "react-icons/fi";
 
-import { FiMaximize, FiX } from "react-icons/fi";
-
-// Tooltip properties (custom colors for keys)
+// ... (keep tooltipProps, formatTick, units, and CustomTooltip the same)
 const tooltipProps = {
-    "SolarVoltage": { color: "blue" },
-    "SolarCurrent": { color: "green" },
-    "SolarPower": { color: "red" },
-    "InverterVoltage": { color: "blue" },
-    "InverterCurrent": { color: "green" },
-    "InverterPower":  { color: "red" },
-    "GridVoltage": { color: "blue" },
-    "GridCurrent": { color: "green" },
-    "GridPower":  { color: "red"  },
-    "BatteryVoltage": { color: "blue" },
-    "BatteryCurrent":{ color: "green" },
-    "BatteryPower": { color: "red"},
+  "SolarVoltage": { color: "blue" },
+  "SolarCurrent": { color: "green" },
+  "SolarPower": { color: "red" },
+  "InverterVoltage": { color: "blue" },
+  "InverterCurrent": { color: "green" },
+  "InverterPower":  { color: "red" },
+  "GridVoltage": { color: "blue" },
+  "GridCurrent": { color: "green" },
+  "GridPower":  { color: "red"  },
+  "BatteryVoltage": { color: "blue" },
+  "BatteryCurrent":{ color: "green" },
+  "BatteryPower": { color: "red"},
 };
 
 // Format X-axis ticks
 const formatTick = (tick) => {
-    const [hourStr, minuteStr] = tick.split(":");
-    let hour = parseInt(hourStr, 10);
-    let minute = parseInt(minuteStr, 10);
-    minute = minute < 10 ? `0${minute}` : minuteStr;
-    hour = hour < 10 ? `0${hour}` : hour;
-    return hour === 24 ? `00:${minute}` : `${hour}:${minute}`;
+  const [hourStr, minuteStr] = tick.split(":");
+  let hour = parseInt(hourStr, 10);
+  let minute = parseInt(minuteStr, 10);
+  minute = minute < 10 ? `0${minute}` : minuteStr;
+  hour = hour < 10 ? `0${hour}` : hour;
+  return hour === 24 ? `00:${minute}` : `${hour}:${minute}`;
 };
 
 // Map keys to their respective units
 const units = {
-    SolarVoltage: "V",
-    SolarCurrent: "A",
-    SolarPower: "W",
-    InverterVoltage: "V",
-    InverterCurrent: "A",
-    InverterPower: "W",
-    GridVoltage: "V",
-    GridCurrent: "A",
-    GridPower: "W",
-    BatteryVoltage: "V",
-    BatteryCurrent: "A",
-    BatteryPower: "W",
+  SolarVoltage: "V",
+  SolarCurrent: "A",
+  SolarPower: "W",
+  InverterVoltage: "V",
+  InverterCurrent: "A",
+  InverterPower: "W",
+  GridVoltage: "V",
+  GridCurrent: "A",
+  GridPower: "W",
+  BatteryVoltage: "V",
+  BatteryCurrent: "A",
+  BatteryPower: "W",
 };
 
 // Custom Tooltip with units
 const CustomTooltip = ({ active, payload, label }) => {
-  
-    if (active && payload && payload.length) {
-        return (
-            <div className="bg-white border border-gray-300 p-2 rounded-md shadow-sm">
-                <p className="font-semibold">{`Time: ${label}`}</p>
-                {payload.map((item, index) => (
-                    <p key={index} style={{ color: item.color }}>
-                        {`${item.name}: ${item.value} ${units[item.name] || ""}`}
-                    </p>
-                ))}
-            </div>
-        );
-    }
-    return null;
+
+  if (active && payload && payload.length) {
+      return (
+          <div className="bg-white border border-gray-300 p-2 rounded-md shadow-sm">
+              <p className="font-semibold">{`Time: ${label}`}</p>
+              {payload.map((item, index) => (
+                  <p key={index} style={{ color: item.color }}>
+                      {`${item.name}: ${item.value} ${units[item.name] || ""}`}
+                  </p>
+              ))}
+          </div>
+      );
+  }
+  return null;
 };
 
 
-const Graph = () => {
 
-const dataCharts= [ {
+const parameters = [
+  { label: 'Voltage', key: 'showVoltage', index: 0 },
+  { label: 'Current', key: 'showCurrent', index: 1 },
+  { label: 'Power', key: 'showPower', index: 2 },
+];
+
+const Graph = () => {
+  // ... (keep dataCharts and useState declarations the same)
+  const dataCharts= [ {
     "ccAxisXValue": "10:44",
     "SolarVoltage": 31.84439,
     "SolarCurrent": "4.96",
@@ -197,141 +202,113 @@ const dataCharts= [ {
     "InletTemperature": null,
     "OutletTemperature": null
 },]
-    const [activeModal, setActiveModal] = useState(null);
-    const [visibility, setVisibility] = useState({
-        Solar: { showVoltage: true, showCurrent: true, showPower: true },
-        Inverter: { showVoltage: true, showCurrent: true, showPower: true },
-        Grid: { showVoltage: true, showCurrent: true, showPower: true },
-        Battery: { showVoltage: true, showCurrent: true, showPower: true },
+
+const [activeModal, setActiveModal] = useState(null);
+const [visibility, setVisibility] = useState({
+    Solar: { showVoltage: true, showCurrent: true, showPower: true },
+    Inverter: { showVoltage: true, showCurrent: true, showPower: true },
+    Grid: { showVoltage: true, showCurrent: true, showPower: true },
+    Battery: { showVoltage: true, showCurrent: true, showPower: true },
+});
+
+
+  const handleCheckboxChange = useCallback((category, key, checked) => {
+    setVisibility((prev) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [key]: checked,
+      },
+    }));
+  }, []);
+
+
+  const handleModalToggle = useCallback((category) => {
+    setActiveModal((prev) => (prev === category ? null : category));
+}, []);
+
+const categories = {
+    Solar: ["SolarVoltage", "SolarCurrent", "SolarPower"],
+    Inverter: ["InverterVoltage", "InverterCurrent", "InverterPower"],
+    Grid: ["GridVoltage", "GridCurrent", "GridPower"],
+    Battery: ["BatteryVoltage", "BatteryCurrent", "BatteryPower"],
+  
+};
+
+// Calculate Y-axis domain dynamically based on active toggles
+const calculateYDomain = (category, keys) => {
+    const activeKeys = keys.filter((key, index) => {
+        if (index === 0) return visibility[category]?.showVoltage;
+        if (index === 1) return visibility[category]?.showCurrent;
+        if (index === 2) return visibility[category]?.showPower;
+        return false;
     });
 
-    const handleCheckboxChange = useCallback((category, key, checked) => {
-        setVisibility((prev) => ({
-            ...prev,
-            [category]: {
-                ...prev[category],
-                [key]: checked,
-            },
-        }));
-    }, []);
+    if (activeKeys.length === 0) {
+        return [0, 100]; // Default range when nothing is selected
+    }
 
-    const handleModalToggle = useCallback((category) => {
-        setActiveModal((prev) => (prev === category ? null : category));
-    }, []);
+    const values = dataCharts.flatMap((data) =>
+        activeKeys.map((key) => data[key] || 0)
+    );
 
-    const categories = {
-        Solar: ["SolarVoltage", "SolarCurrent", "SolarPower"],
-        Inverter: ["InverterVoltage", "InverterCurrent", "InverterPower"],
-        Grid: ["GridVoltage", "GridCurrent", "GridPower"],
-        Battery: ["BatteryVoltage", "BatteryCurrent", "BatteryPower"],
-      
-    };
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+   
 
-    // Calculate Y-axis domain dynamically based on active toggles
-    const calculateYDomain = (category, keys) => {
-        const activeKeys = keys.filter((key, index) => {
-            if (index === 0) return visibility[category]?.showVoltage;
-            if (index === 1) return visibility[category]?.showCurrent;
-            if (index === 2) return visibility[category]?.showPower;
-            return false;
-        });
+    return [ 0, max + 20]; // Add buffer for better visualization
+};
 
-        if (activeKeys.length === 0) {
-            return [0, 100]; // Default range when nothing is selected
-        }
 
-        const values = dataCharts.flatMap((data) =>
-            activeKeys.map((key) => data[key] || 0)
-        );
+  // ... (keep the rest of the logic the same)
 
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-       
 
-        return [ 0, max + 20]; // Add buffer for better visualization
-    };
 
-    return (
-        <div className="flex flex-wrap justify-around w-full">
-  {Object.entries(categories).map(([category, keys]) => {
-    const yDomain = calculateYDomain(category, keys);
-    const { showVoltage, showCurrent, showPower } = visibility[category];
+  return (
+    <div className="flex flex-wrap justify-around w-full">
+      {Object.entries(categories).map(([category, keys]) => {
+        const yDomain = calculateYDomain(category, keys);
+        const categoryVisibility = visibility[category];
 
-    return (
-      <div
-        key={category}
-        className="bg-white shadow-lg rounded-3xl border w-full sm:w-[45%] border-gray-200 overflow-hidden mb-6"
-      >
-        <div className="p-4 bg-gray-50 border border-b-gray-300 flex flex-col sm:flex-row justify-between items-center text-black rounded-t-lg">
-          <h3 className="text-lg font-extrabold mb-2 sm:mb-0">
-            {category} Readings
-          </h3>
+        return (
+          <div key={category} className="bg-white m-2 shadow-lg rounded-lg border w-full sm:w-[45%] border-gray-200 overflow-hidden mb-6">
+            <div className="flex justify-between items-center p-4 bg-gray-50 border border-b-gray-300 text-white rounded-t-lg">
+              <h3 className="md:text-lg text-sm text-black font-bold">{category} Readings</h3>
+              
+              <div className="flex gap-2">
+                {parameters.map((param) => {
+                  const dataKey = keys[param.index];
+                  const color = tooltipProps[dataKey].color;
+                  
+                  return (
+                    <button
+                      key={param.key}
+                      onClick={() => handleCheckboxChange(
+                        category, 
+                        param.key, 
+                        !categoryVisibility[param.key]
+                      )}
+                      style={{
+                        backgroundColor: categoryVisibility[param.key] ? color : 'transparent',
+                        border: `2px solid ${categoryVisibility[param.key] ? color : 'black'}`,
+                        color: categoryVisibility[param.key] ? "white" : 'black',
+                      }}
+                      className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
+                    >
+                      {param.label}
+                    </button>
+                  );
+                })}
+              </div>
 
-          <div className="flex flex-wrap justify-center items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="relative inline-block h-6 w-10 cursor-pointer rounded-full bg-gray-300 transition-colors duration-300">
-                <input
-                  className="peer sr-only"
-                  id={`voltage-${category}`}
-                  type="checkbox"
-                  checked={showVoltage}
-                  onChange={(e) =>
-                    handleCheckboxChange(category, "showVoltage", e.target.checked)
-                  }
-                />
-                <span
-                  className="absolute inset-y-0 left-0 m-1 block h-4 w-4 rounded-full bg-gray-300 ring-[36px] ring-inset ring-white transition-all peer-checked:translate-x-4 peer-checked:bg-white peer-checked:ring-transparent"
-                ></span>
-              </label>
-              <span className="text-sm">Voltage</span>
+              <button 
+                onClick={() => handleModalToggle(category)}
+                className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
+              >
+                <Maximize2 className="h-4 w-4" />
+              </button>
             </div>
-
-            <div className="flex items-center gap-2">
-              <label className="relative inline-block h-6 w-10 cursor-pointer rounded-full bg-gray-300 transition-colors duration-300">
-                <input
-                  className="peer sr-only"
-                  id={`current-${category}`}
-                  type="checkbox"
-                  checked={showCurrent}
-                  onChange={(e) =>
-                    handleCheckboxChange(category, "showCurrent", e.target.checked)
-                  }
-                />
-                <span
-                  className="absolute inset-y-0 left-0 m-1 block h-4 w-4 rounded-full bg-gray-300 ring-[36px] ring-inset ring-white transition-all peer-checked:translate-x-4 peer-checked:bg-white peer-checked:ring-transparent"
-                ></span>
-              </label>
-              <span className="text-sm">Current</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label className="relative inline-block h-6 w-10 cursor-pointer rounded-full bg-gray-300 transition-colors duration-300">
-                <input
-                  className="peer sr-only"
-                  id={`power-${category}`}
-                  type="checkbox"
-                  checked={showPower}
-                  onChange={(e) =>
-                    handleCheckboxChange(category, "showPower", e.target.checked)
-                  }
-                />
-                <span
-                  className="absolute inset-y-0 left-0 m-1 block h-4 w-4 rounded-full bg-gray-300 ring-[36px] ring-inset ring-white transition-all peer-checked:translate-x-4 peer-checked:bg-white peer-checked:ring-transparent"
-                ></span>
-              </label>
-              <span className="text-sm">Power</span>
-            </div>
-          </div>
-
-          <button
-            onClick={() => handleModalToggle(category)}
-            className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100 mt-2 sm:mt-0"
-          >
-            <Maximize2 className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="p-6 pb-10">
+            <div className="p-2 pb-5 ">
           <ResponsiveContainer width="100%" height={350}>
             <LineChart
               data={dataCharts}
@@ -352,119 +329,73 @@ const dataCharts= [ {
                 }
               />
               <Tooltip content={<CustomTooltip />} />
-              {showVoltage && (
-                <Line
-                  type="monotone"
-                  dataKey={keys[0]}
-                  stroke={tooltipProps[keys[0]].color}
-                  dot={false}
-                />
-              )}
-              {showCurrent && (
-                <Line
-                  type="monotone"
-                  dataKey={keys[1]}
-                  stroke={tooltipProps[keys[1]].color}
-                  dot={false}
-                />
-              )}
-              {showPower && (
-                <Line
-                  type="monotone"
-                  dataKey={keys[2]}
-                  stroke={tooltipProps[keys[2]].color}
-                  dot={false}
-                />
-              )}
-              <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
+              {categoryVisibility.showVoltage && (
+  <Line type="monotone" dataKey={keys[0]} stroke={tooltipProps[keys[0]].color} dot={false} />
+)}
+{categoryVisibility.showCurrent && (
+  <Line type="monotone" dataKey={keys[1]} stroke={tooltipProps[keys[1]].color} dot={false} />
+)}
+{categoryVisibility.showPower && (
+  <Line type="monotone" dataKey={keys[2]} stroke={tooltipProps[keys[2]].color} dot={false} />
+)}
+              <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" className="z-100"/>
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div>
-    );
-  })}
+     
 
-  {/* Modal View */}
-  {activeModal && (
-    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-      <div
+            {/* ... (keep chart rendering the same) */}
+          </div>
+        );
+      })}
+
+      {activeModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-10">
+          {/* ... (keep modal backdrop the same) */}
+          <div
         className="absolute inset-0 bg-gray-800 opacity-75"
         onClick={() => handleModalToggle(null)}
       ></div>
-      
-      <div className="relative bg-white rounded-3xl shadow-xl w-full md:w-3/4">
-        <div className="p-5 bg-gray-100 border border-b-gray-300 rounded-t-3xl flex flex-row sm:flex-row justify-between items-start md:items-center">
-        
-        
-         <div className="flex md:flex-row flex-col item-center justify-evenly w-[80%] md:w-[60%]">
+          <div className="relative bg-white rounded-lg shadow-xl w-11/12 md:w-3/4">
+            <div className="flex justify-between items-center p-2 gap-2 bg-gray-100 border border-b-gray-300 text-black rounded-t-lg">
+              <h3 className="md:text-lg text-sm text-black font-bold">{activeModal} Readings</h3>
+              
+              <div className="flex gap-2">
+                {parameters.map((param) => {
+                  const dataKey = categories[activeModal][param.index];
+                  const color = tooltipProps[dataKey].color;
+                  
+                  return (
+                    <button
+                      key={param.key}
+                      onClick={() => handleCheckboxChange(
+                        activeModal, 
+                        param.key, 
+                        !visibility[activeModal][param.key]
+                      )}
+                      style={{
+                        backgroundColor: visibility[activeModal][param.key] ? color : 'transparent',
+                        border: `2px solid ${color}`,
+                        color: visibility[activeModal][param.key] ? 'white' : color,
+                      }}
+                      className=" md:px-2 px-2 py-1  text-sm  rounded-full  md:text-[12px] text-[10px] transition-colors"
+                    >
+                      {param.label}
+                    </button>
+                  );
+                })}
+              </div>
 
-         <h3 className="text-xl font-bold text-black mb-2 sm:mb-0">
-            {activeModal} Readings
-          </h3>
-          <div className="flex flex-row justify-center items-center gap-6">
+              <button
+                onClick={() => handleModalToggle(null)}
+                className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
             
-            <div className="flex flex-col items-center gap-2">
-              <label className="relative inline-block h-6 w-10 cursor-pointer rounded-full bg-gray-300 transition-colors duration-300">
-                <input
-                  className="peer sr-only"
-                  type="checkbox"
-                  checked={visibility[activeModal]?.showVoltage}
-                  onChange={(e) =>
-                    handleCheckboxChange(activeModal, "showVoltage", e.target.checked)
-                  }
-                />
-                <span
-                  className="absolute inset-y-0 left-0 m-1 block h-4 w-4 rounded-full bg-gray-300 ring-[36px] ring-inset ring-white transition-all peer-checked:translate-x-4 peer-checked:bg-white peer-checked:ring-transparent"
-                ></span>
-              </label>
-              <span className="text-sm">Voltage</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <label className="relative inline-block h-6 w-10 cursor-pointer rounded-full bg-gray-300 transition-colors duration-300">
-                <input
-                  className="peer sr-only"
-                  type="checkbox"
-                  checked={visibility[activeModal]?.showCurrent}
-                  onChange={(e) =>
-                    handleCheckboxChange(activeModal, "showCurrent", e.target.checked)
-                  }
-                />
-                <span
-                  className="absolute inset-y-0 left-0 m-1 block h-4 w-4 rounded-full bg-gray-300 ring-[36px] ring-inset ring-white transition-all peer-checked:translate-x-4 peer-checked:bg-white peer-checked:ring-transparent"
-                ></span>
-              </label>
-              <span className="text-sm">Current</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <label className="relative inline-block h-6 w-10 cursor-pointer rounded-full bg-gray-300 transition-colors duration-300">
-                <input
-                  className="peer sr-only"
-                  type="checkbox"
-                  checked={visibility[activeModal]?.showPower}
-                  onChange={(e) =>
-                    handleCheckboxChange(activeModal, "showPower", e.target.checked)
-                  }
-                />
-                <span
-                  className="absolute inset-y-0 left-0 m-1 block h-4 w-4 rounded-full bg-gray-300 ring-[36px] ring-inset ring-white transition-all peer-checked:translate-x-4 peer-checked:bg-white peer-checked:ring-transparent"
-                ></span>
-              </label>
-              <span className="text-sm">Power</span>
-            </div>
-          </div>
-
-
-         </div>
-
-
-          <button
-            onClick={() => handleModalToggle(null)}
-            className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
-          >
-            <FiX size={20} />
-          </button>
-        </div>
-        <div  className="pr-2 bg-white shadow rounded-lg overflow-x-auto">
+            {/* ... (keep modal chart rendering the same) */}
+            <div  className="pr-2 bg-white shadow rounded-lg overflow-x-auto">
            <div className="p-0 bg-white shadow rounded-lg  w-full h-[250px] sm:h-[200px] md:h-[400px]">
   <ResponsiveContainer width="100%" height="100%">
     <LineChart
@@ -523,12 +454,11 @@ const dataCharts= [ {
 </div>
             </div>
 
-      </div>
+          </div>
+        </div>
+      )}
     </div>
-  )}
-</div>
-
-    );
+  );
 };
 
 export default Graph;
