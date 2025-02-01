@@ -315,7 +315,7 @@ const calculateYDomain = (category, keys) => {
               margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick} />
+              <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick}  tick={{ fontSize: 12 }}/>
               <YAxis
                 domain={yDomain}
                 tickCount={10}
@@ -324,6 +324,7 @@ const calculateYDomain = (category, keys) => {
                     ? [0, 15, 25, 35, 45, 50]
                     : undefined
                 }
+                tick={{ fontSize: 12 }}
                 tickFormatter={(value) =>
                   new Intl.NumberFormat().format(Math.round(value))
                 }
@@ -407,11 +408,13 @@ const calculateYDomain = (category, keys) => {
       <XAxis
         dataKey="ccAxisXValue"
         tickFormatter={formatTick}
+        tick={{ fontSize: 12 }}
         // Note: Although XAxis renders text as SVG, you can still adjust its look via its props or via global SVG styling.
       />
       <YAxis
         domain={calculateYDomain(activeModal, categories[activeModal])}
         tickCount={10}
+        tick={{ fontSize: 12 }}
         tickFormatter={(value) =>
           new Intl.NumberFormat().format(Math.round(value))
         }
