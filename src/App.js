@@ -5,7 +5,7 @@ import NotFound from "./components/NotFoundPage"
 import User from "./components/UserPage"
 
 import {BrowserRouter, Route, Routes} from "react-router-dom"
-import ProtectedRoute from "./protectedApp"
+import ProtectedRoute from "../src/components/ProtectedApp/protectedApp"
 import Dashboard from "./components/Dashboard/main"
 import Alerts from "./components/Alerts/main"
 import Location from "./components/location/main"

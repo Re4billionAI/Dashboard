@@ -1,11 +1,11 @@
 import Cookies from "js-cookie" 
 import {  Navigate,Outlet  } from "react-router-dom"
-import Sidebar from "./components/Sidebar/Sidebar"
-import Head from "../src/components/HomePage/head"
-import Sitesbar from "../src/components/HomePage/sitesbar"
+import Sidebar from "../Sidebar/Sidebar"
+import Head from "../Header/head"
+import Sitesbar from "../Sites/sitesbar"
 
 import React, { useState } from "react";
-import { Menu, X, Search, LogOut } from "lucide-react";
+
 
 
 const ProtectedRoute=(extraProps)=>{
