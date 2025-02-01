@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,  } from "react";
 import { Home, Bell, Settings, Grid, LogOut, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
- const [currentTab, setCurrentTab] = useState("Home");
+ const [currentTab, setCurrentTab] = useState(localStorage.getItem("currentTab") || "Home");
 
-  // Function to handle scroll events
- 
-
+  // Save selected tab to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("currentTab", currentTab);
+  }, [currentTab]);
   return (
     <>
       {/* Sidebar for larger screens */}
