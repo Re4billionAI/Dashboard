@@ -12,7 +12,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Sidebar for larger screens */}
-      <nav className="hidden  md:flex w-[265px] h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
+      <nav className="hidden absolute z-100  md:flex w-[265px] h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
         <div className="px-6 py-8 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <img

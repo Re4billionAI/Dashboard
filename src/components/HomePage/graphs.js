@@ -378,7 +378,7 @@ const calculateYDomain = (category, keys) => {
                         border: `2px solid ${color}`,
                         color: visibility[activeModal][param.key] ? 'white' : color,
                       }}
-                      className=" md:px-2 px-2 py-1  text-sm  rounded-full  md:text-[12px] text-[10px] transition-colors"
+                      className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
                     >
                       {param.label}
                     </button>
