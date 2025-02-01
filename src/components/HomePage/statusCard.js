@@ -19,7 +19,7 @@ export default function StatusCard() {
       </div>
       
       <div className="flex flex-col justify-center md:justify-end gap-6 md:gap-4 w-[60%] md:w-auto">
-        <div className="flex flex-row justify-end md:justify-end gap-2 md:gap-4">
+        <div className="flex w-[100%] flex-row justify-end md:justify-end gap-2 md:gap-4">
           <button className="flex items-center gap-1 md:gap-2 w-auto bg-white px-3 md:px-5 py-1.5 md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
             <Calendar className="w-4 h-4 md:w-5 md:h-5" /> 11-02-25
           </button>
@@ -30,7 +30,7 @@ export default function StatusCard() {
           </button>
         </div>
 
-        <div className="ml-auto flex items-center gap-1 md:gap-2 bg-white px-3 md:px-5 py-1.5 md:py-3 rounded-full text-sm md:text-base shadow-md border border-gray-200">
+        <div className="ml-auto w-[85%] flex flex-row justify-center items-center gap-1 md:gap-2 bg-white px-3 md:px-5 py-1.5 md:py-3 rounded-full text-sm md:text-base shadow-md border border-gray-200">
           <MapPin className="w-4 h-4 md:w-5 md:h-5 text-blue-500" /> 
           <span className="font-medium md:font-semibold text-gray-700 text-xs sm:text-sm md:text-base lg:text-lg">
             {location}

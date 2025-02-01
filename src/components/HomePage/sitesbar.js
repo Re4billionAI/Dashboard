@@ -1,13 +1,13 @@
 import { FiHome, FiInfo, FiSettings, FiMail, FiX, FiUser } from "react-icons/fi";
 
-export default function Sidebar({ isOpen, toggleSidebar }) {
+export default function Sitesbar({ isOpen, toggleSidebar }) {
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
+   
+    
       <div
         className={`fixed top-0 left-0 h-full bg-gradient-to-b from-indigo-600 to-purple-600 transition-all duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } w-72 shadow-xl z-50`}
+        } w-[242px] shadow-xl z-50`}
       >
         <div className="p-6 flex items-center justify-between border-b border-white/20">
           <div className="flex items-center space-x-3">
@@ -56,6 +56,6 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           </div>
         </div>
       </div>
-    </div>
+   
   );
 }

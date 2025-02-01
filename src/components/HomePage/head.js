@@ -9,7 +9,7 @@ const Head = ({ toggleSidebar }) => {
   };
 
   return (
-    <div className="sticky md:w-full gap-2 mb-4 top-0 z-10 flex items-center justify-between p-4 backdrop-blur-md  bg-white md:bg-transparent ">
+    <div className="sticky md:w-full gap-2 mb-2 top-0 z-10 flex items-center justify-between px-6 py-4 backdrop-blur-md  bg-white md:bg-transparent ">
       {/* Left Section - Company Logo & Sidebar Toggle */}
       <div className="flex items-center gap-2">
           {/* Sidebar Toggle Button */}

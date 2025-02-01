@@ -2,7 +2,7 @@ import React, { useState, useEffect,  } from "react";
 import { Home, Bell, Settings, Grid, LogOut, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+const Sidebar = () => {
  const [currentTab, setCurrentTab] = useState(localStorage.getItem("currentTab") || "Home");
 
   // Save selected tab to localStorage when it changes
@@ -12,7 +12,7 @@ const Navbar = () => {
   return (
     <>
       {/* Sidebar for larger screens */}
-      <nav className="hidden md:flex w-80 h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
+      <nav className="hidden  md:flex w-[265px] h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
         <div className="px-6 py-8 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <img
@@ -85,4 +85,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Sidebar;

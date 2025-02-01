@@ -1,31 +1,23 @@
 
-import React, { useState } from "react";
-import { Menu, X, Search, LogOut } from "lucide-react";
 
 
-import Sidebar from "./sidebar";
 import StatusCard from "./statusCard";
 import EnergyConsumption from "./EnergyConsumptions";
-import Head from "./head";
+
 import ParameterRepresentation from "./parameter";
 
 const Home = () => {
-   const [isOpen, setIsOpen] = useState(false);
-  
-    const toggleSidebar = () => {
-      setIsOpen(!isOpen);
-    };
-  return (
-   <div className="flex flex-row  bg-[#EBF3FD] w-full ">
-    <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar}/>
    
-     <div className="w-full h-screen  flex flex-col md:px-6 gap-0 overflow-y-auto pb-[70px] md:pb-0">
-  <Head toggleSidebar={toggleSidebar}/>
+  return (
+  
+
+     <div className="w-full h    flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
+
   <StatusCard/>
   <EnergyConsumption/>
   <ParameterRepresentation/>
 </div>
-   </div>
+  
   )
 };
 
