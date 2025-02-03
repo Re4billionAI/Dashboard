@@ -1,4 +1,9 @@
 import React, { useState, useCallback } from "react";
+
+
+import { format, addDays } from "date-fns";
+import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
+
 import {
   LineChart,
   Line,
@@ -203,6 +208,20 @@ const Graph = () => {
     "OutletTemperature": null
 },]
 
+const [selectedDate, setSelectedDate] = useState(new Date());
+
+const handleDateChange = (event) => {
+  setSelectedDate(new Date(event.target.value));
+};
+
+const changeDate = (days) => {
+  setSelectedDate((prevDate) => addDays(prevDate, days));
+};
+
+const refreshDate = () => {
+  setSelectedDate(new Date());
+};
+
 const [activeModal, setActiveModal] = useState(null);
 const [visibility, setVisibility] = useState({
     Solar: { showVoltage: true, showCurrent: true, showPower: true },
@@ -265,13 +284,32 @@ const calculateYDomain = (category, keys) => {
 
 
   return (
-    <div className="flex flex-wrap justify-around w-full">
+    <div className=" m-2">
+     <div className="flex items-center justify-center mb-4  gap-2 p-2 border rounded-lg shadow-md bg-gray-100">
+      <button onClick={() => changeDate(-1)} className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white">
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+      <input
+        type="date"
+        value={format(selectedDate, "yyyy-MM-dd")}
+        onChange={handleDateChange}
+        className="p-2 border rounded-lg bg-white text-gray-900 "
+      />
+      <button onClick={() => changeDate(1)} className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white">
+        <ChevronRight className="w-5 h-5" />
+      </button>
+      <button onClick={refreshDate} className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white">
+        <RefreshCcw className="w-5 h-5" />
+      </button>
+    </div>
+   
+    <div className="flex flex-wrap justify-between w-full  ">
       {Object.entries(categories).map(([category, keys]) => {
         const yDomain = calculateYDomain(category, keys);
         const categoryVisibility = visibility[category];
 
         return (
-          <div key={category} className="bg-white m-2 shadow-lg rounded-lg border w-full sm:w-[45%] border-gray-200 overflow-hidden mb-6">
+          <div key={category} className="bg-white  shadow-lg rounded-lg border w-full sm:w-[49%] border-gray-200 overflow-hidden mb-6">
             <div className="flex justify-between items-center p-4 bg-gray-50 border border-b-gray-300 text-white rounded-t-lg">
               <h3 className="md:text-lg text-sm text-black font-bold">{category} Readings</h3>
               
@@ -306,10 +344,11 @@ const calculateYDomain = (category, keys) => {
                 className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
               >
                 <Maximize2 className="h-4 w-4" />
-              </button>
+              </button>                                                                                                      
             </div>
-            <div className="p-2 pb-5 relative z-1 ">
-          <ResponsiveContainer width="100%" height={350}>
+            <div className="p-0 pb-5 relative z-1 ">
+          <ResponsiveContainer width="100%" height={300}  
+  >
             <LineChart
               data={dataCharts}
               margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
@@ -350,7 +389,7 @@ const calculateYDomain = (category, keys) => {
         );
       })}
 
-      {activeModal && (
+{activeModal && (
         <div className="fixed inset-0 flex items-center justify-center z-10">
           {/* ... (keep modal backdrop the same) */}
           <div
@@ -460,6 +499,7 @@ const calculateYDomain = (category, keys) => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
