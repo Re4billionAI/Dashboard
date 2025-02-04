@@ -118,8 +118,8 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-indigo-200/30">
-        <p className="text-center text-indigo-200 text-sm">v2.4.0</p>
+      <div className=" bottom-0 left-0 right-0 p-4 border-t border-indigo-200/30">
+        <p className="text-center text-indigo-200 text-sm">v1.5.0</p>
       </div>
 
       {/* Custom styles for the scrollbar */}
