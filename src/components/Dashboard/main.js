@@ -26,13 +26,13 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
       : 1;
 
   return (
-    <div className="p-6 w-full mx-auto text-gray-900">
+    <div className="p-4 w-full mx-auto text-gray-900">
       {/* Header with Date Controls */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="text-4xl font-bold mb-4 md:mb-0">
           Solar Generation Dashboard
         </h2>
-        <div className="flex items-center gap-2 p-4 py-1 border rounded-full shadow-md bg-gray-100">
+        <div className="flex items-center gap-2 p-4 py-2 border rounded-full shadow-md bg-gray-100">
           <button
             onClick={() => changeDate(-1)}
             className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
