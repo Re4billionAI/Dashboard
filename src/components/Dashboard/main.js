@@ -61,7 +61,7 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
       </div>
 
       {/* Mobile Tabs */}
-      <div className="md:hidden flex justify-center space-x-6 mb-8">
+      <div className="md:hidden flex justify-between  mb-6">
         <button
           className={`px-6 py-3 rounded-full text-lg font-semibold transition-all shadow-md flex items-center gap-2 ${
             activeTab === 'working'
