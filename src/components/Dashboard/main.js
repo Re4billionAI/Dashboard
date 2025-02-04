@@ -29,7 +29,7 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
     <div className="p-4 w-full mx-auto text-gray-900">
       {/* Header with Date Controls */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h2 className="text-4xl font-bold mb-4 md:mb-0">
+        <h2 className="md:text-4xl text-xl font-bold mb-4 md:mb-0">
           Solar Generation Dashboard
         </h2>
         <div className="flex items-center gap-2 p-4 py-2 border rounded-full shadow-md bg-gray-100">
@@ -259,7 +259,7 @@ const App = () => {
   ];
 
   return (
-    <div className="bg-sky-100 min-h-screen flex items-start justify-center mb-16 md:mb-0">
+    <div className="bg-sky-100 min-h-screen flex items-start justify-center mb-20 md:mb-0">
       <DeviceStatus
         workingLocations={workingLocations}
         notWorkingLocations={notWorkingLocations}
