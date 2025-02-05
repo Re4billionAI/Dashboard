@@ -20,9 +20,13 @@ export default function StatusCard({device, alert,  lastupdate}) {
       
       <div className="flex flex-col justify-center md:justify-end gap-6 md:gap-4 w-[60%] md:w-auto">
         <div className="flex w-[100%] flex-row justify-end md:justify-end gap-2 md:gap-4">
-          <button className="flex items-center gap-1 md:gap-2 w-auto bg-white px-3 md:px-5 py-1.5 md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
-            <Calendar className="w-4 h-4 md:w-5 md:h-5" /> 11-02-25
-          </button>
+        
+        <input 
+  type="date" 
+  className="w-[50%]  bg-white  outline-none text-gray-700 border border-gray-400  p-1 sm:p-1 rounded-full cursor-pointer transition-all duration-300"
+/>
+
+
 
           <button className="flex items-center gap-1 md:gap-2 bg-white px-3 md:px-5 py-1.5 md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
             <Download className="w-4 h-4 md:w-5 md:h-5" /> 
