@@ -1,21 +1,22 @@
 import React from "react";
+import { Sun, Zap, Battery, PlugZap } from "lucide-react";
 
 const data = [
-  { icon: "💡", color: "bg-blue-500" },
-  { icon: "💡", color: "bg-blue-500" },
-  { icon: "⚡", color: "bg-green-500" },
-  { icon: "⚡", color: "bg-green-500" },
-  { icon: "🔒", color: "bg-yellow-500" },
-  { icon: "🔒", color: "bg-yellow-500" },
-  { icon: "🔄", color: "bg-purple-500" },
+  { name:" Solar Voltage", icon: <Sun/>, color: "bg-blue-500" },
+  {name:"Solar Current", icon: <Sun/>, color: "bg-blue-500" },
+  {name:"Grid Voltage", icon: <PlugZap/>, color: "bg-green-500" },
+  { name:"Grid Current", icon: <PlugZap/>, color: "bg-green-500" },
+  { name:" Inverter Voltage", icon: <Zap/>, color: "bg-yellow-500" },
+  { name:"Inverter Current", icon: <Zap/>, color: "bg-yellow-500" },
+  { name:"Battery", icon: <Battery/>, color: "bg-purple-500" },
 ];
 
-const Card = ({ icon, color }) => {
+const Card = ({ icon, color, name }) => {
   return (
-    <div className="bg-white w-[100%] border border-gray-300  rounded-xl p-4 flex flex-col  min-w-0 "> {/* Changed to full width */}
+    <div className="bg-white w-[100%] border border-gray-300  rounded-xl p-3 flex flex-col  min-w-0 "> {/* Changed to full width */}
       <div className="flex justify-between items-center">
-        <span className="text-gray-700 text-sm">Load Consumption</span>
-        <span className="text-2xl">{icon}</span>
+        <span className="text-gray-700 text-sm">{name}</span>
+        <span className={`text-xl text-${color}`}>{icon}</span>
       </div>
       <p className="text-lg font-bold mt-1">0.51kWh</p>
       <div className=" w-full h-2 bg-gray-300 rounded-full mt-2">
@@ -33,7 +34,7 @@ const ParameterRepresentation = () => {
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"> {/* Responsive grid */}
         {data.map((item, index) => (
-          <Card key={index} icon={item.icon} color={item.color} />
+          <Card key={index} icon={item.icon} name={item.name} color={item.color} />
         ))}
       </div>
     </div>

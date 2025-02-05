@@ -64,7 +64,7 @@ const Head = ({ toggleSidebar }) => {
 
       {/* Right Section - Logout Button */}
       <div className="flex items-center">
-        <button className="p-2 bg-blue-600 text-white rounded-md shadow-md flex items-center gap-2">
+        <button className="md:px-4 md:py-2 px-2 py-2 bg-blue-600 text-white rounded-full shadow-md flex items-center gap-2">
           <LogOut /> 
           <span className="hidden sm:block">Logout</span>
         </button>

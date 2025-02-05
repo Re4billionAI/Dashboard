@@ -29,7 +29,7 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
     <div className="p-4 w-full mx-auto text-gray-900">
       {/* Header with Date Controls */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h2 className="md:text-4xl text-xl font-bold mb-4 md:mb-0">
+        <h2 className="md:text-2xl text-xl font-bold mb-4 md:mb-0">
           Solar Generation Dashboard
         </h2>
         <div className="flex items-center gap-2 p-4 py-2 border rounded-full shadow-md bg-gray-100">
@@ -63,7 +63,7 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
       {/* Mobile Tabs */}
       <div className="md:hidden flex justify-between  mb-6">
         <button
-          className={`px-6 py-3 rounded-full text-lg font-semibold transition-all shadow-md flex items-center gap-2 ${
+          className={`md:px-6 md:py-3 px-4 py-2 rounded-full text-lg font-semibold transition-all shadow-md flex items-center gap-2 ${
             activeTab === 'working'
               ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white'
               : 'bg-gray-300 text-gray-800'
@@ -71,9 +71,12 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
           onClick={() => setActiveTab('working')}
         >
           <CheckCircleIcon className="w-6 h-6" /> Active
+          <span className="inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-gray-500 bg-white/50 rounded-full">
+                {workingLocations.length}
+              </span>
         </button>
         <button
-          className={`px-6 py-3 rounded-full text-lg font-semibold transition-all shadow-md flex items-center gap-2 ${
+          className={`md:px-6 md:py-3 px-4 py-2 rounded-full text-lg font-semibold transition-all shadow-md flex items-center gap-2 ${
             activeTab === 'notWorking'
               ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white'
               : 'bg-gray-300 text-gray-800'
@@ -81,6 +84,9 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
           onClick={() => setActiveTab('notWorking')}
         >
           <XCircleIcon className="w-6 h-6" /> Inactive
+          <span className="inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-gray-500 bg-white/50 rounded-full">
+                {notWorkingLocations.length}
+              </span>
         </button>
       </div>
 
@@ -105,7 +111,7 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
                 return (
                   <li
                     key={index}
-                    className="text-lg bg-green-100 p-4 rounded-lg shadow-md font-medium"
+                    className="text-lg bg-green-100 p-4 rounded-xl shadow-md font-medium"
                   >
                     <div className="flex justify-between items-center">
                       <span>{location.name}</span>
@@ -146,7 +152,7 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
               notWorkingLocations.map((location, index) => (
                 <li
                   key={index}
-                  className="text-lg bg-red-100 p-4 rounded-lg shadow-md font-medium flex justify-between"
+                  className="text-lg bg-red-100 p-4 rounded-xl shadow-md font-medium flex justify-between"
                 >
                   <span>{location.name}</span>
                   <span className="text-red-700 font-bold">
@@ -166,14 +172,12 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
       {/* Mobile View */}
       <div className="md:hidden">
         {activeTab === 'working' ? (
-          <div className="bg-white p-6 rounded-lg shadow-xl border-l-8 border-green-500">
+          <div className="bg-white p-6 pt-2 rounded-lg shadow-xl border-l-8 border-green-500">
             <div className="flex items-center gap-4 mb-4">
-              <h3 className="text-3xl font-bold text-green-600 flex items-center gap-2">
+              <h3 className="md:text-3xl text-lg font-bold text-green-600 flex items-center gap-2">
                 <CheckCircleIcon className="w-8 h-8" /> Active 
               </h3>
-              <span className="inline-flex items-center justify-center px-3 py-2 text-sm font-bold leading-none text-white bg-blue-600 rounded-full">
-                {workingLocations.length}
-              </span>
+              
             </div>
             <ul className="list-none space-y-4">
               {workingLocations.length > 0 ? (
@@ -208,14 +212,12 @@ const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
             </ul>
           </div>
         ) : (
-          <div className="bg-white p-6 rounded-lg shadow-xl border-l-8 border-red-500">
+          <div className="bg-white p-6 pt-2  rounded-lg shadow-xl border-l-8 border-red-500">
             <div className="flex items-center gap-4 mb-4">
-              <h3 className="text-3xl font-bold text-red-600 flex items-center gap-2">
+              <h3 className="md:text-3xl text-lg font-bold text-red-600 flex items-center gap-2">
                 <XCircleIcon className="w-8 h-8" /> Inactive 
               </h3>
-              <span className="inline-flex items-center justify-center px-3 py-2 text-sm font-bold leading-none text-white bg-blue-600 rounded-full">
-                {notWorkingLocations.length}
-              </span>
+             
             </div>
             <ul className="list-none space-y-4">
               {notWorkingLocations.length > 0 ? (
@@ -259,7 +261,7 @@ const App = () => {
   ];
 
   return (
-    <div className="bg-sky-100 min-h-screen flex items-start justify-center mb-20 md:mb-0">
+    <div className="bg-sky-100 min-h-screen flex items-start overflow-y-auto justify-center mb-20 md:mb-0">
       <DeviceStatus
         workingLocations={workingLocations}
         notWorkingLocations={notWorkingLocations}

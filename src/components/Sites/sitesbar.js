@@ -1,70 +1,111 @@
 import { useState } from "react";
 import { FiX, FiSearch } from "react-icons/fi";
+import { useSelector, useDispatch } from 'react-redux'
+import { updateLocation } from '../Redux/CounterSlice'
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+
 
 export default function Sitesbar({ isOpen, toggleSidebar }) {
   // Additional data items
+  
+
+
   const additionalData = [
-    "ftb001-Kollar",
-    "stb001-Modaiyur",
-    "nrmsv2f001-Ananthapuram",
-    "rmsv3_001-Vengur",
-    "rmsv3_002-Sithalingamadam",
-    "rmsv32_001-Keelathalanur",
-    "rmsv33_001-Perumukkal",
-    "rmsv33_002-Agalur",
-    "rmsv33_005-Saram",
-    "rmsv34_002-Pootai",
-    "rmsv34_003-Siruvanthadu",
-    "rmsv35_002-Puthirampattu",
-    "rmsv35_003-Vadalur",
-    "rmsv35_007- Alagarai",
-    "rmsv35_008-Kanniyapuram",
-    "rmsv4_001-Melmalaiyanur",
-    "rmsv4_002-Thandavankulam",
-    "rmsv35_006- Channamahgathihalli KA",
-    "rmsv35_014-Jenugadde KA",
-    "rmsv35_015-Sindigere KA",
-    "rmsv36_003-Ramakrishnapuram AP",
-    "rmsv33_003-Testing",
-    "rmsv33_004-Testing",
-    "rmsv33_007-Testing",
-    "rmsv34_004-Testing",
-    "rmsv34_005-Testing",
-    "rmsv35_001-Testing",
-    "rmsv35_004-Testing",
-    "rmsv35_005-Testing",
-    "rmsv35_009-Testing",
-    "rmsv35_010-Testing",
-    "rmsv35_011-Testing",
-    "rmsv35_012-Testing",
-    "rmsv35_013-Testing",
-    "rmsv35_016-Testing",
-    "rmsv35_017-Testing",
-    "rmsv35_018-Testing",
-    "rmsv35_019-Testing",
-    "rmsv35_020-Testing",
-    "rmsv4_003-Testing",
-    "rmsv4_004-Testing",
-    "rmsv4_005-Testing",
-    "rmsv36_001-Testing",
-    "rmsv36_002-Testing",
-    "rmsv36_004-Testing",
-    "rmsv36_005-Testing",
-    "rmsv36_006-Testing",
-    "rmsv36_007-Testing",
-    "rmsv36_008-Testing",
-    "rmsv36_009-Testing",
-    "rmsv36_010-Testing",
-    "rmsv36_011-Testing",
-    "rmsv36_012-Testing",
+    { name: "kollar", path: "ftb001",board: "ftb001", },
+    { name: "modaiyur", path: "stb001", board: "stb001", },
+    { name: "ananthapuram", path: "nrmsv2f001", board: "nrmsv2f001", },
+    { name: "vengur", path: "rmsv3_001", board: "rmsv3_001", },
+    { name: "sithalingamadam", path: "rmsv3_002", board: "rmsv3_002", },
+    { name: "keelathalanur", path: "rmsv32_001", board: "rmsv32_001", },
+    { name: "perumukkal", path: "rmsv33_001", board: "rmsv33_001", },
+    { name: "agalur", path: "rmsv33_002", board: "rmsv33_002", },
+    { name: "saram", path: "rmsv33_005", board: "rmsv33_005", },
+    { name: "pootai", path: "rmsv34_002", board: "rmsv34_002", },
+    { name: "siruvanthadu", path: "rmsv34_003", board: "rmsv34_003", },
+    { name: "puthirampattu", path: "rmsv35_002", board: "rmsv35_002", },
+    { name: "vadalur", path: "rmsv35_003", board: "rmsv35_003", },
+    { name: "alagarai", path: "rmsv35_007", board: "rmsv35_007", },
+    { name: "kanniyapuram", path: "rmsv35_008", board: "rmsv35_008", },
+    { name: "melmalaiyanur", path: "rmsv4_001", board: "rmsv4_001", },
+    { name: "thandavankulam", path: "rmsv4_002", board: "rmsv4_002", },
+    { name: "channamahgathihalli ka", path: "rmsv35_006", board: "rmsv35_006", },
+    { name: "jenugadde ka", path: "rmsv35_014", board: "rmsv35_014", },
+    { name: "sindigere ka", path: "rmsv35_015", board: "rmsv35_015", },
+    { name: "ramakrishnapuram ap", path: "rmsv36_003", board: "rmsv36_003", },
+    { name: "testing", path: "rmsv33_003", board: "rmsv33_003", },
+    { name: "testing", path: "rmsv33_004", board: "rmsv33_004", },
+    { name: "testing", path: "rmsv33_007", board: "rmsv33_007", },
+    { name: "testing", path: "rmsv34_004", board: "rmsv34_004", },
+    { name: "testing", path: "rmsv34_005", board: "rmsv34_005", },
+    { name: "testing", path: "rmsv35_001", board: "rmsv35_001", },
+    { name: "testing", path: "rmsv35_004", board: "rmsv35_004", },
+    { name: "testing", path: "rmsv35_005", board: "rmsv35_005", },
+    { name: "testing", path: "rmsv35_009", board: "rmsv35_009", },
+    { name: "testing", path: "rmsv35_010", board: "rmsv35_010", },
+    { name: "testing", path: "rmsv35_011", board: "rmsv35_011", },
+    { name: "testing", path: "rmsv35_012", board: "rmsv35_012", },
+    { name: "testing", path: "rmsv35_013", board: "rmsv35_013", },
+    { name: "testing", path: "rmsv35_016", board: "rmsv35_016", },
+    { name: "testing", path: "rmsv35_017", board: "rmsv35_017", },
+    { name: "testing", path: "rmsv35_018", board: "rmsv35_018", },
+    { name: "testing", path: "rmsv35_019", board: "rmsv35_019", },
+    { name: "testing", path: "rmsv35_020", board: "rmsv35_020", },
+    { name: "testing", path: "rmsv4_003" , board: "rmsv4_003",},
+    { name: "testing", path: "rmsv4_004", board: "rmsv4_004", },
+    { name: "testing", path: "rmsv4_005", board: "rmsv4_005", },
+    { name: "testing", path: "rmsv36_001", board: "rmsv36_001", },
+    { name: "testing", path: "rmsv36_002", board: "rmsv36_002", },
+    { name: "testing", path: "rmsv36_004", board: "rmsv36_004", },
+    { name: "testing", path: "rmsv36_005", board: "rmsv36_005", },
+    { name: "testing", path: "rmsv36_006", board: "rmsv36_006", },
+    { name: "testing", path: "rmsv36_007", board: "rmsv36_007", },
+    { name: "testing", path: "rmsv36_008", board: "rmsv36_008", },
+    { name: "testing", path: "rmsv36_009", board: "rmsv36_009", },
+    { name: "testing", path: "rmsv36_010", board: "rmsv36_010", },
+    { name: "testing", path: "rmsv36_011", board: "rmsv36_011", },
+    { name: "testing", path: "rmsv36_012", board: "rmsv36_012", }
   ];
 
-  const [selectedLocation, setSelectedLocation] = useState("ftb001-Kollar");
+
+
+
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedLocation, setSelectedLocation] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+
+const dispatch=useDispatch()
+
+ 
+// const handleMenuItemClick = (item, location) => {
+//   console.log(item, location)
+//   setSelectedItem(item);
+//   Cookies.set("selectedItem", item);
+//   Cookies.set("setLocation", location);
+//   setLocation(location);
+//   fetchData(item);
+//   setNav(!nav);
+// };
+
+
+const changeLocation = (data) => {
+ 
+  dispatch(updateLocation(data));
+  setSelectedLocation(data);
+  toggleSidebar()
+  Cookies.set("locationName", data.name);
+  Cookies.set("locationPath", data.path);
+  Cookies.set("locationBoard", data.board);
+  navigate("/");
+  
+};
+
 
   // Filter the data based on search term (case-insensitive)
   const filteredData = additionalData.filter((data) =>
-    data.toLowerCase().includes(searchTerm.toLowerCase())
+    data.name.toLowerCase().includes(searchTerm.toLowerCase())||data.board.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -95,7 +136,7 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
             placeholder="Search sites..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-indigo-600 text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors"
+            className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 bg-indigo-600 text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors"
           />
         </div>
 
@@ -104,21 +145,21 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
           {filteredData.map((data, index) => (
             <li
               key={index}
-              onClick={() => setSelectedLocation(data)}
-              className={`px-4 py-2 rounded-lg cursor-pointer transition-colors text-white text-sm ${
-                selectedLocation === data
-                  ? "bg-purple-600"
-                  : "bg-indigo-500 hover:bg-indigo-900"
+              onClick={() => changeLocation(data)}
+              className={`px-4 py-2 mr-2 rounded-lg cursor-pointer transition-colors  text-sm ${
+                selectedLocation.name === data.name
+                  ? "bg-white text-gray-700"
+                  : "bg-indigo-500 hover:bg-indigo-900 text-white"
               }`}
             >
-              {data}
+              {data.name}
             </li>
           ))}
         </ul>
       </div>
 
       {/* Footer */}
-      <div className=" bottom-0 left-0 right-0 p-4 border-t border-indigo-200/30">
+      <div className=" absolute bottom-0 left-0 right-0 p-4 border-t border-indigo-200/30">
         <p className="text-center text-indigo-200 text-sm">v1.5.0</p>
       </div>
 

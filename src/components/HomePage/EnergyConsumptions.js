@@ -1,5 +1,5 @@
 import React from "react";
-import { Sun, Battery, Zap, ArrowUp } from "lucide-react";
+import { Sun, PlugZap, Zap, ArrowUp } from "lucide-react";
 
 const EnergyConsumption = () => {
   return (
@@ -30,7 +30,7 @@ const EnergyConsumption = () => {
               <p className="text-xl md:text-2xl font-bold text-green-600 mt-1">0.51kWh</p>
             </div>
             <div className="p-2 md:p-3 bg-white rounded-full">
-              <Battery className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
+              <PlugZap className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
             </div>
           </div>
         </div>

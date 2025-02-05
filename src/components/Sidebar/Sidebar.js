@@ -46,7 +46,7 @@ const Sidebar = () => {
               <button
                 key={item.label}
                 onClick={() => handleNavigation(item.label, item.link)}
-                className={`flex items-center gap-3 px-6 py-3.5 rounded-xl text-sm font-medium w-full transition-all ${
+                className={`flex items-center gap-3 px-6 py-3.5 rounded-full text-sm font-medium w-full transition-all ${
                   currentTab === item.label
                     ? "bg-blue-600 text-white shadow-lg"
                     : "text-gray-600 hover:bg-white hover:shadow-md hover:text-blue-600"

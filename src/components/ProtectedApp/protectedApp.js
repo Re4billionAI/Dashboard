@@ -12,7 +12,7 @@ const ProtectedRoute=(extraProps)=>{
   const [isOpen, setIsOpen] = useState(false);
   
     const toggleSidebar = () => {
-      console.log("open")
+   
       setIsOpen(!isOpen);
     };
    
