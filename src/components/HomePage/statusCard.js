@@ -1,8 +1,16 @@
-
+import { useRef } from "react";
 import { Calendar, Download, MapPin, CheckCircle } from "lucide-react";
 
 export default function StatusCard({device, alert,  lastupdate}) {
   const lasttime = new Date(lastupdate * 1000);
+  
+  const dateInputRef = useRef(null);
+
+  const handleIconClick = () => {
+    if (dateInputRef.current) {
+      dateInputRef.current.showPicker(); // Opens the native date picker
+    }
+  };
   
   return (
     <div className="md:m- mb-4 mx-4 md:mx-0 bg-white px-4 md:px-8 shadow-md p-6 rounded-xl md:rounded-3xl flex flex-row md:flex-row-2 items-center justify-between gap-4 md:gap-2">
@@ -18,18 +26,30 @@ export default function StatusCard({device, alert,  lastupdate}) {
         </button>
       </div>
       
-      <div className="flex flex-col justify-center md:justify-end gap-6 md:gap-4 w-[60%] md:w-auto">
-        <div className="flex w-[100%] flex-row justify-end md:justify-end gap-2 md:gap-4">
+      <div className="flex flex-col justify-center md:justify-end gap-6 md:gap-4  md:w-auto">
+        <div className="flex w-[100%] flex-row  item-center justify-center md:justify-end gap-2 md:gap-4">
         
-        <input 
-  type="date" 
-  className="w-[50%]  bg-white  outline-none text-gray-700 border border-gray-400  p-1 sm:p-1 rounded-full cursor-pointer transition-all duration-300"
-/>
+     
+
+        <div className="relative  w-full sm:w-auto flex flex-row items-center justify-center">
+      {/* Hidden Date Input for Mobile, Visible on Larger Screens */}
+      <input 
+        type="date" 
+        ref={dateInputRef}
+        className="w-0 opacity-0 sm:w-auto sm:opacity-100 bg-white border border-gray-500 outline-none text-gray-700 text-sm sm:text-base p-3 sm:p-2 rounded-full cursor-pointer transition-all duration-300 appearance-none"
+      />
+      {/* Clickable Calendar Icon for Mobile */}
+      <Calendar 
+      size={35}
+        className=" inset-y-0 left-3 flex items-center text-gray-600   cursor-pointer sm:hidden"
+        onClick={handleIconClick} 
+      />
+    </div>
 
 
 
-          <button className="flex items-center gap-1 md:gap-2 bg-white px-3 md:px-5 py-1.5 md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
-            <Download className="w-4 h-4 md:w-5 md:h-5" /> 
+          <button className="flex items-center gap-1 md:gap-2 bg-white px-4 md:px-5 py-1 md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
+            <Download className="w-4 h-4 md:w-5 md:h-4" /> 
             <span className="hidden md:block">Download</span>
           </button>
         </div>
