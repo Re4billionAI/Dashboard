@@ -129,7 +129,7 @@ const Home = () => {
           <div className="mt-4">
             {activeTab === 'Overview' && (
               <div>
-                <StatusCard device={device?.name || 'Unknown'} alert={alert}   lastupdate={liveData.data.snapshot.tValue}/>
+                <StatusCard device={device?.name || 'kollar'}alert={alert}   lastupdate={liveData.data.snapshot.tValue}/>
                 <EnergyConsumption />
                 <ParameterRepresentation />
               </div>

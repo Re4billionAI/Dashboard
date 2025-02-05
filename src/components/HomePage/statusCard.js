@@ -6,7 +6,7 @@ export default function StatusCard({device, alert,  lastupdate}) {
   
   return (
     <div className="md:m- mb-4 mx-4 md:mx-0 bg-white px-4 md:px-8 shadow-md p-6 rounded-xl md:rounded-3xl flex flex-row md:flex-row-2 items-center justify-between gap-4 md:gap-2">
-      <div className="text-center md:w-auto md:text-left flex flex-col justify-center md:justify-end gap-6 md:gap-10 w-[50%]">
+      <div className="text-center md:w-auto md:text-left flex flex-col justify-center md:justify-end gap-6 md:gap-10 w-[50%] ">
         <p className="text-xs font-bold md:text-sm text-gray-500">
           Last Update: <br className="md:hidden"/> 
           <span className="font-bold md:font-semibold text-gray-700 text-xs sm:text-sm md:text-base lg:text-lg">
