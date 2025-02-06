@@ -39,7 +39,7 @@ const EnergyConsumption = () => {
         <div className=" bg-gradient-to-br from-red-50 to-red-200 border border-gray-300 rounded-2xl md:rounded-3xl px-2 py-2 md:pl-4 md:pt-4 md:pr-4 md:w-1/3 w-full min-h-[80px] md:min-h-[140px] shadow-md hover:shadow-lg transition-shadow">
           <div className="flex flex-row items-start justify-between p-1 md:p-2">
             <div>
-              <h1 className="text-gray-600 min-text-sm md:text-xl">Load<br/>Consumptions</h1>
+              <h1 className="text-gray-600 text-sm md:text-xl">Load<br/>Consumptions</h1>
               <p className="min-text-lg md:text-xl font-bold text-red-600 mt-1">0.51kWh</p>
             </div>
             <div className="p-2 md:p-3 bg-white rounded-full">
