@@ -14,23 +14,23 @@ export default function StatusCard({device, alert,  lastupdate}) {
   
   return (
     <div className="md:m- mb-4 mx-4 md:mx-0 bg-white px-4 md:px-8 shadow-md p-6 rounded-xl md:rounded-3xl flex flex-row md:flex-row-2 items-center justify-between gap-4 md:gap-2">
-      <div className="text-center md:w-auto md:text-left flex flex-col justify-center md:justify-end gap-6 md:gap-10 w-[50%] ">
+      <div className="text-center md:w-auto md:text-left flex flex-col justify-center md:justify-end gap-10 md:gap-10 w-[50%] ">
         <p className="text-xs font-bold md:text-sm text-gray-500">
           Last Update: <br className="md:hidden"/> 
           <span className="font-bold md:font-semibold text-gray-700 text-xs sm:text-sm md:text-base lg:text-lg">
             {lasttime.toLocaleString()}
           </span>
         </p>
-        <button className={`flex flex-row items-center justify-center gap-1 md:gap-2 ${alert==="success"?"bg-green-500 ":"bg-red-500 " } text-white px-3 md:px-2 py-1.5 md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-green-600 transition-all duration-300`}>
+        <button className={`flex flex-row items-center w-[70%] m-auto justify-center gap-1 md:gap-2 ${alert==="success"?"bg-green-500 ":"bg-red-500 " } text-white px-2 md:px-2 py-1.5 md:py-2 rounded-full text-sm md:text-base shadow-md hover:bg-green-600 transition-all duration-300`}>
           <CheckCircle className="w-4 h-4 md:w-5 md:h-5" /> {alert==="success"?"online":"offline"}
         </button>
       </div>
       
       <div className="flex flex-col justify-center md:justify-end gap-6 md:gap-4  md:w-auto">
+
+
         <div className="flex w-[100%] flex-row  item-center justify-center md:justify-end gap-2 md:gap-4">
         
-     
-
         <div className="relative  w-full sm:w-auto flex flex-row items-center justify-center">
       {/* Hidden Date Input for Mobile, Visible on Larger Screens */}
       <input 
@@ -39,17 +39,17 @@ export default function StatusCard({device, alert,  lastupdate}) {
         className="w-0 opacity-0 sm:w-auto sm:opacity-100 bg-white border border-gray-500 outline-none text-gray-700 text-sm sm:text-base p-3 sm:p-2 rounded-full cursor-pointer transition-all duration-300 appearance-none"
       />
       {/* Clickable Calendar Icon for Mobile */}
-      <Calendar 
-      size={35}
+     <div className="p-3 border border-gray-300  rounded-full sm:hidden"> <Calendar 
+      size={20}
         className=" inset-y-0 left-3 flex items-center text-gray-600   cursor-pointer sm:hidden"
         onClick={handleIconClick} 
-      />
+      /></div>
     </div>
 
 
 
-          <button className="flex items-center gap-1 md:gap-2 bg-white px-4 md:px-5 py-1 md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
-            <Download className="w-4 h-4 md:w-5 md:h-4" /> 
+          <button className="flex items-center gap-1 md:gap-2 py-2 px-3 bg-white  md:px-5  md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
+            <Download className=" md:w-5 md:h-4" size={20} /> 
             <span className="hidden md:block">Download</span>
           </button>
         </div>
