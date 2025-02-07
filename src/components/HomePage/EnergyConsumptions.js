@@ -1,7 +1,8 @@
 import React from "react";
 import { Sun, PlugZap, Zap, ArrowUp } from "lucide-react";
 
-const EnergyConsumption = () => {
+const EnergyConsumption = ({generation}) => {
+ const {p1ValueTot,p2ValueTot, p3ValueTot }=generation
   return (
     <div className="flex flex-col p-2 pb-6  md:p-4 md:mb-4 mb-2 mx-4 md:mx-0 bg-white shadow-md rounded-2xl md:rounded-3xl gap-3">
       <h1 className="text-xl md:text-xl font-bold">Energy Consumptions</h1>
@@ -13,7 +14,7 @@ const EnergyConsumption = () => {
           <div className="flex flex-col-reverse md:flex-row items-start  gap-6 justify-between p-1 md:p-2">
             <div>
               <h1 className="text-gray-500 text-lg md:text-xl "><span className="text-gray-600 text-lg md:text-md ">Solar</span><br/>Generation</h1>
-              <p className="text-2xl md:text-2xl font-bold text-blue-600 mt-1">0.51kWh</p>
+              <p className="text-2xl md:text-2xl font-bold text-blue-600 mt-1">{p1ValueTot} Kwh</p>
             </div>
             <div className="p-2 md:p-3 bg-white rounded-full">
               <Sun className="w-5 h-5 md:w-6 md:h-6 text-blue-500" />
@@ -27,7 +28,7 @@ const EnergyConsumption = () => {
           <div className="flex flex-row items-start justify-between p-1 md:p-2">
             <div>
               <h1 className="text-gray-600 text-sm md:text-xl ">Grid<br/>Energy</h1>
-              <p className="text-xl md:text-2xl font-bold text-green-600 mt-1">0.51kWh</p>
+              <p className="text-xl md:text-2xl font-bold text-green-600 mt-1">{p2ValueTot} Kwh</p>
             </div>
             <div className="p-2 md:p-3 bg-white rounded-full">
               <PlugZap className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
@@ -40,7 +41,7 @@ const EnergyConsumption = () => {
           <div className="flex flex-row items-start justify-between p-1 md:p-2">
             <div>
               <h1 className="text-gray-600 text-sm md:text-xl">Load<br/>Consumptions</h1>
-              <p className="min-text-lg md:text-xl font-bold text-red-600 mt-1">0.51kWh</p>
+              <p className="min-text-lg md:text-xl font-bold text-red-600 mt-1">{p3ValueTot} Kwh</p>
             </div>
             <div className="p-2 md:p-3 bg-white rounded-full">
               <Zap className="w-5 h-5 md:w-6 md:h-6 text-red-600" />

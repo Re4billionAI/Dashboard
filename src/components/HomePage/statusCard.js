@@ -13,8 +13,8 @@ export default function StatusCard({device, alert,  lastupdate}) {
   };
   
   return (
-    <div className="md:m- mb-4 mx-4 md:mx-0 bg-white px-4 md:px-8 shadow-md p-6 rounded-xl md:rounded-3xl flex flex-row md:flex-row-2 items-center justify-between gap-4 md:gap-2">
-      <div className="text-center md:w-auto md:text-left flex flex-col justify-center md:justify-end gap-10 md:gap-10 w-[50%] ">
+    <div className="md:m- mb-4 mx-4 md:mx-0 bg-white px-2 md:px-8 shadow-md p-2 rounded-xl md:rounded-3xl flex flex-row md:flex-row-2 items-center justify-between gap-4 md:gap-2">
+      <div className="text-center md:w-auto md:text-left flex flex-col justify-center md:justify-end gap-8 md:gap-10 w-[50%] ">
         <p className="text-xs font-bold md:text-sm text-gray-500">
           Last Update: <br className="md:hidden"/> 
           <span className="font-bold md:font-semibold text-gray-700 text-xs sm:text-sm md:text-base lg:text-lg">
@@ -26,7 +26,7 @@ export default function StatusCard({device, alert,  lastupdate}) {
         </button>
       </div>
       
-      <div className="flex flex-col justify-center md:justify-end gap-6 md:gap-4  md:w-auto">
+      <div className="flex flex-col justify-center w-[55%] md:justify-end gap-4 md:gap-4  md:w-auto">
 
 
         <div className="flex w-[100%] flex-row  item-center justify-center md:justify-end gap-2 md:gap-4">
@@ -48,7 +48,7 @@ export default function StatusCard({device, alert,  lastupdate}) {
 
 
 
-          <button className="flex items-center gap-1 md:gap-2 py-2 px-3 bg-white  md:px-5  md:py-3 rounded-full text-sm md:text-base shadow-md hover:bg-gray-200 transition-all duration-300 border border-gray-200">
+          <button className="flex items-center gap-1 md:gap-2 py-2 px-3 bg-white  md:px-5  md:py-3 rounded-full text-sm md:text-base  hover:bg-gray-200 transition-all duration-300 border border-gray-200">
             <Download className=" md:w-5 md:h-4" size={20} /> 
             <span className="hidden md:block">Download</span>
           </button>

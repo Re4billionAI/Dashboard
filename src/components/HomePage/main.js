@@ -130,11 +130,11 @@ const Home = () => {
             {activeTab === 'Overview' && (
               <div>
                 <StatusCard device={device?.name || 'kollar'}alert={alert}   lastupdate={liveData.data.snapshot.tValue}/>
-                <EnergyConsumption />
-                <ParameterRepresentation />
+                <EnergyConsumption generation={liveData.data}/>
+                <ParameterRepresentation  parameters={liveData.data.snapshot}/>
               </div>
             )}
-            {activeTab === 'Analytics' && <Graph />}
+            {activeTab === 'Analytics' && <Graph dataCharts={liveData.data.dataCharts} />}
           </div>
         )}
       </div>
