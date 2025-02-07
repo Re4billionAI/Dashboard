@@ -1,8 +1,87 @@
 import React, { useState } from 'react';
 import { Menu, Search, LogOut } from "lucide-react";
+import { useSelector, useDispatch } from 'react-redux'
+import { updateLocation } from "../Redux/CounterSlice"
+
+import { FiX, FiSearch } from "react-icons/fi";
+
+
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+
+
+const locations = [
+  { name: "kollar", path: "ftb001", board: "ftb001" },
+  { name: "modaiyur", path: "stb001", board: "stb001" },
+  { name: "ananthapuram", path: "nrmsv2f001", board: "nrmsv2f001" },
+  { name: "vengur", path: "rmsv3_001", board: "rmsv3_001" },
+  { name: "sithalingamadam", path: "rmsv3_002", board: "rmsv3_002" },
+  { name: "keelathalanur", path: "rmsv32_001", board: "rmsv32_001" },
+  { name: "perumukkal", path: "rmsv33_001", board: "rmsv33_001" },
+  { name: "agalur", path: "rmsv33_002", board: "rmsv33_002" },
+  { name: "saram", path: "rmsv33_005", board: "rmsv33_005" },
+  { name: "pootai", path: "rmsv34_002", board: "rmsv34_002" },
+  { name: "siruvanthadu", path: "rmsv34_003", board: "rmsv34_003" },
+  { name: "puthirampattu", path: "rmsv35_002", board: "rmsv35_002" },
+  { name: "vadalur", path: "rmsv35_003", board: "rmsv35_003" },
+  { name: "alagarai", path: "rmsv35_007", board: "rmsv35_007" },
+  { name: "kanniyapuram", path: "rmsv35_008", board: "rmsv35_008" },
+  { name: "melmalaiyanur", path: "rmsv4_001", board: "rmsv4_001" },
+  { name: "thandavankulam", path: "rmsv4_002", board: "rmsv4_002" },
+  { name: "channamahgathihalli ka", path: "rmsv35_006", board: "rmsv35_006" },
+  { name: "jenugadde ka", path: "rmsv35_014", board: "rmsv35_014" },
+  { name: "sindigere ka", path: "rmsv35_015", board: "rmsv35_015" },
+  { name: "Panchalingala Ap", path: "Panchalingala-AP", board: "rmsv36_001" },
+  { name: "Nudurupadu-Ap", path: "Nudurupadu-AP", board: "rmsv35_005" },
+  { name: "Laddagiri-Ap", path: "Laddagiri-AP", board: "rmsv36_003" }
+];
+
 
 const Head = ({ toggleSidebar }) => {
-  const [showSearch, setShowSearch] = useState(false); // state to toggle search bar visibility
+  const [showSearch, setShowSearch] = useState(false);
+  
+  const [query, setQuery] = useState("");
+  const [filteredLocations, setFilteredLocations] = useState([]);
+
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedLocation, setSelectedLocation] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+
+const dispatch=useDispatch()
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    
+    if (value) {
+      const suggestions = locations.filter((location) =>
+        location.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredLocations(suggestions);
+    } else {
+      setFilteredLocations([]);
+    }
+  };
+
+  const changeLocation = (data) => {
+ 
+    dispatch(updateLocation(data));
+    setSelectedLocation(data);
+   
+    Cookies.set("locationName", data.name);
+    Cookies.set("locationPath", data.path);
+    Cookies.set("locationBoard", data.board);
+    navigate("/");
+    setShowSearch("")
+    setQuery("")
+    setFilteredLocations([])
+    
+  };
+
+  
+  // state to toggle search bar visibility
 
   const handleSearchClick = () => {
     setShowSearch(!showSearch); // toggle the search bar visibility
@@ -34,10 +113,33 @@ const Head = ({ toggleSidebar }) => {
       <div className="flex items-center gap-2 flex-grow justify-end md:justify-start w-[50%] ">
         {/* Desktop Search Bar (always visible on desktop) */}
         <div className="hidden md:flex items-center gap-2">
-          <input 
-            placeholder="Search..." 
-            className="p-2 rounded-full border border-gray-300 pl-6" 
-          />
+        
+
+
+<div className="relative w-64">
+      <input
+        type="text"
+        value={query}
+        onChange={handleChange}
+        placeholder="Search locations..."
+        className="p-2 rounded-full border border-gray-300 pl-6"
+      />
+      {filteredLocations.length > 0 && (
+        <ul className="absolute w-full bg-white border rounded mt-1 shadow">
+          {filteredLocations.map((location, index) => (
+            <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => changeLocation(location)}>
+              {location.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+
+
+
+
+
           <button className="border border-gray-200 bg-white p-2 rounded-full">
             <Search />
           </button>
@@ -49,10 +151,24 @@ const Head = ({ toggleSidebar }) => {
         {/* Mobile Search Bar */}
         {showSearch && (
           <div className="md:hidden flex flex-row  items-center justify-end gap-0   w-[100%]">
-            <input 
-              placeholder="Search..." 
-              className="p-2 rounded-full  pl-6 w-[100%] border border-gray-20" 
-            />
+         <div className="relative w-64">
+      <input
+        type="text"
+        value={query}
+        onChange={handleChange}
+        placeholder="Search locations..."
+        className="p-2 rounded-full  pl-6 w-[100%] border border-gray-20"
+      />
+      {filteredLocations.length > 0 && (
+        <ul className="absolute w-full bg-white border rounded mt-1 shadow">
+          {filteredLocations.map((location, index) => (
+            <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => changeLocation(location)}>
+              {location.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
           </div>
         )}
          <button 
@@ -74,3 +190,7 @@ const Head = ({ toggleSidebar }) => {
 };
 
 export default Head;
+
+
+
+

@@ -34,6 +34,7 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
     { name: "sindigere ka", path: "rmsv35_015", board: "rmsv35_015", },
     { name: "Panchalingala Ap", path: "Panchalingala-AP", board: "rmsv36_001", },
     { name: "Nudurupadu-Ap", path: "Nudurupadu-AP", board: "rmsv35_005", },
+    { name: "Laddagiri-Ap", path: "Laddagiri-AP", board: "rmsv36_003" }
     // { name: "testing", path: "rmsv33_003", board: "rmsv33_003", },
     // { name: "testing", path: "rmsv33_004", board: "rmsv33_004", },
     // { name: "testing", path: "rmsv33_007", board: "rmsv33_007", },
