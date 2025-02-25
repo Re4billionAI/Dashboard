@@ -237,13 +237,8 @@ const App = () => {
         {/* Mobile View */}
         <div className="md:hidden">
           {activeTab === 'working' ? (
-            <div className="bg-white p-6 pt-2 rounded-lg shadow-xl border-l-8 border-green-500">
-              <div className="flex items-center gap-4 mb-4">
-                <h3 className="md:text-xl text-sm font-bold text-green-600 flex items-center gap-2">
-                  <CheckCircleIcon className="w-8 h-8" /> Active 
-                </h3>
-                
-              </div>
+            <div className="bg-white p-6 pt-6 rounded-lg shadow-xl border-l-8 border-green-500">
+              
               <ul className="list-none space-y-4">
                 {workingLocations.length > 0 ? (
                   workingLocations.map((location, index) => {
@@ -286,13 +281,8 @@ const App = () => {
               </ul>
             </div>
           ) : (
-            <div className="bg-white p-6 pt-2  rounded-lg shadow-xl border-l-8 border-red-500">
-              <div className="flex items-center gap-4 mb-4">
-                <h3 className="md:text-3xl text-lg font-bold text-red-600 flex items-center gap-2">
-                  <XCircleIcon className="w-8 h-8" /> Inactive 
-                </h3>
-               
-              </div>
+            <div className="bg-white p-6 pt-6  rounded-lg shadow-xl border-l-8 border-red-500">
+             
               <ul className="list-none space-y-4">
                 {notWorkingLocations.length > 0 ? (
                   notWorkingLocations.map((location, index) => (
