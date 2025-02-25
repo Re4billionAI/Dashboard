@@ -179,7 +179,7 @@ const App = () => {
                       className="text-lg bg-green-100 p-4 rounded-xl shadow-md font-medium"
                     >
                       <div className="flex justify-between items-center">
-                        <span>{location.email}</span>
+                        <span>{location.key}</span>
                         <span className="text-green-700 font-bold">
                           {location.p1ValueTot} kW
                         </span>
@@ -219,7 +219,7 @@ const App = () => {
                     key={index}
                     className="text-lg bg-red-100 p-4 rounded-xl shadow-md font-medium flex justify-between"
                   >
-                    <span>{location.email}</span>
+                    <span>{location.key}</span>
                     <span className="text-red-700 font-bold">
                       {location.p1ValueTot} kW
                     </span>
@@ -254,7 +254,7 @@ const App = () => {
     style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
     className="font-bold break-words "
   >
-    {location.email}
+    {location.key}
   </span>
   <span
     style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
@@ -295,7 +295,7 @@ const App = () => {
     style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
     className="font-bold break-words "
   >
-    {location.email}
+    {location.key}
   </span>
   <span
     style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
