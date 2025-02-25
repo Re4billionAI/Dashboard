@@ -96,7 +96,7 @@ const App = () => {
           <h2 className="md:text-2xl text-xl font-bold mb-4 md:mb-0">
             Solar Generation Dashboard
           </h2>
-          <div className="flex flex-row justify-center md:ml-auto items-center  p-4 py-2 border rounded-full shadow-md bg-gray-100">
+          <div className="flex flex-row justify-center md:ml-auto items-center gap-2 p-4 py-2 border rounded-full shadow-md bg-gray-100">
             <button
               onClick={() => handleNavigation("backward")}
               className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
