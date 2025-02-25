@@ -10,7 +10,9 @@ const getCookie = (name) => {
 const initialDevice = {
   name: getCookie('locationName') || 'kollar',
   path: getCookie('locationPath') || 'ftb001',
-  board: getCookie('locationBoard') || 'ftb001'
+  board: getCookie('locationBoard') || 'ftb001',
+  type: getCookie('locationType') || '24v',
+  timeInterval: getCookie('locationTimeInterval') || '1'
 };
 
 export const counterSlice = createSlice({

@@ -40,7 +40,7 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col p-6 gap-1">
+        <div className="flex-1 flex flex-col p-6 gap-2">
           {[{ icon: Home, label: "Home", link: "" }, { icon: Grid, label: "Dashboard", link: "Dashboard" }, { icon: Bell, label: "Alerts", link: "Alerts" }, { icon: Settings, label: "Location", link: "Location" }].map(
             (item, index) => (
               <button
@@ -49,7 +49,7 @@ const Sidebar = () => {
                 className={`flex items-center gap-3 px-6 py-3.5 rounded-full text-sm font-medium w-full transition-all ${
                   currentTab === item.label
                     ? "bg-blue-600 text-white shadow-lg"
-                    : "text-gray-600 hover:bg-white hover:shadow-md hover:text-blue-600"
+                    : "text-gray-600 hover:bg-white  hover:text-blue-600"
                 }`}
               >
                 <item.icon size={20} />

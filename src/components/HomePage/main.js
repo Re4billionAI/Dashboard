@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { ClipLoader } from 'react-spinners';
+import Spinner from "../Loader/loader"
 
 import StatusCard from './statusCard';
 import EnergyConsumption from './EnergyConsumptions';
@@ -17,7 +17,8 @@ const Home = () => {
   const [liveData, setLiveData] = useState(null);
   const [alert,showAlert ] = useState(null);
 
-  const fetchData = async (item) => {
+  const fetchData = async (item, timeInterval) => {
+    
     if (!item) return; // Prevent unnecessary API calls
 
     try {
@@ -35,7 +36,7 @@ const Home = () => {
 
       const response = await axios.post(
         `${process.env.REACT_APP_HOST}/admin/db`,
-        { selectedItem: item },
+        { selectedItem: item, timeInterval:timeInterval },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -91,7 +92,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (device?.path) fetchData(device.path);
+    if (device?.path) fetchData(device.path, device.timeInterval);
   }, [device]);
 
   return (
@@ -116,9 +117,7 @@ const Home = () => {
 
         {/* Loader */}
         {loading && (
-          <div className="flex justify-center items-center mt-6">
-            <ClipLoader color="#3b82f6" size={50} />
-          </div>
+          <Spinner/>
         )}
 
         {/* Error Message */}
