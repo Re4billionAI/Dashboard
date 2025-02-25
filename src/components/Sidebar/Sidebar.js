@@ -59,21 +59,7 @@ const Sidebar = () => {
           )}
         </div>
 
-        <div className="mt-auto p-6 border-t border-gray-200">
-          <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl hover:bg-white transition-colors">
-            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-              <User size={18} className="text-gray-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">John Anderson</p>
-              <p className="text-xs text-gray-500">john@re4billion.com</p>
-            </div>
-          </div>
-          <button className="w-full flex items-center gap-3 px-6 py-3.5 text-gray-600 hover:text-red-600 rounded-xl text-sm font-medium transition-colors">
-            <LogOut size={20} />
-            <span>Log Out</span>
-          </button>
-        </div>
+       
       </nav>
 
       {/* Mobile Navbar */}

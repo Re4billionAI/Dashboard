@@ -67,6 +67,7 @@ const changeLocation = (data) => {
   Cookies.set("locationType", data.type);
   Cookies.set("locationTimeInterval", data.timeInterval);
   navigate("/");
+  setSearchTerm("")
   
   
 };

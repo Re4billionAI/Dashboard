@@ -239,7 +239,7 @@ const App = () => {
           {activeTab === 'working' ? (
             <div className="bg-white p-6 pt-2 rounded-lg shadow-xl border-l-8 border-green-500">
               <div className="flex items-center gap-4 mb-4">
-                <h3 className="md:text-3xl text-lg font-bold text-green-600 flex items-center gap-2">
+                <h3 className="md:text-xl text-sm font-bold text-green-600 flex items-center gap-2">
                   <CheckCircleIcon className="w-8 h-8" /> Active 
                 </h3>
                 
@@ -252,14 +252,23 @@ const App = () => {
                     return (
                       <li
                         key={index}
-                        className="text-lg bg-green-100 p-4 rounded-lg shadow-md font-medium"
+                        className="text-lg bg-green-100 p-3 rounded-lg shadow-md font-medium"
                       >
-                        <div className="flex justify-between items-center">
-                          <span>{location.email}</span>
-                          <span className="text-green-700 font-bold">
-                            {location.p1ValueTot} kW
-                          </span>
-                        </div>
+                        <div className="flex flex-row justify-between items-center ">
+  <span
+    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
+    className="font-bold break-words "
+  >
+    {location.email}
+  </span>
+  <span
+    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
+    className="text-green-700 font-bold"
+  >
+    {location.p1ValueTot} kW
+  </span>
+</div>
+
                         <div className="w-full bg-green-200 rounded-full h-2 mt-2">
                           <div
                             className="bg-green-500 h-2 rounded-full"
@@ -289,12 +298,22 @@ const App = () => {
                   notWorkingLocations.map((location, index) => (
                     <li
                       key={index}
-                      className="text-lg bg-red-100 p-4 rounded-lg shadow-md font-medium flex justify-between"
+                      className="text-lg bg-red-100 p-3 rounded-lg shadow-md font-medium"
                     >
-                      <span>{location.email}</span>
-                      <span className="text-red-700 font-bold">
-                        {location.p1ValueTot} kW
-                      </span>
+                                          <div className="flex flex-row justify-between items-center ">
+  <span
+    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
+    className="font-bold break-words "
+  >
+    {location.email}
+  </span>
+  <span
+    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
+    className="text-red-700 font-bold"
+  >
+    {location.p1ValueTot} kW
+  </span>
+</div>
                     </li>
                   ))
                 ) : (
