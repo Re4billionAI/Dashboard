@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from "react";
-
-
-import { format, addDays } from "date-fns";
+import React, { useState, useCallback, useEffect } from "react";
+import { format } from "date-fns";
+import Cookies from "js-cookie";
+import { useSelector } from 'react-redux';
+import axios from "axios";
 import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
-
 import {
   LineChart,
   Line,
@@ -11,14 +11,13 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   Brush,
   ResponsiveContainer,
 } from "recharts";
-import { Download, Maximize2 } from 'lucide-react';
+import { Maximize2 } from 'lucide-react';
 import { FiX } from "react-icons/fi";
 
-// ... (keep tooltipProps, formatTick, units, and CustomTooltip the same)
+// Tooltip properties with colors
 const tooltipProps = {
   "SolarVoltage": { color: "blue" },
   "SolarCurrent": { color: "green" },
@@ -36,9 +35,16 @@ const tooltipProps = {
 
 // Format X-axis ticks
 const formatTick = (tick) => {
+  if (!tick || typeof tick !== 'string') return '';
+  
   const [hourStr, minuteStr] = tick.split(":");
+  if (!hourStr || !minuteStr) return tick;
+  
   let hour = parseInt(hourStr, 10);
   let minute = parseInt(minuteStr, 10);
+  
+  if (isNaN(hour) || isNaN(minute)) return tick;
+  
   minute = minute < 10 ? `0${minute}` : minuteStr;
   hour = hour < 10 ? `0${hour}` : hour;
   return hour === 24 ? `00:${minute}` : `${hour}:${minute}`;
@@ -62,23 +68,20 @@ const units = {
 
 // Custom Tooltip with units
 const CustomTooltip = ({ active, payload, label }) => {
-
   if (active && payload && payload.length) {
-      return (
-          <div className="bg-white border border-gray-300 p-2 rounded-md shadow-sm">
-              <p className="font-semibold">{`Time: ${label}`}</p>
-              {payload.map((item, index) => (
-                  <p key={index} style={{ color: item.color }}>
-                      {`${item.name}: ${item.value} ${units[item.name] || ""}`}
-                  </p>
-              ))}
-          </div>
-      );
+    return (
+      <div className="bg-white border border-gray-300 p-2 rounded-md shadow-sm">
+        <p className="font-semibold">{`Time: ${label}`}</p>
+        {payload.map((item, index) => (
+          <p key={index} style={{ color: item.color }}>
+            {`${item.name}: ${item.value !== undefined ? item.value : 'N/A'} ${units[item.name] || ""}`}
+          </p>
+        ))}
+      </div>
+    );
   }
   return null;
 };
-
-
 
 const parameters = [
   { label: 'Voltage', key: 'showVoltage', index: 0 },
@@ -87,31 +90,33 @@ const parameters = [
 ];
 
 const Graph = ({dataCharts}) => {
-  // ... (keep dataCharts and useState declarations the same)
-//   
-
-const [selectedDate, setSelectedDate] = useState(new Date());
-
-const handleDateChange = (event) => {
-  setSelectedDate(new Date(event.target.value));
-};
-
-const changeDate = (days) => {
-  setSelectedDate((prevDate) => addDays(prevDate, days));
-};
-
-const refreshDate = () => {
-  setSelectedDate(new Date());
-};
-
-const [activeModal, setActiveModal] = useState(null);
-const [visibility, setVisibility] = useState({
+  console.log(dataCharts)
+  const device = useSelector((state) => state.location.device);
+  const [loading, setLoading] = useState(false);
+  const [graphValues, setGraphValues] = useState(dataCharts);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [activeModal, setActiveModal] = useState(null);
+  const [visibility, setVisibility] = useState({
     Solar: { showVoltage: true, showCurrent: true, showPower: true },
     Inverter: { showVoltage: true, showCurrent: true, showPower: true },
     Grid: { showVoltage: true, showCurrent: true, showPower: true },
     Battery: { showVoltage: true, showCurrent: true, showPower: true },
-});
+  });
 
+  const handleDateChange = (event) => {
+    setSelectedDate(new Date(event.target.value));
+  };
+
+  const handleNavigation = (direction) => {
+    const currentDate = new Date(selectedDate);
+    currentDate.setDate(currentDate.getDate() + (direction === "forward" ? 1 : -1));
+    setSelectedDate(currentDate);
+    
+  };
+
+  const refreshDate = () => {
+    setSelectedDate(new Date());
+  };
 
   const handleCheckboxChange = useCallback((category, key, checked) => {
     setVisibility((prev) => ({
@@ -123,265 +128,315 @@ const [visibility, setVisibility] = useState({
     }));
   }, []);
 
-
   const handleModalToggle = useCallback((category) => {
     setActiveModal((prev) => (prev === category ? null : category));
-}, []);
+  }, []);
 
-const categories = {
+  const categories = {
     Solar: ["SolarVoltage", "SolarCurrent", "SolarPower"],
     Inverter: ["InverterVoltage", "InverterCurrent", "InverterPower"],
     Grid: ["GridVoltage", "GridCurrent", "GridPower"],
     Battery: ["BatteryVoltage", "BatteryCurrent", "BatteryPower"],
-  
-};
+  };
 
-// Calculate Y-axis domain dynamically based on active toggles
-const calculateYDomain = (category, keys) => {
+  // Calculate Y-axis domain dynamically based on active toggles
+  const calculateYDomain = (category, keys) => {
     const activeKeys = keys.filter((key, index) => {
-        if (index === 0) return visibility[category]?.showVoltage;
-        if (index === 1) return visibility[category]?.showCurrent;
-        if (index === 2) return visibility[category]?.showPower;
-        return false;
+      if (index === 0) return visibility[category]?.showVoltage;
+      if (index === 1) return visibility[category]?.showCurrent;
+      if (index === 2) return visibility[category]?.showPower;
+      return false;
     });
 
     if (activeKeys.length === 0) {
-        return [0, 100]; // Default range when nothing is selected
+      return [0, 100]; // Default range when nothing is selected
     }
 
-    const values = dataCharts.flatMap((data) =>
-        activeKeys.map((key) => data[key] || 0)
+    const values = graphValues.flatMap((data) =>
+      activeKeys.map((key) => data[key] || 0)
     );
 
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-   
+    const min = values.length ? Math.min(...values) : 0;
+    const max = values.length ? Math.max(...values) : 100;
+    
+    // Add buffer for better visualization
+    return [0, max + 20];
+  };
 
-    return [ 0, max + 20]; // Add buffer for better visualization
-};
+  const changeDate = async () => {
+    if (loading) {
+      setLoading(false); // Disable loader after first render
+    }
 
+    try {
+      const token = Cookies.get("token");
+      const response = await axios.post(
+        `${process.env.REACT_APP_HOST}/admin/date`,
+        {
+          selectedItem: device?.path || '',
+          date: format(selectedDate, "yyyy-MM-dd"),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.status === 200 && response.data?.data?.dataCharts) {
+        const newDataArray = response.data.data.dataCharts.map((chart) => ({
+          ccAxisXValue: formatTick(chart.ccAxisXValue),
+          SolarVoltage: chart.SolarVoltage || 0,
+          SolarCurrent: chart.SolarCurrent || 0,
+          SolarPower: (chart.SolarCurrent || 0) * (chart.SolarVoltage || 0),
+          InverterVoltage: chart.InverterVoltage || 0,
+          InverterCurrent: chart.InverterCurrent || 0,
+          InverterPower: (chart.InverterCurrent || 0) * (chart.InverterVoltage || 0),
+          GridVoltage: chart.GridVoltage || 0,
+          GridCurrent: chart.GridCurrent || 0,
+          GridPower: (chart.GridCurrent || 0) * (chart.GridVoltage || 0),
+          BatteryCurrent: chart.BatteryCurrent || 0,
+          BatteryVoltage: chart.BatteryVoltage || 0,
+          BatteryPower: (chart.BatteryCurrent || 0) * (chart.BatteryVoltage || 0),
+        }));
+        
+        setGraphValues(newDataArray);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // ... (keep the rest of the logic the same)
-
-
+  useEffect(() => {
+    changeDate();
+  }, [selectedDate]);
 
   return (
-    <div className=" m-2">
-     <div className="flex items-center justify-center mb-4  gap-2 p-2 border rounded-lg shadow-md bg-gray-100">
-      <button onClick={() => changeDate(-1)} className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white">
-        <ChevronLeft className="w-5 h-5" />
-      </button>
-      <input
-        type="date"
-        value={format(selectedDate, "yyyy-MM-dd")}
-        onChange={handleDateChange}
-        className="p-2 border rounded-lg bg-white text-gray-900 "
-      />
-      <button onClick={() => changeDate(1)} className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white">
-        <ChevronRight className="w-5 h-5" />
-      </button>
-      <button onClick={refreshDate} className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white">
-        <RefreshCcw className="w-5 h-5" />
-      </button>
-    </div>
-   
-    <div className="flex flex-wrap justify-between w-full  ">
-      {Object.entries(categories).map(([category, keys]) => {
-        const yDomain = calculateYDomain(category, keys);
-        const categoryVisibility = visibility[category];
+    <div className="m-2">
+      <div className="flex items-center justify-center mb-4 gap-2 p-2 border rounded-lg shadow-md bg-gray-100">
+        <button
+          onClick={() => handleNavigation("backward")}
+          className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <input
+          type="date"
+          value={format(selectedDate, "yyyy-MM-dd")}
+          onChange={handleDateChange}
+          className="p-2 border rounded-lg bg-white text-gray-900"
+        />
+        <button
+          onClick={() => handleNavigation("forward")}
+          className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+        <button
+          onClick={refreshDate}
+          className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white"
+        >
+          <RefreshCcw className="w-5 h-5" />
+        </button>
+      </div>
 
-        return (
-          <div key={category} className="bg-white  shadow-lg rounded-lg border w-full sm:w-[49%] border-gray-200 overflow-hidden mb-6">
-            <div className="flex justify-between items-center p-4 bg-gray-50 border border-b-gray-300 text-white rounded-t-lg">
-              <h3 className="md:text-lg text-sm text-black font-bold">{category} Readings</h3>
-              
-              <div className="flex gap-2">
-                {parameters.map((param) => {
-                  const dataKey = keys[param.index];
-                  const color = tooltipProps[dataKey].color;
-                  
-                  return (
-                    <button
-                      key={param.key}
-                      onClick={() => handleCheckboxChange(
-                        category, 
-                        param.key, 
-                        !categoryVisibility[param.key]
-                      )}
-                      style={{
-                        backgroundColor: categoryVisibility[param.key] ? color : 'transparent',
-                        border: `2px solid ${categoryVisibility[param.key] ? color : 'black'}`,
-                        color: categoryVisibility[param.key] ? "white" : 'black',
-                      }}
-                      className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
-                    >
-                      {param.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <button 
-                onClick={() => handleModalToggle(category)}
-                className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
-              >
-                <Maximize2 className="h-4 w-4" />
-              </button>                                                                                                      
-            </div>
-            <div className="p-0 pb-5 relative z-1 ">
-          <ResponsiveContainer width="100%" height={300}  
-  >
-            <LineChart
-              data={dataCharts}
-              margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick}  tick={{ fontSize: 12 }}/>
-              <YAxis
-                domain={yDomain}
-                tickCount={10}
-                ticks={
-                  category === "Battery"
-                    ? [0, 15, 25, 35, 45, 50]
-                    : undefined
-                }
-                tick={{ fontSize: 12 }}
-                tickFormatter={(value) =>
-                  new Intl.NumberFormat().format(Math.round(value))
-                }
-              />
-              <Tooltip content={<CustomTooltip />} />
-              {categoryVisibility.showVoltage && (
-  <Line type="monotone" dataKey={keys[0]} stroke={tooltipProps[keys[0]].color} dot={false} />
-)}
-{categoryVisibility.showCurrent && (
-  <Line type="monotone" dataKey={keys[1]} stroke={tooltipProps[keys[1]].color} dot={false} />
-)}
-{categoryVisibility.showPower && (
-  <Line type="monotone" dataKey={keys[2]} stroke={tooltipProps[keys[2]].color} dot={false} />
-)}
-              <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" className="z-100"/>
-            </LineChart>
-          </ResponsiveContainer>
+      {loading ? (
+        <div className="flex justify-center items-center my-4 h-56">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-solid"></div>
         </div>
-     
+      ) : (selectedDate > new Date()) ? (
+        <div className="text-center p-4 bg-yellow-100 border border-yellow-300 rounded-lg">
+          <h1 className="text-lg font-semibold">Please select a current or past date</h1>
+        </div>
+      ) : (
+        <div className="flex flex-wrap justify-between w-full">
+          {Object.entries(categories).map(([category, keys]) => {
+            const yDomain = calculateYDomain(category, keys);
+            const categoryVisibility = visibility[category];
 
-            {/* ... (keep chart rendering the same) */}
-          </div>
-        );
-      })}
-
-{activeModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-10">
-          {/* ... (keep modal backdrop the same) */}
-          <div
-        className="absolute inset-0 bg-gray-800 opacity-75"
-        onClick={() => handleModalToggle(null)}
-      ></div>
-          <div className="relative bg-white rounded-lg shadow-xl w-11/12 md:w-3/4">
-            <div className="flex justify-between items-center p-2 gap-2 bg-gray-100 border border-b-gray-300 text-black rounded-t-lg">
-              <h3 className="md:text-lg text-sm text-black font-bold">{activeModal} Readings</h3>
-              
-              <div className="flex gap-2">
-                {parameters.map((param) => {
-                  const dataKey = categories[activeModal][param.index];
-                  const color = tooltipProps[dataKey].color;
+            return (
+              <div key={category} className="bg-white shadow-lg rounded-lg border w-full sm:w-[49%] border-gray-200 overflow-hidden mb-6">
+                <div className="flex justify-between items-center p-4 bg-gray-50 border border-b-gray-300 text-white rounded-t-lg">
+                  <h3 className="md:text-lg text-sm text-black font-bold">{category} Readings</h3>
                   
-                  return (
-                    <button
-                      key={param.key}
-                      onClick={() => handleCheckboxChange(
-                        activeModal, 
-                        param.key, 
-                        !visibility[activeModal][param.key]
-                      )}
-                      style={{
-                        backgroundColor: visibility[activeModal][param.key] ? color : 'transparent',
-                        border: `2px solid ${color}`,
-                        color: visibility[activeModal][param.key] ? 'white' : color,
-                      }}
-                      className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
-                    >
-                      {param.label}
-                    </button>
-                  );
-                })}
-              </div>
+                  <div className="flex gap-2">
+                    {parameters.map((param) => {
+                      const dataKey = keys[param.index];
+                      const color = tooltipProps[dataKey].color;
+                      
+                      return (
+                        <button
+                          key={param.key}
+                          onClick={() => handleCheckboxChange(
+                            category, 
+                            param.key, 
+                            !categoryVisibility[param.key]
+                          )}
+                          style={{
+                            backgroundColor: categoryVisibility[param.key] ? color : 'transparent',
+                            border: `2px solid ${categoryVisibility[param.key] ? color : 'black'}`,
+                            color: categoryVisibility[param.key] ? "white" : 'black',
+                          }}
+                          className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
+                        >
+                          {param.label}
+                        </button>
+                      );
+                    })}
+                  </div>
 
-              <button
+                  <button 
+                    onClick={() => handleModalToggle(category)}
+                    className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="p-0 pb-5 relative z-1">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart
+                      data={graphValues}
+                      margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick} tick={{ fontSize: 12 }}/>
+                      <YAxis
+                        domain={yDomain}
+                        tickCount={10}
+                        ticks={
+                          category === "Battery"
+                            ? [0, 15, 25, 35, 45, 50]
+                            : undefined
+                        }
+                        tick={{ fontSize: 12 }}
+                        tickFormatter={(value) =>
+                          new Intl.NumberFormat().format(Math.round(value))
+                        }
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      {categoryVisibility.showVoltage && (
+                        <Line type="monotone" dataKey={keys[0]} stroke={tooltipProps[keys[0]].color} dot={false} />
+                      )}
+                      {categoryVisibility.showCurrent && (
+                        <Line type="monotone" dataKey={keys[1]} stroke={tooltipProps[keys[1]].color} dot={false} />
+                      )}
+                      {categoryVisibility.showPower && (
+                        <Line type="monotone" dataKey={keys[2]} stroke={tooltipProps[keys[2]].color} dot={false} />
+                      )}
+                      <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            );
+          })}
+
+          {activeModal && (
+            <div className="fixed inset-0 flex items-center justify-center z-10">
+              <div
+                className="absolute inset-0 bg-gray-800 opacity-75"
                 onClick={() => handleModalToggle(null)}
-                className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
-              >
-                <FiX size={20} />
-              </button>
-            </div>
-            
-            {/* ... (keep modal chart rendering the same) */}
-            <div  className="pr-2 bg-white shadow rounded-lg overflow-x-auto">
-           <div className="p-0 bg-white shadow rounded-lg  w-full h-[250px] sm:h-[200px] md:h-[400px]">
-  <ResponsiveContainer width="100%" height="100%">
-    <LineChart
-      data={dataCharts}
-      margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
-      className="bg-gray-50"  // adds a subtle background to the SVG container
-    >
-      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-      <XAxis
-        dataKey="ccAxisXValue"
-        tickFormatter={formatTick}
-        tick={{ fontSize: 12 }}
-        // Note: Although XAxis renders text as SVG, you can still adjust its look via its props or via global SVG styling.
-      />
-      <YAxis
-        domain={calculateYDomain(activeModal, categories[activeModal])}
-        tickCount={10}
-        tick={{ fontSize: 12 }}
-        tickFormatter={(value) =>
-          new Intl.NumberFormat().format(Math.round(value))
-        }
-      />
-      <Tooltip
-        content={<CustomTooltip />}
-        // Use wrapperClassName to apply Tailwind styling to the tooltip container
-        wrapperClassName="bg-gray-800 text-white p-2 rounded-md shadow-md"
-      />
-      {visibility[activeModal]?.showVoltage && (
-        <Line
-          type="monotone"
-          dataKey={categories[activeModal][0]}
-          stroke={tooltipProps[categories[activeModal][0]].color}
-          dot={false}
-          className="transition duration-300 hover:opacity-80"  // add subtle transition on hover
-        />
-      )}
-      {visibility[activeModal]?.showCurrent && (
-        <Line
-          type="monotone"
-          dataKey={categories[activeModal][1]}
-          stroke={tooltipProps[categories[activeModal][1]].color}
-          dot={false}
-          className="transition duration-300 hover:opacity-80"
-        />
-      )}
-      {visibility[activeModal]?.showPower && (
-        <Line
-          type="monotone"
-          dataKey={categories[activeModal][2]}
-          stroke={tooltipProps[categories[activeModal][2]].color}
-          dot={false}
-          className="transition duration-300 hover:opacity-80"
-        />
-      )}
-      <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
-    </LineChart>
-  </ResponsiveContainer>
-</div>
-            </div>
+              ></div>
+              <div className="relative bg-white rounded-lg shadow-xl w-11/12 md:w-3/4">
+                <div className="flex justify-between items-center p-2 gap-2 bg-gray-100 border border-b-gray-300 text-black rounded-t-lg">
+                  <h3 className="md:text-lg text-sm text-black font-bold">{activeModal} Readings</h3>
+                  
+                  <div className="flex gap-2">
+                    {parameters.map((param) => {
+                      const dataKey = categories[activeModal][param.index];
+                      const color = tooltipProps[dataKey].color;
+                      
+                      return (
+                        <button
+                          key={param.key}
+                          onClick={() => handleCheckboxChange(
+                            activeModal, 
+                            param.key, 
+                            !visibility[activeModal][param.key]
+                          )}
+                          style={{
+                            backgroundColor: visibility[activeModal][param.key] ? color : 'transparent',
+                            border: `2px solid ${color}`,
+                            color: visibility[activeModal][param.key] ? 'white' : color,
+                          }}
+                          className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
+                        >
+                          {param.label}
+                        </button>
+                      );
+                    })}
+                  </div>
 
-          </div>
+                  <button
+                    onClick={() => handleModalToggle(null)}
+                    className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
+                  >
+                    <FiX size={20} />
+                  </button>
+                </div>
+                
+                <div className="pr-2 bg-white shadow rounded-lg overflow-x-auto">
+                  <div className="p-0 bg-white shadow rounded-lg w-full h-[250px] sm:h-[200px] md:h-[400px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={graphValues}
+                        margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+                        className="bg-gray-50"
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        <XAxis
+                          dataKey="ccAxisXValue"
+                          tickFormatter={formatTick}
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis
+                          domain={calculateYDomain(activeModal, categories[activeModal])}
+                          tickCount={10}
+                          tick={{ fontSize: 12 }}
+                          tickFormatter={(value) =>
+                            new Intl.NumberFormat().format(Math.round(value))
+                          }
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        {visibility[activeModal]?.showVoltage && (
+                          <Line
+                            type="monotone"
+                            dataKey={categories[activeModal][0]}
+                            stroke={tooltipProps[categories[activeModal][0]].color}
+                            dot={false}
+                            className="transition duration-300 hover:opacity-80"
+                          />
+                        )}
+                        {visibility[activeModal]?.showCurrent && (
+                          <Line
+                            type="monotone"
+                            dataKey={categories[activeModal][1]}
+                            stroke={tooltipProps[categories[activeModal][1]].color}
+                            dot={false}
+                            className="transition duration-300 hover:opacity-80"
+                          />
+                        )}
+                        {visibility[activeModal]?.showPower && (
+                          <Line
+                            type="monotone"
+                            dataKey={categories[activeModal][2]}
+                            stroke={tooltipProps[categories[activeModal][2]].color}
+                            dot={false}
+                            className="transition duration-300 hover:opacity-80"
+                          />
+                        )}
+                        <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </div>
     </div>
   );
 };
