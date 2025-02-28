@@ -65,7 +65,7 @@ const Home = () => {
 
           console.log({currValTime:currValTime})
            
-          if (Math.abs(currValTime - checkVal) <= 50) {
+          if (Math.abs(currValTime - checkVal) <= 30) {
             console.log(currValTime, currValTime);
             showAlert( "success"); 
                
