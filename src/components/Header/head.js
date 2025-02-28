@@ -145,7 +145,7 @@ const dispatch=useDispatch()
         className="p-2 rounded-full border border-gray-300 pl-6"
       />
       {filteredLocations.length > 0 && (
-        <ul className="absolute w-full bg-white border rounded mt-1 shadow">
+        <ul className="absolute  bg-white border rounded mt-1 shadow">
           {filteredLocations.map((location, index) => (
             <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => changeLocation(location)}>
               {location.name}
@@ -180,7 +180,7 @@ const dispatch=useDispatch()
         className="p-2 rounded-full  pl-6 w-[100%] border border-gray-20"
       />
       {filteredLocations.length > 0 && (
-        <ul className="absolute w-full bg-white border rounded mt-1 shadow">
+        <ul className="absolute  bg-white border rounded mt-1 shadow">
           {filteredLocations.map((location, index) => (
             <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => changeLocation(location)}>
               {location.name}
