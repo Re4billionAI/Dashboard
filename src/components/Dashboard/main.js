@@ -170,9 +170,15 @@ const App = () => {
             <ul className="list-none space-y-4">
               {workingLocations.length > 0 ? (
                 workingLocations.map((location, index) => {
-                  const progress =
-                    (location.p1ValueTot / maxGeneration) * 100;
-                    console.log(progress)
+                  const sites = ["Perumugai", "Agalur", "Alagarai"];
+                                    
+                  const siteName = location.key?.split("-")[1]?.trim(); // Safely get and trim the site name
+                  console.log("Extracted Site Name:", siteName); // Debugging log
+
+                  const progress = 
+                    (location.p1ValueTot / (siteName && sites.includes(siteName) ? location.p1ValueTot : 4)) * 100;
+
+
                   return (
                     <li
                       key={index}
@@ -180,9 +186,14 @@ const App = () => {
                     >
                       <div className="flex justify-between items-center">
                         <span>{location.key}</span>
-                        <span className="text-green-700 font-bold">
+                     <div>
+                     <span className="text-green-700 font-bold">
                           {location.p1ValueTot} kW
+                        </span> 
+                        <span className="text-green-700 font-bold">
+                         /  4 kW
                         </span>
+                     </div>
                       </div>
                       <div className="w-full bg-green-200 rounded-full h-2 mt-2">
                         <div
@@ -242,8 +253,15 @@ const App = () => {
               <ul className="list-none space-y-4">
                 {workingLocations.length > 0 ? (
                   workingLocations.map((location, index) => {
-                    const progress =
-                      (location.solarGeneration / maxGeneration) * 100;
+                    const sites = ["Perumugai", "Agalur", "Alagarai"];
+                                    
+                  const siteName = location.key?.split("-")[1]?.trim(); // Safely get and trim the site name
+                  console.log("Extracted Site Name:", siteName); // Debugging log
+
+                  const progress = 
+                    (location.p1ValueTot / (siteName && sites.includes(siteName) ? location.p1ValueTot : 4)) * 100;
+
+
                     return (
                       <li
                         key={index}

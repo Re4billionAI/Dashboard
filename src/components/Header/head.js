@@ -85,6 +85,24 @@ const dispatch=useDispatch()
     
   };
 
+
+ 
+
+
+  const handleLogout = () => {
+    Cookies.remove('token');
+    Cookies.remove('selectedItem');
+    Cookies.remove('selectedLocation');
+    Cookies.remove('role');
+    Cookies.remove('locationName'); 
+    Cookies.remove('locationPath'); 
+    Cookies.remove('locationBoard'); 
+    Cookies.remove('locationType'); 
+    Cookies.remove('locationTimeInterval');
+
+
+    window.location.href = "/login";
+}
   
   // state to toggle search bar visibility
 
@@ -115,13 +133,10 @@ const dispatch=useDispatch()
 
       {/* Center Section - Search Bar */}
       
-      <div className="flex items-center gap-2 flex-grow justify-end md:justify-start w-[50%] ">
+      <div className="flex items-center gap-0 flex-grow justify-end md:justify-start w-[20%] ">
         {/* Desktop Search Bar (always visible on desktop) */}
-        <div className="hidden md:flex items-center gap-2">
-        
-
-
-<div className="relative w-64">
+        <div className="hidden md:flex flex-row justify-center items-center gap-0">
+<div className=" mr-3">
       <input
         type="text"
         value={query}
@@ -156,7 +171,7 @@ const dispatch=useDispatch()
         {/* Mobile Search Bar */}
         {showSearch && (
           <div className="md:hidden flex flex-row  items-center justify-end gap-0   w-[100%]">
-         <div className="relative w-64">
+         <div className="relative mr-2">
       <input
         type="text"
         value={query}
@@ -184,8 +199,8 @@ const dispatch=useDispatch()
       </div>
 
       {/* Right Section - Logout Button */}
-      <div className="flex items-center">
-        <button className="md:px-4 md:py-2 px-2 py-2 bg-blue-600 text-white rounded-full shadow-md flex items-center gap-2">
+      <div className="flex items-center" onClick={handleLogout}>
+        <button className="md:px-4 md:py-2 px-2 py-2 bg-blue-600 text-white rounded-full shadow-md flex items-center gap-2" >
           <LogOut /> 
           <span className="hidden sm:block">Logout</span>
         </button>
