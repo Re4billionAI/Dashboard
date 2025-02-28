@@ -95,10 +95,7 @@ export default function StatusCard({device, alert,  lastupdate}) {
         "BV Unit": "V",
         "Battery Current": item.batteryCurrent,
         "BC Unit": "A",
-        "InLetTemperature": item.inLetTemperature,
-        "Temp Unit": "celsius",
-        "OutLetTemperature": item.outLetTemperature,
-        "Temp Unit": "celsius",
+       
       }));
     
   
@@ -117,8 +114,7 @@ export default function StatusCard({device, alert,  lastupdate}) {
         const solarVoltage = parseFloat(item.solarVoltage) || 0;
         const gridVoltage = parseFloat(item.gridVoltage) || 0;
         const inverterVoltage= parseFloat(item.inverterVoltage) || 0;
-        const InLetTemperature= parseFloat(item.InLetTemperature) || 0;
-        const outLetTemperature= parseFloat(item.outLetTemperature) || 0;
+        
     
         solarGeneration += (solarCurrent * solarVoltage )*timeDelta*60/(1000*3600);
         gridEnergy += (gridCurrent  * gridVoltage )*timeDelta*60/(1000*3600);
