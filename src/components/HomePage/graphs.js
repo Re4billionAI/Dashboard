@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import Cookies from "js-cookie";
 import { useSelector } from 'react-redux';
 import axios from "axios";
-import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight,ChevronDown, RefreshCcw } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { Maximize2 } from 'lucide-react';
 import { FiX } from "react-icons/fi";
+import BatteryGraph from "./batterygraph";
 
 // Tooltip properties with colors
 const tooltipProps = {
@@ -27,13 +28,9 @@ const tooltipProps = {
   "InverterPower":  { color: "red" },
   "GridVoltage": { color: "blue" },
   "GridCurrent": { color: "green" },
-  "GridPower":  { color: "red"  },
-  "BatteryVoltage": { color: "blue" },
-  "BatteryCurrent":{ color: "green" },
-  "BatteryPower": { color: "red"},
+  "GridPower":  { color: "red" },
 };
 
-// Format X-axis ticks
 const formatTick = (tick) => {
   if (!tick || typeof tick !== 'string') return '';
   
@@ -50,7 +47,6 @@ const formatTick = (tick) => {
   return hour === 24 ? `00:${minute}` : `${hour}:${minute}`;
 };
 
-// Map keys to their respective units
 const units = {
   SolarVoltage: "V",
   SolarCurrent: "A",
@@ -61,12 +57,8 @@ const units = {
   GridVoltage: "V",
   GridCurrent: "A",
   GridPower: "W",
-  BatteryVoltage: "V",
-  BatteryCurrent: "A",
-  BatteryPower: "W",
 };
 
-// Custom Tooltip with units
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -89,18 +81,18 @@ const parameters = [
   { label: 'Power', key: 'showPower', index: 2 },
 ];
 
-const Graph = ({dataCharts}) => {
+const Graph = ({ dataCharts }) => {
   console.log(dataCharts)
   const device = useSelector((state) => state.location.device);
   const [loading, setLoading] = useState(false);
   const [graphValues, setGraphValues] = useState(dataCharts);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeModal, setActiveModal] = useState(null);
+  // Removed Battery from visibility state
   const [visibility, setVisibility] = useState({
     Solar: { showVoltage: true, showCurrent: true, showPower: true },
     Inverter: { showVoltage: true, showCurrent: true, showPower: true },
     Grid: { showVoltage: true, showCurrent: true, showPower: true },
-    Battery: { showVoltage: true, showCurrent: true, showPower: true },
   });
 
   const handleDateChange = (event) => {
@@ -111,7 +103,6 @@ const Graph = ({dataCharts}) => {
     const currentDate = new Date(selectedDate);
     currentDate.setDate(currentDate.getDate() + (direction === "forward" ? 1 : -1));
     setSelectedDate(currentDate);
-    
   };
 
   const refreshDate = () => {
@@ -132,14 +123,13 @@ const Graph = ({dataCharts}) => {
     setActiveModal((prev) => (prev === category ? null : category));
   }, []);
 
+  // Removed Battery from categories
   const categories = {
     Solar: ["SolarVoltage", "SolarCurrent", "SolarPower"],
     Inverter: ["InverterVoltage", "InverterCurrent", "InverterPower"],
     Grid: ["GridVoltage", "GridCurrent", "GridPower"],
-    Battery: ["BatteryVoltage", "BatteryCurrent", "BatteryPower"],
   };
 
-  // Calculate Y-axis domain dynamically based on active toggles
   const calculateYDomain = (category, keys) => {
     const activeKeys = keys.filter((key, index) => {
       if (index === 0) return visibility[category]?.showVoltage;
@@ -149,7 +139,7 @@ const Graph = ({dataCharts}) => {
     });
 
     if (activeKeys.length === 0) {
-      return [0, 100]; // Default range when nothing is selected
+      return [0, 100];
     }
 
     const values = graphValues.flatMap((data) =>
@@ -159,13 +149,12 @@ const Graph = ({dataCharts}) => {
     const min = values.length ? Math.min(...values) : 0;
     const max = values.length ? Math.max(...values) : 100;
     
-    // Add buffer for better visualization
     return [0, max + 20];
   };
 
   const changeDate = async () => {
     if (loading) {
-      setLoading(false); // Disable loader after first render
+      setLoading(false);
     }
 
     try {
@@ -195,11 +184,12 @@ const Graph = ({dataCharts}) => {
           GridVoltage: chart.GridVoltage || 0,
           GridCurrent: chart.GridCurrent || 0,
           GridPower: ((chart.GridCurrent || 0) * (chart.GridVoltage || 0)).toFixed(2),
-          BatteryCurrent: chart.BatteryCurrent || 0,
           BatteryVoltage: chart.BatteryVoltage || 0,
-          BatteryPower: (chart.BatteryCurrent || 0) * (chart.BatteryVoltage || 0),
+          BatteryVoltage2: chart.BatteryVoltage2 || 0,
+          BatteryVoltage3: chart.BatteryVoltage3 || 0,
+          BatteryVoltage4: chart.BatteryVoltage4 || 0,
+
         }));
-        
         setGraphValues(newDataArray);
       }
     } catch (error) {
@@ -215,7 +205,7 @@ const Graph = ({dataCharts}) => {
 
   return (
     <div className="m-2">
-      <div className="flex items-center justify-center mb-4 gap-2 p-2 border rounded-lg shadow-md bg-gray-100">
+      <div className="flex items-center justify-center mb-4 gap-2 p-2 border md:rounded-lg rounded-full shadow-md bg-gray-100">
         <button
           onClick={() => handleNavigation("backward")}
           className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
@@ -252,17 +242,28 @@ const Graph = ({dataCharts}) => {
         </div>
       ) : (
         <div className="flex flex-wrap justify-between w-full">
+          <BatteryGraph graphValues={graphValues}/>
           {Object.entries(categories).map(([category, keys]) => {
             const yDomain = calculateYDomain(category, keys);
             const categoryVisibility = visibility[category];
 
             return (
-              <div key={category} className="bg-white shadow-lg rounded-lg border w-full sm:w-[49%] border-gray-200 overflow-hidden mb-6">
+              <div key={category} className="bg-white  rounded-3xl border w-full sm:w-[49%] border-gray-200 overflow-hidden mb-6">
+                
                 <div className="flex justify-between items-center p-4 bg-gray-50 border border-b-gray-300 text-white rounded-t-lg">
                   <h3 className="md:text-lg text-sm text-black font-bold">{category} Readings</h3>
                   
-                  <div className="flex gap-2">
-                    {parameters.map((param) => {
+                 <div className="flex justify-between items-center gap-2"> 
+                  <div className="relative group inline-block">
+  {/* Tooltip trigger */}
+  <div className="cursor-pointer px-2 py-1 flex bg-gray-200 text-black rounded-full text-sm">
+     Options <ChevronDown/>
+  </div>
+
+  {/* Tooltip content */}
+  <div className="absolute hidden group-hover:block z-10 mt-0 p-3 bg-white border rounded-lg shadow-lg min-w-[160px] transform -translate-x-14 space-y-3">
+    <div className="flex flex-col gap-1">
+    {parameters.map((param) => {
                       const dataKey = keys[param.index];
                       const color = tooltipProps[dataKey].color;
                       
@@ -285,14 +286,17 @@ const Graph = ({dataCharts}) => {
                         </button>
                       );
                     })}
+    </div>
+  </div>
+
                   </div>
 
                   <button 
                     onClick={() => handleModalToggle(category)}
-                    className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
+                    className="text-gray-600 bg-white md:block hidden rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
                   >
                     <Maximize2 className="h-4 w-4" />
-                  </button>
+                  </button></div>
                 </div>
                 <div className="p-0 pb-5 relative z-1">
                   <ResponsiveContainer width="100%" height={300}>
@@ -305,12 +309,9 @@ const Graph = ({dataCharts}) => {
                       <YAxis
                         domain={yDomain}
                         tickCount={10}
-                        ticks={
-                          category === "Battery"
-                            ? [0, 15, 25, 35, 45, 50]
-                            : undefined
-                        }
-                        tick={{ fontSize: 12 }}
+                        tick={{
+                          fontSize: 12
+                        }}
                         tickFormatter={(value) =>
                           new Intl.NumberFormat().format(Math.round(value))
                         }
@@ -342,7 +343,6 @@ const Graph = ({dataCharts}) => {
               <div className="relative bg-white rounded-lg shadow-xl w-11/12 md:w-3/4">
                 <div className="flex justify-between items-center p-2 gap-2 bg-gray-100 border border-b-gray-300 text-black rounded-t-lg">
                   <h3 className="md:text-lg text-sm text-black font-bold">{activeModal} Readings</h3>
-                  
                   <div className="flex gap-2">
                     {parameters.map((param) => {
                       const dataKey = categories[activeModal][param.index];
@@ -368,7 +368,6 @@ const Graph = ({dataCharts}) => {
                       );
                     })}
                   </div>
-
                   <button
                     onClick={() => handleModalToggle(null)}
                     className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"

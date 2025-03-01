@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Menu, Search, LogOut } from "lucide-react";
 import { useSelector, useDispatch } from 'react-redux'
 import { updateLocation } from "../Redux/CounterSlice"
@@ -57,6 +57,9 @@ const Head = ({ toggleSidebar }) => {
 
 const dispatch=useDispatch()
 
+const desktopSearchRef = useRef(null);
+const mobileSearchRef = useRef(null);
+
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
@@ -111,6 +114,31 @@ const dispatch=useDispatch()
     setShowSearch(!showSearch); // toggle the search bar visibility
   };
 
+
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        !desktopSearchRef.current?.contains(event.target) &&
+        !mobileSearchRef.current?.contains(event.target)
+      ) {
+        setFilteredLocations([]);
+      }
+    };
+
+    if (filteredLocations.length > 0) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [filteredLocations]);
+
+
+
+
   return (
     <div className="sticky md:w-full gap-2 mb-2 top-0 z-10 flex items-center justify-between px-6 py-4 backdrop-blur-md  bg-white md:bg-transparent ">
       {/* Left Section - Company Logo & Sidebar Toggle */}
@@ -142,11 +170,12 @@ const dispatch=useDispatch()
         type="text"
         value={query}
         onChange={handleChange}
-        placeholder="Search locations..."
-        className="p-2 rounded-full border border-gray-300 pl-6"
+        
+        placeholder="Search Site"
+        className="p-2 rounded-full border border-gray-300 pl-2"
       />
       {filteredLocations.length > 0 && (
-        <ul className="absolute  bg-white border rounded mt-1 shadow">
+        <ul className="absolute   bg-white border rounded  shadow">
           {filteredLocations.map((location, index) => (
             <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => changeLocation(location)}>
               {location.name}
@@ -178,7 +207,7 @@ const dispatch=useDispatch()
         value={query}
         onChange={handleChange}
         placeholder="Search locations..."
-        className="p-2 rounded-full  pl-6 w-[100%] border border-gray-20"
+        className="p-2 rounded-full  pl-2 w-[100%] border border-gray-20"
       />
       {filteredLocations.length > 0 && (
         <ul className="absolute  bg-white border rounded mt-1 shadow">

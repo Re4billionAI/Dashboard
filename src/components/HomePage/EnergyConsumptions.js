@@ -50,7 +50,9 @@ const EnergyConsumption = ({generation}) => {
         </div>
        </div>
       </div>
+      
     </div>
+
   );
 };
 
