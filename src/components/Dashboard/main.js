@@ -2,8 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/solid';
 import { format, addDays } from "date-fns";
 import axios from "axios"
+
 import Spinner from "../Loader/loader";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+const Excel = require('exceljs');
 
 
 const App = () => {
@@ -28,10 +30,7 @@ const App = () => {
     setDate(currentDate.toISOString().split("T")[0]);
   };
 
-  const refreshDate = () => {
-    setDate(new Date());
-  };
-
+ 
 
   const fetchDevices = useCallback(async () => {
 
@@ -116,7 +115,8 @@ const App = () => {
               <ChevronRight className="w-5 h-5" />
             </button>
             <button
-              onClick={refreshDate}
+    
+              onClick={createExcelWithDateColorAndData}
               className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white"
             >
               <Download className="w-5 h-5" />
@@ -337,7 +337,97 @@ const App = () => {
     );
   };
   
-
+  const createExcelWithDateColorAndData = async () => {
+    if(date === new Date().toISOString().split("T")[0]) {
+      alert("Cannot download the current date's data. Please select a different date.");
+      return 
+    }
+    const workbook = new Excel.Workbook();
+    const sheet = workbook.addWorksheet('Sheet 1');
+  
+    // Set the current date
+    const currentDate = new Date(date);
+  
+    // Merge and style header cells
+    sheet.mergeCells('I1:N1');
+    sheet.mergeCells('B2:C2');
+    const headerCell = sheet.getCell('I1:N1');
+    headerCell.value = `Total Solar Generation On - ${currentDate.getDate()}-${currentDate.toLocaleString('default', { month: 'short' })}-${currentDate.getFullYear()}`;
+    headerCell.font = { bold: true, size: 14 };
+    headerCell.alignment = {
+      horizontal: 'center', // Center horizontally
+      vertical: 'middle',   // Center vertically
+      wrapText: true        // Wrap text if it overflows
+    };
+  
+    // Add column headers
+    const row2 = sheet.getRow(2);
+    row2.getCell('A').value = "Site Names";
+    row2.getCell('B').value = "Solar Generation";
+    headerCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFFF00' } // Yellow background
+    };
+    // Style column headers
+    ['A', 'B'].forEach((col) => {
+      const cell = row2.getCell(col);
+      cell.font = { bold: true, size: 12 };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFFF00' } // Yellow background
+      };
+      cell.alignment = {
+        horizontal: 'center',
+        vertical: 'middle',
+        wrapText: true
+      };
+    });
+  
+    // Adjust column width for better display
+    sheet.getColumn('A').width = 25;
+  
+    // Populate data rows
+  
+    const data = allDevices; // Assuming allDevices is defined elsewhere
+    console.log(data)
+    data.forEach((item, index) => {
+      
+     
+      const rowIndex = index + 3; // Start data from the third row
+      const siteName = item.key.split("-")[1];
+      let solarGeneration
+      if (item.status==="Not Worked"){
+        solarGeneration="DNW"
+      }else{
+        solarGeneration= parseFloat(item.p1ValueTot);
+      }
+      
+      // Set site name and solar generation
+      sheet.getCell(`A${rowIndex}`).value = siteName;
+      sheet.getCell(`B${rowIndex}`).value = solarGeneration;
+  
+      // Merge cells B and C for each data row
+      sheet.mergeCells(`B${rowIndex}:C${rowIndex}`);
+      sheet.getCell(`B${rowIndex}`).alignment = {
+        horizontal: 'center',
+        vertical: 'middle',
+        wrapText: true
+      };
+    });
+  
+    // Write the Excel file to a buffer
+    const buffer = await workbook.xlsx.writeBuffer();
+  
+    // Create a Blob from the buffer and trigger the download
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'excelFileWithData.xlsx'; // File name for download
+    link.click(); // Trigger the download
+  };
+  
 
   return (
     <div className="bg-sky-100 min-h-screen flex items-start overflow-y-auto justify-center mb-20 md:mb-0">
