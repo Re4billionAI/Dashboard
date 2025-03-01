@@ -206,7 +206,7 @@ const mobileSearchRef = useRef(null);
         type="text"
         value={query}
         onChange={handleChange}
-        placeholder="Search locations..."
+        placeholder="Search Site"
         className="p-2 rounded-full  pl-2 w-[100%] border border-gray-20"
       />
       {filteredLocations.length > 0 && (
