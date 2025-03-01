@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useSelector } from 'react-redux';
 import { FiX } from "react-icons/fi"; // Make sure to import react-icons
 import {
   LineChart,
@@ -60,13 +61,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-// Define the parameters for toggling Battery readings
-const parameters = [
-  { label: "Voltage1", key: "showVoltage", index: 0 },
-  { label: "Voltage2", key: "showVoltage2", index: 1 },
-  { label: "Voltage3", key: "showVoltage3", index: 2 },
-  { label: "Voltage4", key: "showVoltage4", index: 3 },
-];
+
 
 // Battery keys now include the fourth property
 const batteryKeys = [
@@ -82,9 +77,11 @@ const categories = {
 };
 
 const BatteryGraph = ({ graphValues }) => {
-  console.log({ graphValues: graphValues });
-  
-  // State for visibility of different parameters
+ 
+  const site = useSelector((state) => state.location.device);
+console.log(site)
+   const checkLocation=site.type==="48v"?true:false
+  console.log(checkLocation)
   const [visibility, setVisibility] = useState({
     Battery: {
       showVoltage: true,
@@ -134,6 +131,26 @@ const BatteryGraph = ({ graphValues }) => {
     const max = values.length ? Math.max(...values) : 100;
     return [0, max + 20];
   };
+
+
+
+  let parameters
+  // Define the parameters for toggling Battery readings
+  if (checkLocation===true){
+     parameters = [
+      { label: "Voltage1", key: "showVoltage", index: 0 },
+      { label: "Voltage2", key: "showVoltage2", index: 1 },
+      { label: "Voltage3", key: "showVoltage3", index: 2 },
+      { label: "Voltage4", key: "showVoltage4", index: 3 },
+    ];
+  }else{
+    parameters = [
+      { label: "Voltage1", key: "showVoltage", index: 0 },
+     
+    ];
+  }
+
+
 
   return (
     <>
@@ -220,7 +237,7 @@ const BatteryGraph = ({ graphValues }) => {
                   dot={false}
                 />
               )}
-              {visibility.Battery.showVoltage2 && (
+              {visibility.Battery.showVoltage2 &&checkLocation===true&& (
                 <Line
                   type="monotone"
                   dataKey="BatteryVoltage2"
@@ -228,7 +245,7 @@ const BatteryGraph = ({ graphValues }) => {
                   dot={false}
                 />
               )}
-              {visibility.Battery.showVoltage3 && (
+              {visibility.Battery.showVoltage3 && checkLocation===true&&(
                 <Line
                   type="monotone"
                   dataKey="BatteryVoltage3"
@@ -236,7 +253,7 @@ const BatteryGraph = ({ graphValues }) => {
                   dot={false}
                 />
               )}
-              {visibility.Battery.showVoltage4 && (
+              {visibility.Battery.showVoltage4 && checkLocation===true&& (
                 <Line
                   type="monotone"
                   dataKey="BatteryVoltage4"
