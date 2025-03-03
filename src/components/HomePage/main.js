@@ -18,6 +18,7 @@ const Home = () => {
   const [alert,showAlert ] = useState(null);
 
   const fetchData = async (item, timeInterval) => {
+    console.log({item,timeInterval})
     
     if (!item) return; // Prevent unnecessary API calls
 

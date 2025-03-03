@@ -188,7 +188,7 @@ const App = () => {
                         <span>{location.key}</span>
                      <div>
                      <span className="text-green-700 font-bold">
-                          {location.p1ValueTot} kW
+                          {location.p1ValueTot.toFixed(2)} kW
                         </span> 
                         <span className="text-green-700 font-bold">
                          /  4 kW
