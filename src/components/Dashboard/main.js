@@ -176,7 +176,7 @@ const App = () => {
                   console.log("Extracted Site Name:", siteName); // Debugging log
 
                   const progress = 
-                    (location.p1ValueTot / (siteName && sites.includes(siteName) ? location.p1ValueTot : 4)) * 100;
+                    (location.p1ValueTot /maxGeneration) * 100;
 
 
                   return (
@@ -191,7 +191,7 @@ const App = () => {
                           {location.p1ValueTot.toFixed(2)} kW
                         </span> 
                         <span className="text-green-700 font-bold">
-                         /  4 kW
+                         
                         </span>
                      </div>
                       </div>

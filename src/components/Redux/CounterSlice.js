@@ -8,7 +8,7 @@ const getCookie = (name) => {
 
 // Retrieve cookie values
 const initialDevice = {
-  name: getCookie('locationName') || 'kollar',
+  name: getCookie('locationName') || 'Kollar-TN',
   path: getCookie('locationPath') || 'ftb001',
   board: getCookie('locationBoard') || 'ftb001',
   type: getCookie('locationType') || '24v',

@@ -18,7 +18,7 @@ const Home = () => {
   const [alert,showAlert ] = useState(null);
 
   const fetchData = async (item, timeInterval) => {
-    console.log({item,timeInterval})
+  
     
     if (!item) return; // Prevent unnecessary API calls
 
@@ -55,17 +55,20 @@ const Home = () => {
             hour: "2-digit",
             minute: "2-digit",
             hour12: false,
+            timeZone: "Asia/Kolkata"
           }).format(t);
 
-           
+           console.log({currTime})
           const check =data.dataCharts[data.dataCharts.length - 1].ccAxisXValue;
+          console.log(data.dataCharts)
 
            
           const currValTime = Number(currTime.split(":")[0] + currTime.split(":")[1]);
           const checkVal = Number(check.split(":")[0] + check.split(":")[1]);
 
-          console.log({currValTime:currValTime})
-           
+
+           console.log(currValTime, checkVal)
+
           if (Math.abs(currValTime - checkVal) <= 30) {
             console.log(currValTime, currValTime);
             showAlert( "success"); 

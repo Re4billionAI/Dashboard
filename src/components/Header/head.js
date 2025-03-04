@@ -39,6 +39,7 @@ const  locations= [
   { name: "Perumugai-TN", path: "Perumugai-TN", board: "rmsv36_010",type:"48v",timeInterval:5 },
   { name: "Chinnajatram-TG", path: "chjatram-TG", board: "rmsv36_008",type:"24v",timeInterval:5 },
   { name: "Muthpoor-TG", path: "Muthpoor-TG", board: "rmsv36_002",type:"24v",timeInterval:5 },
+  { name: "Ippagudem-TG", path: "Ippagudem-TG", board: "rmsv36_011",type:"24v",timeInterval:5 },
 ];
 
 

@@ -40,16 +40,20 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
     { name: "Perumugai-TN", path: "Perumugai-TN", board: "rmsv36_010",type:"48v",timeInterval:5 },
     { name: "Chinnajatram-TG", path: "Chjatram-TG", board: "rmsv36_008",type:"24v",timeInterval:5 },
     { name: "Muthpoor-TG", path: "Muthpoor-TG", board: "rmsv36_005",type:"24v",timeInterval:5 },
+    { name: "Ippagudem-TG", path: "Ippagudem-TG", board: "rmsv36_011",type:"24v",timeInterval:5 },
    
   ];
 
 
 
 
-
+  const getCookie = (name) => {
+    const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return matches ? decodeURIComponent(matches[1]) : null;
+  };
   const location = useLocation();
   const navigate = useNavigate();
-  const [selectedLocation, setSelectedLocation] = useState({});
+  const [selectedLocation, setSelectedLocation] = useState({name: getCookie("locationName"), path: getCookie("locationPath"), board: getCookie("locationBoard"), type: getCookie("locationType"), timeInterval:getCookie("locationTimeInterval") });
   const [searchTerm, setSearchTerm] = useState("");
 
 const dispatch=useDispatch()
@@ -59,7 +63,7 @@ const dispatch=useDispatch()
 
 
 const changeLocation = (data) => {
- 
+ console.log(data)
   dispatch(updateLocation(data));
   setSelectedLocation(data);
   toggleSidebar()

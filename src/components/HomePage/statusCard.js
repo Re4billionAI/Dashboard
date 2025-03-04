@@ -8,6 +8,7 @@ import axios from "axios"
 import { useSelector } from 'react-redux';
 
 export default function StatusCard({device, alert,  lastupdate}) {
+  console.log(alert)
   const devicelocation = useSelector((state) => state.location.device);
   const [date, setDate]=useState(new Date());
   const lasttime = new Date(lastupdate * 1000);
@@ -27,7 +28,8 @@ export default function StatusCard({device, alert,  lastupdate}) {
      
       const datas = await axios.post(
         `${process.env.REACT_APP_HOST}/admin/date`,
-        { selectedItem: devicelocation.path, date: date },
+        { selectedItem: devicelocation.path||"", date: format(date, "yyyy-MM-dd") },
+        
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -36,7 +38,7 @@ export default function StatusCard({device, alert,  lastupdate}) {
       );
       if (datas.status === 200) {
      
-       
+       console.log(datas.data.data.dataCharts)
           
         const newDataArray = datas.data.data.dataCharts.map((chart) => ({
              
@@ -49,11 +51,13 @@ export default function StatusCard({device, alert,  lastupdate}) {
           gridCurrent: `${chart.GridCurrent}`,
           batteryCurrent: `${chart.BatteryCurrent}`,
           batteryVoltage: `${chart.BatteryVoltage}`,
-          inLetTemperature: `${chart.InletTemperature}`,
-          outLetTemperature: `${chart.OutletTemperature}`,
+        
         }));
 
+        
         return {newDataArray}
+        
+       
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -70,13 +74,14 @@ export default function StatusCard({device, alert,  lastupdate}) {
          
       const {newDataArray} = await dataFetch();
     
+   
       if (newDataArray.length === 0) {
           
         console.warn("No data fetched");
         return;
       }
       
-   
+    console.log({newDataArray})
       const data = newDataArray.map((item) => ({
         Time: item.time,
         "Solar Voltage": item.solarVoltage,
@@ -158,8 +163,8 @@ export default function StatusCard({device, alert,  lastupdate}) {
             {lasttime.toLocaleString()}
           </span>
         </p>
-        <button className={`flex flex-row items-center w-[70%] m-auto justify-center gap-1 md:gap-2 ${alert==="success"?"bg-green-500 ":"bg-red-500 " } text-white px-2 md:px-2 py-1.5 md:py-2 rounded-full text-sm md:text-base shadow-md hover:bg-green-600 transition-all duration-300`}>
-          <CheckCircle className="w-4 h-4 md:w-5 md:h-5" /> {alert==="success"?"online":"offline"}
+        <button className={`flex flex-row items-center w-[70%] m-auto justify-center gap-1 md:gap-2 ${alert==="success"?"bg-green-500 ":"bg-red-500" } text-white px-2 md:px-2 py-1.5 md:py-2 rounded-full text-sm md:text-base shadow-md `}>
+          <CheckCircle className="w-4 h-4 md:w-5 md:h-5" /> {alert==="success"?"Online":"Offline"}
         </button>
       </div>
       
