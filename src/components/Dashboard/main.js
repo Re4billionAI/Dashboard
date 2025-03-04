@@ -278,7 +278,7 @@ const App = () => {
     style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
     className="text-green-700 font-bold"
   >
-    {location.p1ValueTot} kW
+    {location.p1ValueTot.toFixed(2)} kW
   </span>
 </div>
 
