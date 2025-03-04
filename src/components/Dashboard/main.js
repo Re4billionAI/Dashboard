@@ -232,7 +232,7 @@ const App = () => {
                   >
                     <span>{location.key}</span>
                     <span className="text-red-700 font-bold">
-                      {location.p1ValueTot} kW
+                      {location.p1ValueTot.toFixed(2)} kW
                     </span>
                   </li>
                 ))
@@ -319,7 +319,7 @@ const App = () => {
     style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
     className="text-red-700 font-bold"
   >
-    {location.p1ValueTot} kW
+    {location.p1ValueTot.toFixed(2)} kW
   </span>
 </div>
                     </li>
