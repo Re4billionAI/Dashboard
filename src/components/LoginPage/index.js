@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-
 import axios from "axios";
 import Cookies from "js-cookie";
+import {Eye, EyeOff  } from "lucide-react" // Import icons from Heroicons
 
 const Login = () => {
   const [email, setEmail] = useState("");
-  const [PasswordType, setPasswordType] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+<EyeOff />
   useEffect(() => {
     if (Cookies.get("token")) {
       if (Cookies.get("role") === "Admin") {
@@ -33,25 +33,15 @@ const Login = () => {
         email,
         password,
       });
-     
-      const token = response.data.data.token;
-      const role = response.data.data.role;
-      
+
+      const { token, role, location } = response.data.data;
       Cookies.set("token", token, { expires: 7 });
       Cookies.set("role", role, { expires: 7 });
+      Cookies.set("selectedLocation", location);
 
-      if (role === "Admin") {
-        window.location.href = "/";
-      }
-      if (role === "User") {
-        const location = response.data.data.location;
-        Cookies.set("selectedItem", password);
-        Cookies.set("selectedLocation", location);
-        window.location.href = "/User";
-      }
+      window.location.href = role === "Admin" ? "/" : "/User";
     } catch (error) {
       console.error("Error signing up:", error);
-      console.log({error})
       setError("Invalid login credentials");
     } finally {
       setLoading(false);
@@ -59,131 +49,146 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-cover w-full">
-   
-      <div className="flex flex-col items-center justify-center w-[400px] md:w-[400px] lg:w-[500px] min-h-[450px] bg-[#282250] backdrop-filter backdrop-blur-lg bg-opacity-80 shadow-lg rounded-lg p-4 ">
-        <form onSubmit={handleLogin}>
-          <div className="flex flex-col gap-4 items-center">
-           
-            <h1 className="flex text-white text-2xl">Login Page</h1>
-            <p className="text-orange-500 font-semibold">{error}</p>
-            <div className="text-white flex items-center shadow-lg w-full bg-[#282250] rounded-lg">
-              <span className="bg-[#FFC312] p-3 rounded-l-lg">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="black"
-                  className="size-7"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </span>
-              <input
-                type="text"
-                required
-                placeholder="username"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError("");
-                }}
-                className="p-3 bg-[#282250] focus:outline-none text-xl rounded-r-lg text-white"
-              />
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center px-4 py-8 bg-gray-900 relative overflow-hidden">
+      {/* Background with gradient overlay */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-70"
+        style={{ backgroundImage: "url('https://res.cloudinary.com/dky72aehn/image/upload/v1740747416/2151896739_zlpzrv.jpg')" }}
+      ></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900/90 to-blue-900/70"></div>
+
+      {/* Floating particles for background effect */}
+      <div className="absolute inset-0">
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1.5 h-1.5 bg-white/20 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDuration: `${10 + Math.random() * 20}s`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Content Container */}
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto">
+        {/* Left Side - Details */}
+        <div className="w-full md:w-1/2 text-center md:text-left px-6 mb-8 md:mb-0">
+          <h1 className="text-5xl font-bold text-white mb-6 animate-fade-in">
+            Re4billion<span className="text-blue-400">.</span>AI
+          </h1>
+          <p className="text-gray-300 text-lg mb-8 max-w-md animate-fade-in animate-delay-200">
+            Access your dashboard and manage sustainable energy solutions effortlessly.
+          </p>
+          <div className="flex justify-center md:justify-start space-x-8 animate-fade-in animate-delay-400">
+            <div className="text-center bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+              <p className="text-3xl font-bold text-blue-400">500+</p>
+              <p className="text-gray-300">Solar Installations</p>
             </div>
-            <div className="text-white flex items-center shadow-lg">
-              <span className="bg-[#FFC312] p-3 rounded-l-lg">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="black"
-                  className="size-7"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M15.75 1.5a6.75 6.75 0 0 0-6.651 7.906c.067.39-.032.717-.221.906l-6.5 6.499a3 3 0 0 0-.878 2.121v2.818c0 .414.336.75.75.75H6a.75.75 0 0 0 .75-.75v-1.5h1.5A.75.75 0 0 0 9 19.5V18h1.5a.75.75 0 0 0 .53-.22l2.658-2.658c.19-.189.517-.288.906-.22A6.75 6.75 0 1 0 15.75 1.5Zm0 3a.75.75 0 0 0 0 1.5A2.25 2.25 0 0 1 18 8.25a.75.75 0 0 0 1.5 0 3.75 3.75 0 0 0-3.75-3.75Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </span>
-              <div className="w-full flex items-center bg-[#282250] rounded-lg shadow-lg">
-                <input
-                  type={`${PasswordType ? "text" : "password"}`}
-                  required
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setError("");
-                  }}
-                  className="p-3 bg-[#282250] focus:outline-none text-xl rounded-r-lg text-white"
-                />
-                {PasswordType ? (
-                  <div
-                    className="cursor-pointer px-2"
-                    onClick={() => setPasswordType(!PasswordType)}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      className="size-6"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
-                      />
-                    </svg>
-                  </div>
-                ) : (
-                  <div
-                    className="cursor-pointer px-2"
-                    onClick={() => setPasswordType(!PasswordType)}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      className="size-6"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                      />
-                    </svg>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="w-full p-4">
-              <div className="flex items-center justify-center w-full">
-                <div className="flex items-center justify-center w-full">
-                  <input
-                    type="submit"
-                    className="flex p-2 cursor-pointer text-2xl bg-[#FFC312] rounded font-semibold"
-                    value={loading ? "Loading..." : "Login"}
-                    disabled={loading}
-                  />
-                </div>
-              </div>
+            <div className="text-center bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+              <p className="text-3xl font-bold text-blue-400">1M+</p>
+              <p className="text-gray-300">CO2 Reduced</p>
             </div>
           </div>
-        </form>
+        </div>
+
+        {/* Right Side - Login Form */}
+        <div className="w-full md:w-1/3 bg-white/10 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-white/10 relative animate-fade-in animate-delay-600">
+          <h2 className="text-center text-3xl font-bold text-white mb-6">Login</h2>
+          {error && (
+            <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+              <p className="text-red-400 text-sm text-center">{error}</p>
+            </div>
+          )}
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full bg-white/10 border border-white/10 text-white placeholder-gray-400 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+            <div className="relative">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+                Password
+              </label>
+              <input
+                type={showPassword ? "text" : "password"} // Toggle input type
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="w-full bg-white/10 border border-white/10 text-white placeholder-gray-400 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
+                required
+              />
+              {/* Toggle Password Visibility Button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-400 transition-all mt-7"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3.5 rounded-lg font-semibold hover:bg-blue-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
+        </div>
       </div>
+
+      {/* Animations */}
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0) translateX(0); }
+          25% { transform: translateY(-20px) translateX(40px); }
+          50% { transform: translateY(10px) translateX(-40px); }
+          75% { transform: translateY(-10px) translateX(-15px); }
+        }
+
+        @keyframes fade-in {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-float {
+          animation: float 10s infinite ease-in-out;
+        }
+
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
+        }
+
+        .animate-delay-200 {
+          animation-delay: 0.2s;
+        }
+
+        .animate-delay-400 {
+          animation-delay: 0.4s;
+        }
+
+        .animate-delay-600 {
+          animation-delay: 0.6s;
+        }
+      `}</style>
     </div>
   );
 };
