@@ -434,9 +434,9 @@ const App = () => {
         {isLoading ? (
         <Spinner />
       ) :  date > new Date().toISOString().split("T")[0]? (
-        <div className="flex justify-center items-center">
-          <img className="w-1/2"  alt="Error" />
-          <p>{error}</p>
+        <div className="flex justify-center h-full items-center">
+         
+          <p>select past or current date</p>
         </div>
       ) : date === new Date().toISOString().split("T")[0] ? (
         <div className="w-full">
