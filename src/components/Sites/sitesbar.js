@@ -41,6 +41,7 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
     { name: "Chinnajatram-TG", path: "Chjatram-TG", board: "rmsv36_008",type:"24v",timeInterval:5 },
     { name: "Muthpoor-TG", path: "Muthpoor-TG", board: "rmsv36_005",type:"24v",timeInterval:5 },
     { name: "Ippagudem-TG", path: "Ippagudem-TG", board: "rmsv36_011",type:"24v",timeInterval:5 },
+    { name: "Fareedpur-TG", path: "Fareedpur-TG", board: "rmsv36_012",type:"24v",timeInterval:5 },
    
   ];
 
