@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center px-4 py-8 bg-gray-900 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-start px-4 pt-8 bg-gray-900 relative overflow-hidden">
       {/* Background with gradient overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-70"
@@ -80,16 +80,16 @@ const Login = () => {
           <h1 className="text-5xl font-bold text-white mb-6 animate-fade-in">
             Re4billion<span className="text-blue-400">.</span>AI
           </h1>
-          <p className="text-gray-300 text-lg mb-8 max-w-md animate-fade-in animate-delay-200">
+          <p className="text-gray-300 md:text-lg text-sm mb-8 max-w-md animate-fade-in animate-delay-200">
             Access your dashboard and manage sustainable energy solutions effortlessly.
           </p>
           <div className="flex justify-center md:justify-start space-x-8 animate-fade-in animate-delay-400">
             <div className="text-center bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-              <p className="text-3xl font-bold text-blue-400">500+</p>
+              <p className="md:text-3xl text-xl font-bold text-blue-400">500+</p>
               <p className="text-gray-300">Solar Installations</p>
             </div>
             <div className="text-center bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-              <p className="text-3xl font-bold text-blue-400">1M+</p>
+              <p className="md:text-3xl text-xl font-bold text-blue-400">1M+</p>
               <p className="text-gray-300">CO2 Reduced</p>
             </div>
           </div>
