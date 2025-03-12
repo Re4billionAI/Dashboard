@@ -79,9 +79,9 @@ const categories = {
 const BatteryGraph = ({ graphValues }) => {
  
   const site = useSelector((state) => state.location.device);
-console.log(site)
+
    const checkLocation=site.type==="48v"||site.name==="Thandavankulam-TN"?true:false
-  console.log(checkLocation)
+
   const [visibility, setVisibility] = useState({
     Battery: {
       showVoltage: true,

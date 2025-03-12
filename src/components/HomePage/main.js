@@ -49,34 +49,48 @@ const Home = () => {
         const data = response.data.data;
         if (data.dataCharts.length > 0) {
             
-          const t = Date.now();
-          
+          const t = new Date();
+
+          // Get current time in HH:mm format in Asia/Kolkata timezone
           const currTime = new Intl.DateTimeFormat("en-US", {
             hour: "2-digit",
             minute: "2-digit",
             hour12: false,
             timeZone: "Asia/Kolkata"
           }).format(t);
-
-           console.log({currTime})
-          const check =data.dataCharts[data.dataCharts.length - 1].ccAxisXValue;
-          console.log(data.dataCharts)
-
-           
-          const currValTime = Number(currTime.split(":")[0] + currTime.split(":")[1]);
-          const checkVal = Number(check.split(":")[0] + check.split(":")[1]);
-
-
-           console.log(currValTime, checkVal)
-
-          if (Math.abs(currValTime - checkVal) <= 30) {
-            console.log(currValTime, currValTime);
-            showAlert( "success"); 
-               
+          
+          console.log({ currTime });
+          
+          // Ensure dataCharts is not empty
+          if (data.dataCharts.length === 0) {
+            console.error("dataCharts is empty!");
           } else {
-            console.log(checkVal, currValTime);
-            showAlert( "danger");
+            const check = data.dataCharts[data.dataCharts.length - 1].ccAxisXValue;
+            console.log("Last recorded time:", check);
+          
+            // Convert HH:mm format to Date object (Asia/Kolkata timezone)
+            const [currHours, currMinutes] = currTime.split(":").map(Number);
+            const currentDateTime = new Date();
+            currentDateTime.setHours(currHours, currMinutes, 0, 0); // Set time
+          
+            const [checkHours, checkMinutes] = check.split(":").map(Number);
+            const checkDateTime = new Date();
+            checkDateTime.setHours(checkHours, checkMinutes, 0, 0); // Set time
+          
+            // Calculate the absolute difference in minutes
+            const diffInMinutes = Math.abs((currentDateTime - checkDateTime) / (1000 * 60));
+          
+            console.log("Time Difference (minutes):", diffInMinutes);
+          
+            if (diffInMinutes <= 30) {
+              console.log("✅ Success:", diffInMinutes);
+              showAlert("success");
+            } else {
+              console.log("❌ Danger:", diffInMinutes);
+              showAlert("danger");
+            }
           }
+          
         } else {
             
           showAlert( "danger");

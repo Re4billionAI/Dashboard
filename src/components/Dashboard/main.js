@@ -259,7 +259,7 @@ const App = () => {
                   console.log("Extracted Site Name:", siteName); // Debugging log
 
                   const progress = 
-                    (location.p1ValueTot / (siteName && sites.includes(siteName) ? location.p1ValueTot : 4)) * 100;
+                  (location.p1ValueTot /maxGeneration) * 100;
 
 
                     return (
