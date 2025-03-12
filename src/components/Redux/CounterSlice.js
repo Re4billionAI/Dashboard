@@ -48,7 +48,7 @@ const additionalData = [
   { name: "Ippagudem-TG", path: "Ippagudem-TG", board: "rmsv36_011",type:"24v",timeInterval:5 },
   { name: "Fareedpur-TG", path: "Fareedpur-TG", board: "rmsv36_012",type:"24v",timeInterval:5 },
   { name: "Kollampalli-TG", path: "Kollampalli-TG", board: "rmsv35_01",type:"24v",timeInterval:5 },
-  { name: "rmsv36_012", path: "Testing-rmsv36_012", board: "rmsv36_012",type:"24v",timeInterval:5 },
+  { name: "Testing-rmsv36_012", path: "rmsv36_012", board: "rmsv36_012",type:"24v",timeInterval:5 },
   
  
 ];
