@@ -41,6 +41,8 @@ const changeLocation = (data) => {
   Cookies.set("locationBoard", data.board);
   Cookies.set("locationType", data.type);
   Cookies.set("locationTimeInterval", data.timeInterval);
+  Cookies.set("locationGeocode", JSON.stringify(data.geocode));
+
   navigate("/");
   setSearchTerm("")
   

@@ -342,7 +342,7 @@ const BatteryGraph = ({ graphValues }) => {
                         className="transition duration-300 hover:opacity-80"
                       />
                     )}
-                    {visibility[activeModal]?.showVoltage2 && (
+                    {visibility[activeModal]?.showVoltage2 &&checkLocation===true&& (
                       <Line
                         type="monotone"
                         dataKey={categories[activeModal][1]}
@@ -351,7 +351,7 @@ const BatteryGraph = ({ graphValues }) => {
                         className="transition duration-300 hover:opacity-80"
                       />
                     )}
-                    {visibility[activeModal]?.showVoltage3 && (
+                    {visibility[activeModal]?.showVoltage3 &&checkLocation===true&& (
                       <Line
                         type="monotone"
                         dataKey={categories[activeModal][2]}
@@ -360,7 +360,7 @@ const BatteryGraph = ({ graphValues }) => {
                         className="transition duration-300 hover:opacity-80"
                       />
                     )}
-                    {visibility[activeModal]?.showVoltage4 && (
+                    {visibility[activeModal]?.showVoltage4 &&checkLocation===true&& (
                       <Line
                         type="monotone"
                         dataKey={categories[activeModal][3]}

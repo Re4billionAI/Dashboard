@@ -30,7 +30,7 @@ if (name==="Solar Voltage"){
 
 
 if (name==="Solar Current"){
-  if (value < 4) {
+  if (value < 2) {
     color = "bg-red-500"; // Low value
     widthPercentage = "25%";
   } else if (value > 10) {
@@ -83,7 +83,7 @@ if (name==="Grid Voltage"){
 }
   
 if (name==="Grid Current"){
-  if (value < 3) {
+  if (value < 2) {
     color = "bg-red-500"; // Low value
     widthPercentage = "25%";
   } else if (value > 6) {

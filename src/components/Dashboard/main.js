@@ -1,56 +1,57 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/solid';
-import { format, addDays } from "date-fns";
-import axios from "axios"
-
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { useSelector, useDispatch } from 'react-redux';
+import { updateLocation } from '../Redux/CounterSlice';
 import Spinner from "../Loader/loader";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 const Excel = require('exceljs');
 
-
 const App = () => {
-
-  const [working, setworking] = useState([]);
-  const [notworking, setnotworking] = useState([]);
-
+  const [isOpen, setIsOpen] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('working');
   const [devices, setDevices] = useState({ workingDevices: [], notWorkingDevices: [] });
   const [allDevices, setAllDevices] = useState([]);
-  const [date, setDate] =useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const additionalData = useSelector((state) => state.location.locations);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleDateChange = (newdate) => {
     if (newdate !== date) 
       setDate(newdate);
   };
+
   const handleNavigation = (direction) => {
     const currentDate = new Date(date);
     currentDate.setDate(currentDate.getDate() + (direction === "forward" ? 1 : -1));
     setDate(currentDate.toISOString().split("T")[0]);
   };
 
- 
-
   const fetchDevices = useCallback(async () => {
-
     setIsLoading(true);
     setError(null);
-  
 
     try {
+      if (!navigator.onLine) {
+        throw new Error('No internet connection. Please check your network.');
+      }
+
       const response = await axios.post(
         `${process.env.REACT_APP_HOST}/admin/generation`,
         { date }
       );
       
-
       if (response.status === 200) {
         const { data } = response.data;
-
         
         if (data.workingDevices && data.notWorkingDevices) {
-        
           setDevices({
             workingDevices: data.workingDevices,
             notWorkingDevices: data.notWorkingDevices,
@@ -66,10 +67,10 @@ const App = () => {
         }
       }
     } catch (err) {
-      setError("Error fetching devices. Please try again.");
+      console.error('Error fetching data:', err);
+      setError(err.message || "Error fetching devices. Please try again.");
     } finally {
       setIsLoading(false);
-     
     }
   }, [date]);
 
@@ -77,55 +78,52 @@ const App = () => {
     fetchDevices();
   }, [date, fetchDevices]);
 
+  // Error display component
+  const ErrorDisplay = ({ message }) => (
+    <div className="flex flex-col items-center justify-center h-96 w-full mt-28">
+      <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6 max-w-md">
+        <img 
+          src="/images/error-illustration.svg" 
+          alt="Error" 
+          className="w-32 h-32 mx-auto mb-4" 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2VmNDQ0NCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIj48L2NpcmNsZT48bGluZSB4MT0iMTIiIHkxPSI4IiB4Mj0iMTIiIHkyPSIxMiI+PC9saW5lPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMTIuMDEiIHkyPSIxNiI+PC9saW5lPjwvc3ZnPg==";
+          }}
+        />
+        <h3 className="text-red-600 text-xl font-bold mb-2 text-center">Connection Error</h3>
+        <p className="text-gray-700 text-center">{message}</p>
+        <button 
+          onClick={fetchDevices}
+          className="mt-4 w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
 
-  const DeviceStatus = ({workingLocations,notWorkingLocations }) => {
-   
-
- 
-    // Compute maximum solar generation among active locations for progress bar calculation
-    const maxGeneration =
-      workingLocations.length > 0
-        ? Math.max(...workingLocations.map(loc => loc.p1ValueTot))
-        : 1;
+  const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
+    const setHomepage = (location) => {
+      console.log(additionalData);
+      const setlocation = additionalData.find((loc) => loc.name.split("-")[0] === location.split("-")[1]); 
+      
+      dispatch(updateLocation(setlocation));
+      
+      Cookies.set("locationName", setlocation.name);
+      Cookies.set("locationPath", setlocation.path);
+      Cookies.set("locationBoard", setlocation.board);
+      Cookies.set("locationType", setlocation.type);
+      Cookies.set("locationTimeInterval", setlocation.timeInterval);
+      Cookies.set("locationGeocode", JSON.stringify(setlocation.geocode));
+      
+      navigate("/");
+    };
   
     return (
       <div className="p-4 w-full mx-auto text-gray-900">
-        {/* Header with Date Controls */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-          <h2 className="md:text-2xl text-xl font-bold mb-4 md:mb-0">
-            Solar Generation Dashboard
-          </h2>
-          <div className="flex flex-row justify-center md:ml-auto items-center gap-2 p-4 py-2 border rounded-full shadow-md bg-gray-100">
-            <button
-              onClick={() => handleNavigation("backward")}
-              className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => handleDateChange(e.target.value)}
-              className="p-2 border rounded-lg bg-white"
-            />
-            <button
-              onClick={() => handleNavigation("forward")}
-              className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            <button
-    
-              onClick={createExcelWithDateColorAndData}
-              className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white"
-            >
-              <Download className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-  
         {/* Mobile Tabs */}
-        <div className="md:hidden flex justify-between  mb-6">
+        <div className="md:hidden flex justify-between mb-6">
           <button
             className={`md:px-6 md:py-3 px-4 py-2 rounded-full text-lg font-semibold transition-all shadow-md flex items-center gap-2 ${
               activeTab === 'working'
@@ -136,8 +134,8 @@ const App = () => {
           >
             <CheckCircleIcon className="w-6 h-6" /> Active
             <span className="inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-gray-500 bg-white/50 rounded-full">
-                  {workingLocations.length}
-                </span>
+              {workingLocations.length}
+            </span>
           </button>
           <button
             className={`md:px-6 md:py-3 px-4 py-2 rounded-full text-lg font-semibold transition-all shadow-md flex items-center gap-2 ${
@@ -149,8 +147,8 @@ const App = () => {
           >
             <XCircleIcon className="w-6 h-6" /> Inactive
             <span className="inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-gray-500 bg-white/50 rounded-full">
-                  {notWorkingLocations.length}
-                </span>
+              {notWorkingLocations.length}
+            </span>
           </button>
         </div>
   
@@ -169,41 +167,23 @@ const App = () => {
             </div>
             <ul className="list-none space-y-4">
               {workingLocations.length > 0 ? (
-                workingLocations.map((location, index) => {
-                  const sites = ["Perumugai", "Agalur", "Alagarai"];
-                                    
-                  const siteName = location.key?.split("-")[1]?.trim(); // Safely get and trim the site name
-                  console.log("Extracted Site Name:", siteName); // Debugging log
-
-                  const progress = 
-                    (location.p1ValueTot /maxGeneration) * 100;
-
-
-                  return (
-                    <li
-                      key={index}
-                      className="text-lg bg-green-100 p-4 rounded-xl shadow-md font-medium"
-                    >
-                      <div className="flex justify-between items-center">
-                        <span>{location.key}</span>
-                     <div>
-                     <span className="text-green-700 font-bold">
-                          {location.p1ValueTot.toFixed(2)} kW
-                        </span> 
+                workingLocations.map((location, index) => (
+                  <li
+                    key={index}
+                    id={location}
+                    onClick={() => setHomepage(location.key)}
+                    className="text-lg bg-green-100 p-4 rounded-xl shadow-md cursor-pointer font-medium"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span>{location.key}</span>
+                      <div>
                         <span className="text-green-700 font-bold">
-                         
+                          {location.p1ValueTot.toFixed(2)} kWh
                         </span>
-                     </div>
                       </div>
-                      <div className="w-full bg-green-200 rounded-full h-2 mt-2">
-                        <div
-                          className="bg-green-500 h-2 rounded-full"
-                          style={{ width: `${progress}%` }}
-                        ></div>
-                      </div>
-                    </li>
-                  );
-                })
+                    </div>
+                  </li>
+                ))
               ) : (
                 <li className="text-center text-gray-500">
                   No active locations found.
@@ -228,12 +208,46 @@ const App = () => {
                 notWorkingLocations.map((location, index) => (
                   <li
                     key={index}
-                    className="text-lg bg-red-100 p-4 rounded-xl shadow-md font-medium flex justify-between"
+                    onClick={() => setHomepage(location.key)}
+                    className="text-lg bg-red-100 p-4 rounded-xl shadow-md font-medium"
                   >
-                    <span>{location.key}</span>
-                    <span className="text-red-700 font-bold">
-                      {location.p1ValueTot.toFixed(2)} kW
-                    </span>
+                    <div className="flex justify-between cursor-pointer">
+                      <span>{location.key}</span>
+                      <div className="flex items-center">
+                        <span className="text-red-700 font-bold">
+                          {location.p1ValueTot.toFixed(2)} kWh
+                        </span>
+                        <span
+                          className="ml-2 text-white font-bold bg-red-500 p-2 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Stop the event from bubbling up
+                            setIsOpen((prevState) => ({
+                              ...prevState,
+                              [location.key]: !prevState[location.key],
+                            }));
+                          }}
+                        >
+                          {isOpen[location.key] ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Dropdown content */}
+                    {isOpen[location.key] && (
+                      <div className="mt-3 pt-3 border-t border-red-200">
+                        <span className="text-red-700 font-bold">
+                          Stopped At -{" "}
+                          {new Date(location.additionalData.tValue * 1000).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
+                        </span>
+                      </div>
+                    )}
                   </li>
                 ))
               ) : (
@@ -249,48 +263,30 @@ const App = () => {
         <div className="md:hidden">
           {activeTab === 'working' ? (
             <div className="bg-white p-6 pt-6 rounded-lg shadow-xl border-l-8 border-green-500">
-              
               <ul className="list-none space-y-4">
                 {workingLocations.length > 0 ? (
-                  workingLocations.map((location, index) => {
-                    const sites = ["Perumugai", "Agalur", "Alagarai"];
-                                    
-                  const siteName = location.key?.split("-")[1]?.trim(); // Safely get and trim the site name
-                  console.log("Extracted Site Name:", siteName); // Debugging log
-
-                  const progress = 
-                  (location.p1ValueTot /maxGeneration) * 100;
-
-
-                    return (
-                      <li
-                        key={index}
-                        className="text-lg bg-green-100 p-3 rounded-lg shadow-md font-medium"
-                      >
-                        <div className="flex flex-row justify-between items-center ">
-  <span
-    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
-    className="font-bold break-words "
-  >
-    {location.key}
-  </span>
-  <span
-    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
-    className="text-green-700 font-bold"
-  >
-    {location.p1ValueTot.toFixed(2)} kW
-  </span>
-</div>
-
-                        <div className="w-full bg-green-200 rounded-full h-2 mt-2">
-                          <div
-                            className="bg-green-500 h-2 rounded-full"
-                            style={{ width: `${progress}%` }}
-                          ></div>
-                        </div>
-                      </li>
-                    );
-                  })
+                  workingLocations.map((location, index) => (
+                    <li
+                      key={index}
+                      onClick={() => setHomepage(location.key)}
+                      className="text-lg bg-green-100 p-3 rounded-lg shadow-md font-medium"
+                    >
+                      <div className="flex flex-row justify-between items-center">
+                        <span
+                          style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
+                          className="font-bold break-words"
+                        >
+                          {location.key}
+                        </span>
+                        <span
+                          style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
+                          className="text-green-700 font-bold"
+                        >
+                          {location.p1ValueTot.toFixed(2)} kWh
+                        </span>
+                      </div>
+                    </li>
+                  ))
                 ) : (
                   <li className="text-center text-gray-500">
                     No active locations found.
@@ -299,29 +295,63 @@ const App = () => {
               </ul>
             </div>
           ) : (
-            <div className="bg-white p-6 pt-6  rounded-lg shadow-xl border-l-8 border-red-500">
-             
+            <div className="bg-white p-6 pt-6 rounded-lg shadow-xl border-l-8 border-red-500">
               <ul className="list-none space-y-4">
                 {notWorkingLocations.length > 0 ? (
                   notWorkingLocations.map((location, index) => (
                     <li
                       key={index}
-                      className="text-lg bg-red-100 p-3 rounded-lg shadow-md font-medium"
+                      onClick={() => setHomepage(location.key)}
+                      className="text-lg bg-red-100 p-4 rounded-xl shadow-md font-medium"
                     >
-                                          <div className="flex flex-row justify-between items-center ">
-  <span
-    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
-    className="font-bold break-words "
-  >
-    {location.key}
-  </span>
-  <span
-    style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
-    className="text-red-700 font-bold"
-  >
-    {location.p1ValueTot.toFixed(2)} kW
-  </span>
-</div>
+                      <div
+                        className="flex justify-between cursor-pointer"
+                        onClick={() =>
+                          setIsOpen((prevState) => ({
+                            ...prevState,
+                            [location.key]: !prevState[location.key],
+                          }))
+                        }
+                      >
+                        <span>{location.key}</span>
+                        <div className="flex items-center">
+                          <span className="text-red-700 font-bold">
+                            {location.p1ValueTot.toFixed(2)} kWh
+                          </span>
+                          <span
+                            className="ml-2 text-white font-bold bg-red-500 p-2 rounded-full"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Stop the event from bubbling up
+                              setIsOpen((prevState) => ({
+                                ...prevState,
+                                [location.key]: !prevState[location.key],
+                              }));
+                            }}
+                          >
+                            {isOpen[location.key] ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Dropdown content */}
+                      {isOpen[location.key] && (
+                        <div className="mt-3 pt-3 border-t border-red-200">
+                          <span className="text-red-700 font-bold">
+                            Stopped At -{" "}
+                            {new Date(location.additionalData.tValue * 1000).toLocaleString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              }
+                            )}
+                          </span>
+                        </div>
+                      )}
                     </li>
                   ))
                 ) : (
@@ -340,7 +370,7 @@ const App = () => {
   const createExcelWithDateColorAndData = async () => {
     if(date === new Date().toISOString().split("T")[0]) {
       alert("Cannot download the current date's data. Please select a different date.");
-      return 
+      return;
     }
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Sheet 1');
@@ -355,9 +385,9 @@ const App = () => {
     headerCell.value = `Total Solar Generation On - ${currentDate.getDate()}-${currentDate.toLocaleString('default', { month: 'short' })}-${currentDate.getFullYear()}`;
     headerCell.font = { bold: true, size: 14 };
     headerCell.alignment = {
-      horizontal: 'center', // Center horizontally
-      vertical: 'middle',   // Center vertically
-      wrapText: true        // Wrap text if it overflows
+      horizontal: 'center',
+      vertical: 'middle',
+      wrapText: true
     };
   
     // Add column headers
@@ -389,19 +419,16 @@ const App = () => {
     sheet.getColumn('A').width = 25;
   
     // Populate data rows
-  
-    const data = allDevices; // Assuming allDevices is defined elsewhere
-    console.log(data)
+    const data = allDevices;
+    console.log(data);
     data.forEach((item, index) => {
-      
-     
       const rowIndex = index + 3; // Start data from the third row
       const siteName = item.key.split("-")[1];
-      let solarGeneration
-      if (item.status==="Not Worked"){
-        solarGeneration="DNW"
-      }else{
-        solarGeneration= parseFloat(item.p1ValueTot);
+      let solarGeneration;
+      if (item.status === "Not Worked") {
+        solarGeneration = "DNW";
+      } else {
+        solarGeneration = parseFloat(item.p1ValueTot);
       }
       
       // Set site name and solar generation
@@ -427,26 +454,65 @@ const App = () => {
     link.download = 'excelFileWithData.xlsx'; // File name for download
     link.click(); // Trigger the download
   };
-  
 
   return (
-    <div className="bg-sky-100 min-h-screen flex items-start overflow-y-auto justify-center mb-20 md:mb-0">
-        {isLoading ? (
+    <div className='p-4 text-center'>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between px-6">
+        <h2 className="md:text-2xl text-xl font-bold mb-4 md:mb-0">
+          Solar Generation Dashboard
+        </h2>
+        <div className="flex flex-row justify-center md:ml-auto items-center gap-2 p-4 py-2 border rounded-full shadow-md bg-gray-100">
+          <button
+            onClick={() => handleNavigation("backward")}
+            className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => handleDateChange(e.target.value)}
+            className="p-2 border rounded-lg bg-white"
+          />
+          <button
+            onClick={() => handleNavigation("forward")}
+            className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+          <button
+            onClick={createExcelWithDateColorAndData}
+            className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white"
+          >
+            <Download className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+      
+      {isLoading ? (
         <Spinner />
-      ) :  date > new Date().toISOString().split("T")[0]? (
+      ) : error ? (
+        <ErrorDisplay message={error} />
+      ) : date > new Date().toISOString().split("T")[0] ? (
         <div className="flex justify-center h-full items-center">
-         
-          <p>select past or current date</p>
+          <p>Select past or current date</p>
         </div>
       ) : date === new Date().toISOString().split("T")[0] ? (
         <div className="w-full">
-          <DeviceStatus title="Working Devices" workingLocations={devices.workingDevices} notWorkingLocations={devices.notWorkingDevices} />
-         
+          <DeviceStatus 
+            title="Working Devices" 
+            workingLocations={devices.workingDevices} 
+            notWorkingLocations={devices.notWorkingDevices} 
+          />
         </div>
       ) : (
         <div className="w-full flex flex-justify-center">
-          <DeviceStatus title="Worked Devices" devices={allDevices.filter(d => d.status === "Worked")}  workingLocations={allDevices.filter(d => d.status === "Worked")} notWorkingLocations={allDevices.filter(d => d.status === "Not Worked")} />
-         
+          <DeviceStatus 
+            title="Worked Devices" 
+            devices={allDevices.filter(d => d.status === "Worked")}  
+            workingLocations={allDevices.filter(d => d.status === "Worked")} 
+            notWorkingLocations={allDevices.filter(d => d.status === "Not Worked")} 
+          />
         </div>
       )}
     </div>

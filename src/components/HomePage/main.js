@@ -15,11 +15,9 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [liveData, setLiveData] = useState(null);
-  const [alert,showAlert ] = useState(null);
+  const [alert, showAlert] = useState(null);
 
   const fetchData = async (item, timeInterval) => {
-  
-    
     if (!item) return; // Prevent unnecessary API calls
 
     try {
@@ -27,9 +25,7 @@ const Home = () => {
       setError(null); // Reset error state
       
       if (!navigator.onLine) {
-        
         throw new Error('No internet connection. Please check your network.');
-      
       }
 
       const token = Cookies.get('token');
@@ -37,18 +33,17 @@ const Home = () => {
 
       const response = await axios.post(
         `${process.env.REACT_APP_HOST}/admin/db`,
-        { selectedItem: item, timeInterval:timeInterval },
+        { selectedItem: item, timeInterval: timeInterval },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      
       if (response.status === 200) {
-
-
         setLiveData(response.data);
         const data = response.data.data;
+        
         if (data.dataCharts.length > 0) {
-            
           const t = new Date();
 
           // Get current time in HH:mm format in Asia/Kolkata timezone
@@ -59,13 +54,11 @@ const Home = () => {
             timeZone: "Asia/Kolkata"
           }).format(t);
           
-          console.log({ currTime });
-          
           // Ensure dataCharts is not empty
           if (data.dataCharts.length === 0) {
             console.error("dataCharts is empty!");
           } else {
-            const check = data.dataCharts[data.dataCharts.length - 1].ccAxisXValue;
+            const check = data.dataCharts[data.dataCharts.length - 2].ccAxisXValue;
             console.log("Last recorded time:", check);
           
             // Convert HH:mm format to Date object (Asia/Kolkata timezone)
@@ -90,13 +83,10 @@ const Home = () => {
               showAlert("danger");
             }
           }
-          
         } else {
-            
-          showAlert( "danger");
+          showAlert("danger");
         }
-        
-    }
+      }
     } catch (err) {
       console.error('Error fetching data:', err);
       if (err.message === 'No internet connection. Please check your network.') {
@@ -113,45 +103,81 @@ const Home = () => {
     if (device?.path) fetchData(device.path, device.timeInterval);
   }, [device]);
 
+  // Error display component
+  const ErrorDisplay = ({ message }) => (
+    <div className="flex flex-col items-center justify-start h-screen w-full pt-28">
+      <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6 max-w-md">
+        <img 
+          src="/images/error-illustration.svg" 
+          alt="Error" 
+          className="w-32 h-32 mx-auto mb-4" 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2VmNDQ0NCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIj48L2NpcmNsZT48bGluZSB4MT0iMTIiIHkxPSI4IiB4Mj0iMTIiIHkyPSIxMiI+PC9saW5lPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMTIuMDEiIHkyPSIxNiI+PC9saW5lPjwvc3ZnPg==";
+          }}
+        />
+        <h3 className="text-red-600 text-xl font-bold mb-2 text-center">Connection Error</h3>
+        <p className="text-gray-700 text-center">{message}</p>
+        <button 
+          onClick={() => {
+            if (device?.path) fetchData(device.path, device.timeInterval);
+          }}
+          className="mt-4 w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="w-full h flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
+    <div className="h flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
       <div>
         {/* Tab Navigation */}
-        <div className="flex border-b flex-row items-center justify-center border-gray-200">
-          {['Overview', 'Analytics'].map((tab) => (
-            <button
-              key={tab}
-              className={`px-4 py-2 focus:outline-none ${
-                activeTab === tab
-                  ? 'border-b-2 border-blue-500 text-blue-500 font-semibold'
-                  : 'text-gray-500'
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
+        <div className='flex justify-center'>
+          <div className="inline-flex border items-center rounded-full bg-white justify-center border-gray-300">
+            {['Overview', 'Analytics'].map((tab) => (
+              <button
+                key={tab}
+                className={`px-4 py-2 focus:outline-none ${
+                  activeTab === tab
+                    ? 'border-b-2 border-blue-500 bg-blue-500 text-white rounded-full font-semibold'
+                    : 'text-gray-500 font-bold'
+                }`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Loader */}
-        {loading && (
-          <Spinner/>
-        )}
+        {loading && <Spinner />}
 
-        {/* Error Message */}
-        {error && <p className="text-red-500 text-center  h-screen w-full mt-4">{error}</p>}
+        {/* Error Message with Image */}
+        {error && <ErrorDisplay message={error} />}
 
         {/* Content */}
-        {!loading && (
+        {!loading && !error && liveData && (
           <div className="mt-4">
             {activeTab === 'Overview' && (
               <div>
-                <StatusCard device={device?.name || 'kollar'}alert={alert}   lastupdate={liveData.data.snapshot.tValue}/>
-                <EnergyConsumption generation={liveData.data}/>
-                <ParameterRepresentation  parameters={liveData.data.snapshot}/>
+                <StatusCard 
+                  device={device?.name || 'kollar'} 
+                  alert={alert} 
+                  lastupdate={liveData.data.snapshot.tValue}
+                />
+                <EnergyConsumption generation={liveData.data} />
+                <ParameterRepresentation parameters={liveData.data.snapshot} />
               </div>
             )}
-            {activeTab === 'Analytics' && <Graph dataCharts={liveData.data.dataCharts} />}
+            {activeTab === 'Analytics' && (
+              <Graph 
+                site={device?.name || 'kollar'} 
+                dataCharts={liveData.data.dataCharts} 
+              />
+            )}
           </div>
         )}
       </div>

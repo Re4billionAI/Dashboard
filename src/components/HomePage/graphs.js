@@ -81,9 +81,10 @@ const parameters = [
   { label: 'Power', key: 'showPower', index: 2 },
 ];
 
-const Graph = ({ dataCharts }) => {
-  console.log(dataCharts)
+const Graph = ({  dataCharts }) => {
+  
   const device = useSelector((state) => state.location.device);
+ 
   const [loading, setLoading] = useState(false);
   const [graphValues, setGraphValues] = useState(dataCharts);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -205,31 +206,41 @@ const Graph = ({ dataCharts }) => {
 
   return (
     <div className="m-2">
-      <div className="flex items-center justify-center mb-4 gap-2 p-2 border md:rounded-lg rounded-full shadow-md bg-gray-100">
-        <button
-          onClick={() => handleNavigation("backward")}
-          className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <input
-          type="date"
-          value={format(selectedDate, "yyyy-MM-dd")}
-          onChange={handleDateChange}
-          className="p-2 border rounded-lg bg-white text-gray-900"
-        />
-        <button
-          onClick={() => handleNavigation("forward")}
-          className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-        <button
-          onClick={refreshDate}
-          className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white"
-        >
-          <RefreshCcw className="w-5 h-5" />
-        </button>
+      
+      <div className="flex items-center justify-start mb-4 gap-2 p-2 border md:rounded-lg rounded-lg shadow-md bg-gray-100">
+      <div className="md:flex md:flex-row md:justify-between md:items-center gap-2 md:w-[60%] flex flex-col items-center justify-center w-full">
+  <h1 className="text-xl font-semibold text-center md:text-left">{device.name}</h1>
+  <div className="flex items-center gap-4 justify-center">
+    <button
+      onClick={() => handleNavigation("backward")}
+      className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
+      aria-label="Previous date"
+    >
+      <ChevronLeft className="w-5 h-5" />
+    </button>
+    <input
+      type="date"
+      value={format(selectedDate, "yyyy-MM-dd")}
+      onChange={handleDateChange}
+      className="p-2 border rounded-lg bg-white text-gray-900"
+      aria-label="Select date"
+    />
+    <button
+      onClick={() => handleNavigation("forward")}
+      className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
+      aria-label="Next date"
+    >
+      <ChevronRight className="w-5 h-5" />
+    </button>
+    <button
+      onClick={refreshDate}
+      className="bg-green-500 p-2 rounded-full hover:bg-green-600 text-white"
+      aria-label="Refresh date"
+    >
+      <RefreshCcw className="w-5 h-5" />
+    </button>
+  </div>
+</div>
       </div>
 
       {loading ? (
