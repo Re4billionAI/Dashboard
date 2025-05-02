@@ -121,7 +121,7 @@ const App = () => {
     };
   
     return (
-      <div className="p-4 w-full mx-auto text-gray-900">
+      <div className="p-4 w-full mx-auto text-gray-900 ">
         {/* Mobile Tabs */}
         <div className="md:hidden flex justify-between mb-6">
           <button
@@ -172,7 +172,7 @@ const App = () => {
                     key={index}
                     id={location}
                     onClick={() => setHomepage(location.key)}
-                    className="text-lg bg-green-100 p-4 rounded-xl shadow-md cursor-pointer font-medium"
+                    className="text-lg bg-green-100 p-4 rounded-xl shadow-md cursor-pointer font-medium "
                   >
                     <div className="flex justify-between items-center">
                       <span>{location.key}</span>

@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 export default function StatusCard({device, alert,  lastupdate}) {
  
   const devicelocation = useSelector((state) => state.location.device);
-  console.log(devicelocation)
+  
   const [date, setDate]=useState(new Date());
   const lasttime = new Date(lastupdate * 1000);
   
@@ -53,6 +53,11 @@ export default function StatusCard({device, alert,  lastupdate}) {
           gridCurrent: `${chart.GridCurrent}`,
           batteryCurrent: `${chart.BatteryCurrent}`,
           batteryVoltage: `${chart.BatteryVoltage}`,
+          batteryVoltage1: `${chart.BatteryVoltage1}`,
+          batteryVoltage2: `${chart.BatteryVoltage2}`,
+          batteryVoltage3: `${chart.BatteryVoltage3}`,
+          batteryVoltage4: `${chart.BatteryVoltage4}`,
+
         
         }));
 
@@ -68,91 +73,213 @@ export default function StatusCard({device, alert,  lastupdate}) {
   };
 
 
-
   const handlePrint = async (e) => {
     e.preventDefault();
-
-    try {
-         
-      const {newDataArray} = await dataFetch();
     
-   
+    try {
+      const { newDataArray } = await dataFetch();
+      
       if (newDataArray.length === 0) {
-          
         console.warn("No data fetched");
         return;
       }
       
-    console.log({newDataArray})
+      console.log({ newDataArray });
+      
+      
+      // Transform the data for Excel
       const data = newDataArray.map((item) => ({
         Time: item.time,
-        "Solar Voltage": item.solarVoltage,
+        "Solar Voltage": parseFloat(item.solarVoltage) || 0,
         "SV Unit": "V",
-        "Solar Current": item.solarCurrent,
+        "Solar Current": parseFloat(item.solarCurrent) || 0,
         "SC Unit": "A",
-        "Inverter Voltage": item.inverterVoltage,
+        "Inverter Voltage": parseFloat(item.inverterVoltage) || 0,
         "IV Unit": "V",
-        "Inverter Current": item.inverterCurrent,
+        "Inverter Current": parseFloat(item.inverterCurrent) || 0,
         "IC Unit": "A",
-        "Grid Voltage": item.gridVoltage,
+        "Grid Voltage": parseFloat(item.gridVoltage) || 0,
         "GV Unit": "V",
-        "Grid Current": item.gridCurrent,
+        "Grid Current": parseFloat(item.gridCurrent) || 0,
         "GC Unit": "A",
-        "Battery Voltage": item.batteryVoltage,
+        "Battery Voltage": parseFloat(item.batteryVoltage) || 0,
         "BV Unit": "V",
-        "Battery Current": item.batteryCurrent,
+        "Battery Current": parseFloat(item.batteryCurrent) || 0,
         "BC Unit": "A",
-       
+        "Battery Voltage 1": parseFloat(item.batteryVoltage1) || 0,
+        "BV1 Unit": "V",
+        "Battery Voltage 2": parseFloat(item.batteryVoltage2) || 0,
+        "BV2 Unit": "V",
+        "Battery Voltage 3": parseFloat(item.batteryVoltage3) || 0,
+        "BV3 Unit": "V",
+        "Battery Voltage 4": parseFloat(item.batteryVoltage4) || 0,
+        "BV4 Unit": "V",
       }));
-    
-  
+      
+      // Calculate energy values
       let solarGeneration = 0;
       let gridEnergy = 0;
       let loadConsumption = 0;
-  
+      
       newDataArray.forEach((item) => {
-          
-
-    
         const solarCurrent = parseFloat(item.solarCurrent) || 0;
         const gridCurrent = parseFloat(item.gridCurrent) || 0;
         const inverterCurrent = parseFloat(item.inverterCurrent) || 0;
-
+        
         const solarVoltage = parseFloat(item.solarVoltage) || 0;
         const gridVoltage = parseFloat(item.gridVoltage) || 0;
-        const inverterVoltage= parseFloat(item.inverterVoltage) || 0;
+        const inverterVoltage = parseFloat(item.inverterVoltage) || 0;
         
-    
-        solarGeneration += (solarCurrent * solarVoltage )*timeDelta*60/(1000*3600);
-        gridEnergy += (gridCurrent  * gridVoltage )*timeDelta*60/(1000*3600);
-        loadConsumption +=  (inverterCurrent  * inverterVoltage)*timeDelta*60/(1000*3600);
+        solarGeneration += (solarCurrent * solarVoltage) * timeDelta * 60 / (1000 * 3600);
+        gridEnergy += (gridCurrent * gridVoltage) * timeDelta * 60 / (1000 * 3600);
+        loadConsumption += (inverterCurrent * inverterVoltage) * timeDelta * 60 / (1000 * 3600);
+      });
       
-     
-      });
-  
-      data.push({});
+      // Add summary row
+      data.push({}); // Empty row for spacing
       data.push({
-        Time: "End of Day",
-        "Solar Voltage": "Solar Generation : ",
-        "SV Unit": (solarGeneration ).toFixed(2),
-        "Solar Current": "kWh",
-        "SC Unit": "Grid Energy",
-        "Inverter Voltage": (gridEnergy).toFixed(2),
-        "IV Unit": "kWh",
-        "Inverter Current": "Load Consumption",
-        "IC Unit": (loadConsumption ).toFixed(2),
-        "Grid Voltage": "kWh",
+        Time: "End of Day Summary",
+        "Solar Voltage": "Solar Generation:",
+        "SV Unit": `${solarGeneration.toFixed(2)} kWh`,
+        "Solar Current": "",
+        "SC Unit": "",
+        "Inverter Voltage": "Grid Energy:",
+        "IV Unit": `${gridEnergy.toFixed(2)} kWh`,
+        "Inverter Current": "",
+        "IC Unit": "",
+        "Grid Voltage": "Load Consumption:",
+        "GV Unit": `${loadConsumption.toFixed(2)} kWh`,
       });
-   
-      const ws = XLSX.utils.json_to_sheet(data);
-   
+      
+      // Create a new workbook and add worksheet
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Data Sheet");
-
-   
-      XLSX.writeFile(wb, `${devicelocation.name}-${date}.xlsx`);
+      const ws = XLSX.utils.json_to_sheet(data);
+      
+      // Set column widths for better readability
+      const columnWidths = [
+        { wch: 12 },  // Time
+        { wch: 12 },  // Solar Voltage
+        { wch: 7 },   // SV Unit
+        { wch: 12 },  // Solar Current
+        { wch: 7 },   // SC Unit
+        { wch: 15 },  // Inverter Voltage
+        { wch: 7 },   // IV Unit
+        { wch: 15 },  // Inverter Current
+        { wch: 7 },   // IC Unit
+        { wch: 12 },  // Grid Voltage
+        { wch: 7 },   // GV Unit
+        { wch: 12 },  // Grid Current
+        { wch: 7 },   // GC Unit
+        { wch: 15 },  // Battery Voltage
+        { wch: 7 },   // BV Unit
+        { wch: 15 },  // Battery Current
+        { wch: 7 },   // BC Unit
+        { wch: 15 },  // Battery Voltage 1
+        { wch: 7 },   // BV1 Unit
+        { wch: 15 },  // Battery Voltage 2
+        { wch: 7 },   // BV2 Unit
+        { wch: 15 },  // Battery Voltage 3
+        { wch: 7 },   // BV3 Unit
+        { wch: 15 },  // Battery Voltage 4
+        { wch: 7 },   // BV4 Unit
+      ];
+      ws['!cols'] = columnWidths;
+      
+      // Add styles to the worksheet
+      // First, get the range of cells in the worksheet
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      
+      // Create styles for different cell types
+      const headerStyle = {
+        font: { bold: true, color: { rgb: "FFFFFF" } },
+        fill: { fgColor: { rgb: "4472C4" } },
+        alignment: { horizontal: "center" }
+      };
+      
+      const dataStyle = {
+        font: { color: { rgb: "000000" } },
+        alignment: { horizontal: "center" }
+      };
+      
+      const summaryStyle = {
+        font: { bold: true, color: { rgb: "000000" } },
+        fill: { fgColor: { rgb: "E2EFDA" } },
+        alignment: { horizontal: "center" }
+      };
+      
+      const unitStyle = {
+        font: { italic: true, color: { rgb: "777777" } },
+        alignment: { horizontal: "center" }
+      };
+      
+      // Apply styles to cells
+      // Note: This requires xlsx-style package to work properly
+      // First, create a new worksheet with the same data
+      const newWs = XLSX.utils.aoa_to_sheet(XLSX.utils.sheet_to_json(ws, { header: 1 }));
+      
+      // Apply styles to header row
+      for (let C = range.s.c; C <= range.e.c; C++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+        if (!newWs[cellAddress]) continue;
+        
+        newWs[cellAddress].s = headerStyle;
+      }
+      
+      // Apply styles to data rows
+      for (let R = 1; R < range.e.r; R++) {
+        for (let C = range.s.c; C <= range.e.c; C++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!newWs[cellAddress]) continue;
+          
+          // Apply different styles to unit columns
+          if (C % 2 === 0) { // Even-indexed columns contain values
+            newWs[cellAddress].s = dataStyle;
+          } else { // Odd-indexed columns contain units
+            newWs[cellAddress].s = unitStyle;
+          }
+        }
+      }
+      
+      // Apply special styles to summary rows (last two rows)
+      for (let C = range.s.c; C <= range.e.c; C++) {
+        const cellAddress1 = XLSX.utils.encode_cell({ r: range.e.r - 1, c: C });
+        const cellAddress2 = XLSX.utils.encode_cell({ r: range.e.r, c: C });
+        
+        if (newWs[cellAddress1]) newWs[cellAddress1].s = summaryStyle;
+        if (newWs[cellAddress2]) newWs[cellAddress2].s = summaryStyle;
+      }
+      
+      // Format numbers to have 2 decimal places
+      for (let R = 1; R <= range.e.r; R++) {
+        for (let C = range.s.c; C <= range.e.c; C++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!newWs[cellAddress]) continue;
+          
+          const cell = newWs[cellAddress];
+          if (typeof cell.v === 'number') {
+            // Skip unit columns
+            if (C % 2 === 0) {
+              cell.z = '0.00'; // Format for 2 decimal places
+            }
+          }
+        }
+      }
+      
+      // Add the styled worksheet to the workbook
+      XLSX.utils.book_append_sheet(wb, newWs, "Energy Data");
+      
+      // Generate a meaningful filename with date
+      const formattedDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const filename = `${devicelocation.name}-${formattedDate}.xlsx`;
+      
+      // Write to file
+      XLSX.writeFile(wb, filename);
+      
+      console.log(`Excel file saved as: ${filename}`);
     } catch (error) {
       console.error("Error handling print:", error);
+      // Show an error notification to the user
+      alert(`Failed to generate Excel report: ${error.message}`);
     }
   };
   

@@ -172,7 +172,7 @@ const Graph = ({  dataCharts }) => {
           },
         }
       );
-      
+    
       if (response.status === 200 && response.data?.data?.dataCharts) {
         const newDataArray = response.data.data.dataCharts.map((chart) => ({
           ccAxisXValue: formatTick(chart.ccAxisXValue),
@@ -185,6 +185,7 @@ const Graph = ({  dataCharts }) => {
           GridVoltage: chart.GridVoltage || 0,
           GridCurrent: chart.GridCurrent || 0,
           GridPower: ((chart.GridCurrent || 0) * (chart.GridVoltage || 0)).toFixed(2),
+          BatteryCurrent: chart.BatteryCurrent || 0,
           BatteryVoltage: chart.BatteryVoltage || 0,
           BatteryVoltage2: chart.BatteryVoltage2 || 0,
           BatteryVoltage3: chart.BatteryVoltage3 || 0,

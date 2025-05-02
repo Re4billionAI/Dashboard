@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useSelector } from 'react-redux';
-import { FiX } from "react-icons/fi"; // Make sure to import react-icons
+import { FiX } from "react-icons/fi";
 import {
   LineChart,
   Line,
@@ -13,12 +13,13 @@ import {
 } from "recharts";
 import { Maximize2, ChevronDown } from 'lucide-react';
 
-// Define tooltip colors for the four Battery properties
+// Define tooltip colors for the Battery properties
 const tooltipProps = {
   BatteryVoltage: { color: "blue" },
   BatteryVoltage2: { color: "green" },
   BatteryVoltage3: { color: "red" },
   BatteryVoltage4: { color: "purple" },
+  BatteryCurrent: { color: "orange" },
 };
 
 // Format the X-axis ticks (time labels)
@@ -37,20 +38,25 @@ const formatTick = (tick) => {
 // Map Battery keys to their respective units
 const units = {
   BatteryVoltage: "V",
-  BatteryVoltage2: "V", // For example, if representing current
-  BatteryVoltage3: "V", // For example, if representing power
-  BatteryVoltage4: "V", // Adjust unit as needed
+  BatteryVoltage2: "V",
+  BatteryVoltage3: "V", 
+  BatteryVoltage4: "V",
+  BatteryCurrent: "A",
 };
 
 // Custom Tooltip component displaying Battery units
 const CustomTooltip = ({ active, payload, label }) => {
+  const formatLabel = (label) => {
+    return label.replace(/([a-z])([A-Z])/g, "$1 $2");
+  };
+
   if (active && payload && payload.length) {
     return (
       <div className="bg-white border border-gray-300 p-2 rounded-md shadow-sm">
         <p className="font-semibold">{`Time: ${label}`}</p>
         {payload.map((item, index) => (
           <p key={index} style={{ color: item.color }}>
-            {`${item.name}: ${
+            {`${formatLabel(item.name)}: ${
               item.value !== undefined ? item.value : "N/A"
             } ${units[item.name] || ""}`}
           </p>
@@ -62,35 +68,73 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 
-
-// Battery keys now include the fourth property
-const batteryKeys = [
-  "BatteryVoltage",
-  "BatteryVoltage2",
-  "BatteryVoltage3",
-  "BatteryVoltage4",
-];
-
-// Define categories for modal use
-const categories = {
-  Battery: batteryKeys
-};
-
 const BatteryGraph = ({ graphValues }) => {
- 
+  console.log(graphValues)
   const site = useSelector((state) => state.location.device);
+  
+  // Define site-specific parameters
+  const getParameters = (siteType, siteName) => {
+    if (siteType === "testing 1") {
+      return [
+        { label: "Voltage1", key: "showVoltage1", dataKey: "BatteryVoltage" },
+        { label: "Voltage2", key: "showVoltage2", dataKey: "BatteryVoltage2" },
+        { label: "Voltage3", key: "showVoltage3", dataKey: "BatteryVoltage3" },
+        { label: "Voltage4", key: "showVoltage4", dataKey: "BatteryVoltage4" },
+        { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+      ];
+    } else if (siteType === "testing 2") {
+      return [
+        { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
+        { label: "Voltage2", key: "showVoltage2", dataKey: "BatteryVoltage2" },
+        { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+      ];
+    } else if (siteType === "testing 3" || siteName === "Saram-TN") {
+      return [
+        { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
+        { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+      ];
+    } else if (siteType === "48v") {
+      return [
+        { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
+        { label: "Voltage2", key: "showVoltage2", dataKey: "BatteryVoltage2" },
+        { label: "Voltage3", key: "showVoltage3", dataKey: "BatteryVoltage3" },
+        { label: "Voltage4", key: "showVoltage4", dataKey: "BatteryVoltage4" },
+      ];
+    } else if (siteType === "24v") {
+      return [
+        { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
+      ];
+    }
 
-   const checkLocation=site.type==="48v"||site.name==="Thandavankulam-TN"?true:false
+    // Default case
+   
+  };
 
-  const [visibility, setVisibility] = useState({
-    Battery: {
-      showVoltage: true,
-      showVoltage2: true,
-      showVoltage3: true,
-      showVoltage4: true,
-    },
+  // Get parameters for current site
+  const [parameters, setParameters] = useState(() => getParameters(site.type, site.name));
+  
+  // Initialize visibility state based on parameters
+  const [visibility, setVisibility] = useState(() => {
+    const initialVisibility = {};
+    parameters.forEach(param => {
+      initialVisibility[param.key] = true;
+    });
+    return { Battery: initialVisibility };
   });
   
+  // Update parameters and visibility when site changes
+  useEffect(() => {
+    const newParameters = getParameters(site.type, site.name);
+    setParameters(newParameters);
+    
+    // Reset visibility state with only the allowed parameters
+    const newVisibility = {};
+    newParameters.forEach(param => {
+      newVisibility[param.key] = true;
+    });
+    setVisibility({ Battery: newVisibility });
+  }, [site.type, site.name]);
+
   // State for active modal
   const [activeModal, setActiveModal] = useState(null);
 
@@ -110,102 +154,82 @@ const BatteryGraph = ({ graphValues }) => {
     }));
   }, []);
 
-  // Dynamically calculate Y-axis domain based on visible parameters
-  const calculateYDomain = (category = "Battery", categoryKeys = batteryKeys) => {
-    const activeKeys = categoryKeys.filter((key, index) => {
-      if (index === 0) return visibility[category]?.showVoltage;
-      if (index === 1) return visibility[category]?.showVoltage2;
-      if (index === 2) return visibility[category]?.showVoltage3;
-      if (index === 3) return visibility[category]?.showVoltage4;
-      return false;
-    });
+  // Calculate Y-axis domain based on visible parameters
+  const calculateYDomain = () => {
+    const activeDataKeys = parameters
+      .filter(param => visibility.Battery && visibility.Battery[param.key])
+      .map(param => param.dataKey);
 
-    if (activeKeys.length === 0) {
+    if (activeDataKeys.length === 0) {
       return [0, 100];
     }
 
     const values = graphValues.flatMap((data) =>
-      activeKeys.map((key) => data[key] || 0)
+      activeDataKeys.map((key) => data[key] || 0)
     );
 
     const max = values.length ? Math.max(...values) : 100;
     return [0, max + 20];
   };
 
-
-
-  let parameters
-  // Define the parameters for toggling Battery readings
-  if (checkLocation===true){
-     parameters = [
-      { label: "Voltage1", key: "showVoltage", index: 0 },
-      { label: "Voltage2", key: "showVoltage2", index: 1 },
-      { label: "Voltage3", key: "showVoltage3", index: 2 },
-      { label: "Voltage4", key: "showVoltage4", index: 3 },
-    ];
-  }else{
-    parameters = [
-      { label: "Voltage1", key: "showVoltage", index: 0 },
-     
-    ];
-  }
-
-
+  // Get only the allowed data keys for current site type
+  const getAllowedDataKeys = () => {
+    return parameters.map(param => param.dataKey);
+  };
 
   return (
     <>
-      <div className="bg-white  rounded-3xl border w-full sm:w-[49%] border-gray-200 overflow-hidden mb-6">
+      <div className="bg-white rounded-3xl border w-full sm:w-[49%] border-gray-200 overflow-hidden mb-6">
         <div className="flex justify-between items-center p-4 bg-gray-50 border border-b-gray-300 rounded-t-lg">
           <h3 className="md:text-lg text-sm text-black font-bold">
             Battery Readings
           </h3>
           <div className="flex gap-2">
-          <div className="relative group inline-block">
-  {/* Tooltip trigger */}
-  <div className="cursor-pointer px-2 py-1 flex bg-gray-200 rounded-full text-sm">
-     Options <ChevronDown/>
-  </div>
+            <div className="relative group inline-block">
+              {/* Tooltip trigger */}
+              <div className="cursor-pointer px-2 py-1 flex bg-gray-200 rounded-full text-sm">
+                Options <ChevronDown/>
+              </div>
 
-  {/* Tooltip content */}
-  <div className="absolute hidden group-hover:block z-10 mt-0 p-3 bg-white border rounded-lg shadow-lg min-w-[160px] transform -translate-x-14 space-y-3">
-    <div className="flex flex-col gap-1">
-      {parameters.map((param) => {
-        const dataKey = batteryKeys[param.index];
-        const color = tooltipProps[dataKey].color;
-        return (
-          <button
-            key={param.key}
-            onClick={() =>
-              handleCheckboxChange(
-                "Battery",
-                param.key,
-                !visibility.Battery[param.key]
-              )
-            }
-            style={{
-              backgroundColor: visibility.Battery[param.key]
-                ? color
-                : "transparent",
-              border: `2px solid ${
-                visibility.Battery[param.key] ? color : "black"
-              }`,
-              color: visibility.Battery[param.key] ? "white" : "black",
-            }}
-            className="w-full px-1 py-1 rounded-full text-sm transition-colors flex items-center justify-center"
-          >
-            {param.label}
-          </button>
-        );
-      })}
-    </div>
-  </div>
-</div>
+              {/* Tooltip content */}
+              <div className="absolute hidden group-hover:block z-10 mt-0 p-3 bg-white border rounded-lg shadow-lg min-w-[160px] transform -translate-x-14 space-y-3">
+                <div className="flex flex-col gap-1">
+                  {parameters.map((param) => {
+                    const color = tooltipProps[param.dataKey].color;
+                    return (
+                      <button
+                        key={param.key}
+                        onClick={() =>
+                          handleCheckboxChange(
+                            "Battery",
+                            param.key,
+                            !visibility.Battery[param.key]
+                          )
+                        }
+                        style={{
+                          backgroundColor: visibility.Battery[param.key]
+                            ? color
+                            : "transparent",
+                          border: `2px solid ${
+                            visibility.Battery[param.key] ? color : "black"
+                          }`,
+                          color: visibility.Battery[param.key] ? "white" : "black",
+                        }}
+                        className="w-full px-1 py-1 rounded-full text-sm transition-colors flex items-center justify-center"
+                      >
+                        {param.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
             <button 
-                    onClick={() => handleModalToggle("Battery")}
-                    className="text-gray-600 bg-white rounded-lg md:block hidden border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
-                  >
-                    <Maximize2 className="h-4 w-4" />
-                  </button>
+              onClick={() => handleModalToggle("Battery")}
+              className="text-gray-600 bg-white rounded-lg md:block hidden border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </button>
           </div>
         </div>
         <div className="p-0 pb-5 relative z-1">
@@ -229,38 +253,20 @@ const BatteryGraph = ({ graphValues }) => {
                 }
               />
               <Tooltip content={<CustomTooltip />} />
-              {visibility.Battery.showVoltage && (
-                <Line
-                  type="monotone"
-                  dataKey="BatteryVoltage"
-                  stroke={tooltipProps.BatteryVoltage.color}
-                  dot={false}
-                />
-              )}
-              {visibility.Battery.showVoltage2 &&checkLocation===true&& (
-                <Line
-                  type="monotone"
-                  dataKey="BatteryVoltage2"
-                  stroke={tooltipProps.BatteryVoltage2.color}
-                  dot={false}
-                />
-              )}
-              {visibility.Battery.showVoltage3 && checkLocation===true&&(
-                <Line
-                  type="monotone"
-                  dataKey="BatteryVoltage3"
-                  stroke={tooltipProps.BatteryVoltage3.color}
-                  dot={false}
-                />
-              )}
-              {visibility.Battery.showVoltage4 && checkLocation===true&& (
-                <Line
-                  type="monotone"
-                  dataKey="BatteryVoltage4"
-                  stroke={tooltipProps.BatteryVoltage4.color}
-                  dot={false}
-                />
-              )}
+              
+              {/* Render lines based only on allowed parameters for this site */}
+              {parameters.map(param => (
+                visibility.Battery && visibility.Battery[param.key] && (
+                  <Line
+                    key={param.dataKey}
+                    type="monotone"
+                    dataKey={param.dataKey}
+                    stroke={tooltipProps[param.dataKey].color}
+                    dot={false}
+                  />
+                )
+              ))}
+              
               <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
             </LineChart>
           </ResponsiveContainer>
@@ -279,8 +285,7 @@ const BatteryGraph = ({ graphValues }) => {
               <h3 className="md:text-lg text-sm text-black font-bold">{activeModal} Readings</h3>
               <div className="flex gap-2">
                 {parameters.map((param) => {
-                  const dataKey = categories[activeModal][param.index];
-                  const color = tooltipProps[dataKey].color;
+                  const color = tooltipProps[param.dataKey].color;
                   
                   return (
                     <button
@@ -291,9 +296,9 @@ const BatteryGraph = ({ graphValues }) => {
                         !visibility[activeModal][param.key]
                       )}
                       style={{
-                        backgroundColor: visibility[activeModal][param.key] ? color : 'transparent',
+                        backgroundColor: visibility[activeModal] && visibility[activeModal][param.key] ? color : 'transparent',
                         border: `2px solid ${color}`,
-                        color: visibility[activeModal][param.key] ? 'white' : color,
+                        color: visibility[activeModal] && visibility[activeModal][param.key] ? 'white' : color,
                       }}
                       className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
                     >
@@ -325,7 +330,7 @@ const BatteryGraph = ({ graphValues }) => {
                       tick={{ fontSize: 12 }}
                     />
                     <YAxis
-                      domain={calculateYDomain(activeModal, categories[activeModal])}
+                      domain={calculateYDomain()}
                       tickCount={10}
                       tick={{ fontSize: 12 }}
                       tickFormatter={(value) =>
@@ -333,42 +338,21 @@ const BatteryGraph = ({ graphValues }) => {
                       }
                     />
                     <Tooltip content={<CustomTooltip />} />
-                    {visibility[activeModal]?.showVoltage && (
-                      <Line
-                        type="monotone"
-                        dataKey={categories[activeModal][0]}
-                        stroke={tooltipProps[categories[activeModal][0]].color}
-                        dot={false}
-                        className="transition duration-300 hover:opacity-80"
-                      />
-                    )}
-                    {visibility[activeModal]?.showVoltage2 &&checkLocation===true&& (
-                      <Line
-                        type="monotone"
-                        dataKey={categories[activeModal][1]}
-                        stroke={tooltipProps[categories[activeModal][1]].color}
-                        dot={false}
-                        className="transition duration-300 hover:opacity-80"
-                      />
-                    )}
-                    {visibility[activeModal]?.showVoltage3 &&checkLocation===true&& (
-                      <Line
-                        type="monotone"
-                        dataKey={categories[activeModal][2]}
-                        stroke={tooltipProps[categories[activeModal][2]].color}
-                        dot={false}
-                        className="transition duration-300 hover:opacity-80"
-                      />
-                    )}
-                    {visibility[activeModal]?.showVoltage4 &&checkLocation===true&& (
-                      <Line
-                        type="monotone"
-                        dataKey={categories[activeModal][3]}
-                        stroke={tooltipProps[categories[activeModal][3]].color}
-                        dot={false}
-                        className="transition duration-300 hover:opacity-80"
-                      />
-                    )}
+                    
+                    {/* Render lines based only on allowed parameters for this site */}
+                    {parameters.map(param => (
+                      visibility[activeModal] && visibility[activeModal][param.key] && (
+                        <Line
+                          key={param.dataKey}
+                          type="monotone"
+                          dataKey={param.dataKey}
+                          stroke={tooltipProps[param.dataKey].color}
+                          dot={false}
+                          className="transition duration-300 hover:opacity-80"
+                        />
+                      )
+                    ))}
+                    
                     <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
                   </LineChart>
                 </ResponsiveContainer>

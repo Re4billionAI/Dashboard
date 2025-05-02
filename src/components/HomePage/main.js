@@ -40,6 +40,7 @@ const Home = () => {
       );
       
       if (response.status === 200) {
+       
         setLiveData(response.data);
         const data = response.data.data;
         
@@ -58,7 +59,7 @@ const Home = () => {
           if (data.dataCharts.length === 0) {
             console.error("dataCharts is empty!");
           } else {
-            const check = data.dataCharts[data.dataCharts.length - 2].ccAxisXValue;
+            const check = data.dataCharts[data.dataCharts.length - 1].ccAxisXValue;
             console.log("Last recorded time:", check);
           
             // Convert HH:mm format to Date object (Asia/Kolkata timezone)

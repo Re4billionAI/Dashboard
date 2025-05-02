@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { MapPin, Sun, CloudRain, Wind, Droplets, Gauge, Loader2 } from "lucide-react";
+import {  Sun, CloudRain, Wind, Droplets, Gauge, Loader2 } from "lucide-react";
 
 const WeatherInfo = ({ lat, lon }) => {
   const [weather, setWeather] = useState(null);
