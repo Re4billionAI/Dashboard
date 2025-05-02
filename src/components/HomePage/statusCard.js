@@ -84,7 +84,7 @@ export default function StatusCard({device, alert,  lastupdate}) {
         return;
       }
       
-      console.log({ newDataArray });
+      
       
       
       // Transform the data for Excel
