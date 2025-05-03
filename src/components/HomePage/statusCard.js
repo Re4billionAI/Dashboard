@@ -8,7 +8,7 @@ import { Calendar, Download, CircleAlert,  MapPin, CheckCircle } from "lucide-re
 import axios from "axios"
 import { useSelector } from 'react-redux';
 
-export default function StatusCard({device, alert,  lastupdate}) {
+export default function StatusCard({device, alert,  lastupdate, updatedEngergies}) {
  
   const devicelocation = useSelector((state) => state.location.device);
   
@@ -23,6 +23,43 @@ export default function StatusCard({device, alert,  lastupdate}) {
       dateInputRef.current.showPicker(); // Opens the native date picker
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { newDataArray } = await dataFetch();
+        
+      if (newDataArray.length === 0) {
+        console.warn("No data fetched");
+        return;
+      }
+
+      let solarGeneration = 0;
+      let gridEnergy = 0;
+      let loadConsumption = 0;
+      
+      newDataArray.forEach((item) => {
+        const solarCurrent = parseFloat(item.solarCurrent) || 0;
+        const gridCurrent = parseFloat(item.gridCurrent) || 0;
+        const inverterCurrent = parseFloat(item.inverterCurrent) || 0;
+        
+        const solarVoltage = parseFloat(item.solarVoltage) || 0;
+        const gridVoltage = parseFloat(item.gridVoltage) || 0;
+        const inverterVoltage = parseFloat(item.inverterVoltage) || 0;
+        
+        solarGeneration += (solarCurrent * solarVoltage) * timeDelta * 60 / (1000 * 3600);
+        gridEnergy += (gridCurrent * gridVoltage) * timeDelta * 60 / (1000 * 3600);
+        loadConsumption += (inverterCurrent * inverterVoltage) * timeDelta * 60 / (1000 * 3600);
+      });
+      
+      updatedEngergies(solarGeneration, gridEnergy, loadConsumption);
+
+
+      
+     
+    };
+
+    fetchData();
+  }, [date]);
 
   const dataFetch = async () => {
     try {

@@ -124,7 +124,7 @@ const mobileSearchRef = useRef(null);
         </button>
         {/* Company Logo */}
         <img 
-          src="https://res.cloudinary.com/dky72aehn/image/upload/v1738137266/Screenshot_2025-01-29_132015-removebg-preview_hc6g3y.png" // Replace with your logo's path
+          src="https://res.cloudinary.com/dky72aehn/image/upload/v1746253013/Layer_2_pvgh9s.png" // Replace with your logo's path
           alt="Company Logo" 
           className="w-10 h-10 object-contain md:hidden" 
         />

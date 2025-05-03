@@ -104,6 +104,7 @@ const App = () => {
   );
 
   const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
+    console.log({"workingLocations":workingLocations} )
     const setHomepage = (location) => {
       console.log(additionalData);
       const setlocation = additionalData.find((loc) => loc.name.split("-")[0] === location.split("-")[1]); 
@@ -168,20 +169,41 @@ const App = () => {
             <ul className="list-none space-y-4">
               {workingLocations.length > 0 ? (
                 workingLocations.map((location, index) => (
-                  <li
+                 <li
                     key={index}
-                    id={location}
                     onClick={() => setHomepage(location.key)}
-                    className="text-lg bg-green-100 p-4 rounded-xl shadow-md cursor-pointer font-medium "
+                    className="text-lg bg-green-100 p-4 rounded-xl shadow-md font-medium"
                   >
-                    <div className="flex justify-between items-center">
-                      <span>{location.key}</span>
-                      <div>
+                    <div className="flex justify-between cursor-pointer">
+                      <span className='text-green-700 font-bold'>{location.key}</span>
+                      <div className="flex items-center">
                         <span className="text-green-700 font-bold">
                           {location.p1ValueTot.toFixed(2)} kWh
                         </span>
+                        <span
+                          className="ml-2 text-white font-bold bg-green-500 p-2 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Stop the event from bubbling up
+                            setIsOpen((prevState) => ({
+                              ...prevState,
+                              [location.key]: !prevState[location.key],
+                            }));
+                          }}
+                        >
+                          {isOpen[location.key] ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </span>
                       </div>
                     </div>
+
+                    {/* Dropdown content */}
+                    {isOpen[location.key] && (
+                      <div className="mt-3 pt-3 border-t border-green-200">
+                        <span className="text-green-700 font-bold">
+                          Grid Energy: {location.p2ValueTot.toFixed(2)} kWh -   
+                          Load Consumption: {location.p3ValueTot.toFixed(2)} kWh
+                        </span>
+                      </div>
+                    )}
                   </li>
                 ))
               ) : (
@@ -212,7 +234,7 @@ const App = () => {
                     className="text-lg bg-red-100 p-4 rounded-xl shadow-md font-medium"
                   >
                     <div className="flex justify-between cursor-pointer">
-                      <span>{location.key}</span>
+                      <span  className='text-red-800 font-bold'>{location.key}</span>
                       <div className="flex items-center">
                         <span className="text-red-700 font-bold">
                           {location.p1ValueTot.toFixed(2)} kWh

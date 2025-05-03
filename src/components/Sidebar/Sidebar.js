@@ -27,14 +27,14 @@ const Sidebar = () => {
     <>
       {/* Sidebar for larger screens */}
       <nav className="hidden md:flex w-[265px] h-screen bg-gradient-to-b from-blue-50 to-indigo-50 flex-col -3xl shadow-2xl border-r border-gray-300">
-        <div className="px-6 py-8 border-b border-gray-200">
+        <div className="px-6 py-3 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <img
-              src="https://res.cloudinary.com/dky72aehn/image/upload/v1738137266/Screenshot_2025-01-29_132015-removebg-preview_hc6g3y.png"
+              src="https://res.cloudinary.com/dky72aehn/image/upload/v1746253013/Layer_2_pvgh9s.png"
               alt="logo"
-              className="w-12 h-12 rounded-xl shadow-sm"
+              className="w-10 h-18 rounded-xl shadow-sm"
             />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-green-500 bg-clip-text text-transparent">
               Re4billion
             </h1>
           </div>

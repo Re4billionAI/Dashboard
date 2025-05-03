@@ -16,6 +16,7 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [liveData, setLiveData] = useState(null);
   const [alert, showAlert] = useState(null);
+  const [energies, setEnergies] = useState({solargen:0, gridgen:0, loadconsumption:0});
 
   const fetchData = async (item, timeInterval) => {
     if (!item) return; // Prevent unnecessary API calls
@@ -42,6 +43,8 @@ const Home = () => {
       if (response.status === 200) {
        
         setLiveData(response.data);
+        setEnergies({solargen:response.data.data.p1ValueTot, gridgen:response.data.data.p2ValueTot, loadconsumption:response.data.data.p3ValueTot})
+       
         const data = response.data.data;
         
         if (data.dataCharts.length > 0) {
@@ -99,6 +102,19 @@ const Home = () => {
       setLoading(false);
     }
   };
+
+
+const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
+
+  console.log("Updated Energies:", solargen, gridgen, loadconsumption);
+   setEnergies({
+    solargen:solargen,
+    gridgen:gridgen,
+    loadconsumption:loadconsumption
+   })
+
+}
+
 
   useEffect(() => {
     if (device?.path) fetchData(device.path, device.timeInterval);
@@ -168,8 +184,10 @@ const Home = () => {
                   device={device?.name || 'kollar'} 
                   alert={alert} 
                   lastupdate={liveData.data.snapshot.tValue}
+                  updatedEngergies={updatedEngergies}
+                 
                 />
-                <EnergyConsumption generation={liveData.data} />
+                <EnergyConsumption generation={energies}  />
                 <ParameterRepresentation parameters={liveData.data.snapshot} />
               </div>
             )}
