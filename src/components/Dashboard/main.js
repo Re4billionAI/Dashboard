@@ -199,8 +199,8 @@ const App = () => {
                     {isOpen[location.key] && (
                       <div className="mt-3 pt-3 border-t border-green-200">
                         <span className="text-green-700 font-bold">
-                          Grid Energy: {location.p2ValueTot.toFixed(2)} kWh -   
-                          Load Consumption: {location.p3ValueTot.toFixed(2)} kWh
+                          Grid Energy: {location.p3ValueTot.toFixed(2)} kWh -   
+                          Load Consumption: {location.p2ValueTot.toFixed(2)} kWh
                         </span>
                       </div>
                     )}
@@ -288,26 +288,46 @@ const App = () => {
               <ul className="list-none space-y-4">
                 {workingLocations.length > 0 ? (
                   workingLocations.map((location, index) => (
+
+                    
                     <li
-                      key={index}
-                      onClick={() => setHomepage(location.key)}
-                      className="text-lg bg-green-100 p-3 rounded-lg shadow-md font-medium"
-                    >
-                      <div className="flex flex-row justify-between items-center">
-                        <span
-                          style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
-                          className="font-bold break-words"
-                        >
-                          {location.key}
-                        </span>
-                        <span
-                          style={{ fontSize: "clamp(0.75rem, 2vw, 1rem)" }}
-                          className="text-green-700 font-bold"
-                        >
+                    key={index}
+                    onClick={() => setHomepage(location.key)}
+                    className="text-lg bg-green-100 p-4 rounded-xl shadow-md font-medium"
+                  >
+                    <div className="flex justify-between cursor-pointer">
+                      <span className='text-green-700 text-sm text-left font-bold'>{location.key}</span>
+                      <div className="flex items-center">
+                        <span className="text-green-700 text-sm font-bold">
                           {location.p1ValueTot.toFixed(2)} kWh
                         </span>
+                        <span
+                          className="ml-2 text-white font-bold bg-green-500 p-2 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Stop the event from bubbling up
+                            setIsOpen((prevState) => ({
+                              ...prevState,
+                              [location.key]: !prevState[location.key],
+                            }));
+                          }}
+                        >
+                          {isOpen[location.key] ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </span>
                       </div>
-                    </li>
+                    </div>
+
+                    {/* Dropdown content */}
+                    {isOpen[location.key] && (
+                      <div className="mt-3 pt-3 border-t border-green-200">
+                        <span className="text-green-700 font-bold text-sm">
+                          Grid Energy: {location.p3ValueTot.toFixed(2)} kWh -  <br/> 
+                          Load Consumption: {location.p2ValueTot.toFixed(2)} kWh
+                        </span>
+                      </div>
+                    )}
+                  </li>
+
+                    
                   ))
                 ) : (
                   <li className="text-center text-gray-500">
@@ -335,9 +355,9 @@ const App = () => {
                           }))
                         }
                       >
-                        <span>{location.key}</span>
+                        <span className='text-sm text-left'>{location.key}</span>
                         <div className="flex items-center">
-                          <span className="text-red-700 font-bold">
+                          <span className="text-red-700 text-sm font-bold">
                             {location.p1ValueTot.toFixed(2)} kWh
                           </span>
                           <span

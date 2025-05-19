@@ -202,6 +202,8 @@ const Graph = ({  dataCharts }) => {
   };
 
   useEffect(() => {
+    
+    
     changeDate();
   }, [selectedDate]);
 

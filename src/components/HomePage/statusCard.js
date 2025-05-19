@@ -139,11 +139,10 @@ export default function StatusCard({device, alert,  lastupdate, updatedEngergies
         "GV Unit": "V",
         "Grid Current": parseFloat(item.gridCurrent) || 0,
         "GC Unit": "A",
-        "Battery Voltage": parseFloat(item.batteryVoltage) || 0,
-        "BV Unit": "V",
+      
         "Battery Current": parseFloat(item.batteryCurrent) || 0,
         "BC Unit": "A",
-        "Battery Voltage 1": parseFloat(item.batteryVoltage1) || 0,
+        "Battery Voltage 1": parseFloat(item.batteryVoltage) || 0,
         "BV1 Unit": "V",
         "Battery Voltage 2": parseFloat(item.batteryVoltage2) || 0,
         "BV2 Unit": "V",

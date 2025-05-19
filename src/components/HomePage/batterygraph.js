@@ -69,7 +69,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 
 const BatteryGraph = ({ graphValues }) => {
-  console.log(graphValues)
+console.log({graphValues2:graphValues})
   const site = useSelector((state) => state.location.device);
   
   // Define site-specific parameters
