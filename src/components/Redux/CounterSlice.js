@@ -61,6 +61,7 @@ const additionalData = [
   { name: "Kurki-KA", path: "Kurki-KA", board: "rmsv36_004",type:"24v", geocode: [14.394696, 75.965068],timeInterval:5 },
   { name: "Arupathy-TN", path: "Arupathy-TN", board: "rmsv36_015",type:"24v", geocode: [11.10425, 79.714584],timeInterval:5 },
   { name: "Kolwadi-MH", path: "Kolwadi-MH", board: "rmsv36_019",type:"24v", geocode: [11.10425, 79.714584],timeInterval:5 },
+  { name: "Sashte-MH", path: "Sashte-MH", board: "rmsv36_020",type:"24v", geocode: [11.10425, 79.714584],timeInterval:5 },
   { name: "keelathirupanthuruthi-TN", path: "Keela-TN", board: "rmsv36_014",type:"24v",geocode: [10.859925, 79.08984], timeInterval:5 },
   { name: "Testing-01", path: "rmsv36_012", board: "rmsv36_012",type:"testing 1", geocode: [12.96227, 80.257758],timeInterval:1 },
   { name: "Testing-02", path: "rmsv36_020", board: "rmsv36_020",type:"testing 2",geocode: [12.96227, 80.257758], timeInterval:1 },
