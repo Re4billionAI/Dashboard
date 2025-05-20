@@ -8,7 +8,7 @@ const DATA_URL = 'http://127.0.0.1:5001/rmstesting-d5aa6/us-central1/firebackend
 // Colors for the charts
 const COLORS = ['#34a853', '#1a73e8', '#fbbc05'];
 
-export default function BrieData() {
+export default function BrieData(handlePageChange) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,10 +48,10 @@ export default function BrieData() {
     fetchData();
   }, []);
 
-  // Refresh data function
+  
   const refreshData = () => {
     setLoading(true);
-    // In a real application, this would refetch the data
+  
     setTimeout(() => {
       setLoading(false);
     }, 1500);

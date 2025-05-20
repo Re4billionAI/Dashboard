@@ -1,16 +1,20 @@
 
 import { useState } from 'react';
 import Home from './home';
+import BrieData from '../BriefData/main';
 
 const Main = () => {
-  const [ specificPage, setSpecificPage] = useState(true);
+  const [ specificPage, setSpecificPage] = useState(false);
 
-
+  const handlePageChange = () => {
+    setSpecificPage(!specificPage);
+  
+  }
 
 
   return (
     <>
-      {specificPage ? <Home /> : <div>Loading...</div>}
+      {specificPage ? <Home /> : <BrieData handlePageChange={handlePageChange}/>}
     </>
   );
 };
