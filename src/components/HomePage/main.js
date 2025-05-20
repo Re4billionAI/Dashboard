@@ -4,7 +4,7 @@ import Home from './home';
 import BrieData from '../BriefData/main';
 
 const Main = () => {
-  const [ specificPage, setSpecificPage] = useState(false);
+  const [ specificPage, setSpecificPage] = useState(true);
 
   const handlePageChange = () => {
     setSpecificPage(!specificPage);
