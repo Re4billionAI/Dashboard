@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Activity, Grid, Sun, Power, Search, Zap } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { updateLocation } from '../Redux/CounterSlice'
+import { useDispatch, useSelector } from 'react-redux';
 
 // Define the initial data URL
 const DATA_URL = 'http://127.0.0.1:5001/rmstesting-d5aa6/us-central1/firebackend/admin/allSitesBriefData';
@@ -8,13 +12,31 @@ const DATA_URL = 'http://127.0.0.1:5001/rmstesting-d5aa6/us-central1/firebackend
 // Colors for the charts
 const COLORS = ['#34a853', '#1a73e8', '#fbbc05'];
 
-export default function BrieData(handlePageChange) {
+export default function BrieData({handlePageChange}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'siteName', direction: 'ascending' });
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', or 'inactive'
+
+
+  const additionalData = useSelector((state) => state.location.locations);
+ 
+
+  const getCookie = (name) => {
+    const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return matches ? decodeURIComponent(matches[1]) : null;
+  };
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedLocation, setSelectedLocation] = useState({name: getCookie("locationName"), path: getCookie("locationPath"), board: getCookie("locationBoard"), type: getCookie("locationType"), timeInterval:getCookie("locationTimeInterval") });
+ 
+
+const dispatch=useDispatch()
+
+
+
 
   // Fetch data on component mount 
   useEffect(() => {
@@ -48,6 +70,52 @@ export default function BrieData(handlePageChange) {
     fetchData();
   }, []);
 
+
+
+
+  const changeLocation = (site) => {
+
+    const splitIndex = site.name.indexOf('-');
+    let siteName
+    if (splitIndex !== -1) {
+       siteName = splitIndex.slice(splitIndex + 1);
+      return siteName;
+    }
+
+  
+    
+
+console.log(splitIndex)
+
+   
+   
+    //  dispatch(updateLocation(data));
+    //  setSelectedLocation(data);
+ 
+    //  Cookies.set("locationName", data.name);
+    //  Cookies.set("locationPath", data.path);
+    //  Cookies.set("locationBoard", data.board);
+    //  Cookies.set("locationType", data.type);
+    //  Cookies.set("locationTimeInterval", data.timeInterval);
+    //  Cookies.set("locationGeocode", JSON.stringify(data.geocode));
+   
+    //  navigate("/");
+    //  setSearchTerm("")
+     
+     
+   };
+
+
+
+
+
+
+
+
+  const updatesite = () => {
+    handlePageChange()
+
+  }
   
   const refreshData = () => {
     setLoading(true);
@@ -173,6 +241,7 @@ export default function BrieData(handlePageChange) {
       ) : (
         <div className="container mx-auto px-4 py-8">
           <header className="mb-8">
+            <button onClick={()=>handlePageChange()}>back</button>
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 flex items-center">
@@ -396,7 +465,7 @@ export default function BrieData(handlePageChange) {
                       const { status, statusColor } = calculateSiteStatus(site);
                       
                       return (
-                        <tr key={site.siteId} className="hover:bg-gray-50">
+                        <tr key={site.siteId} className="hover:bg-gray-50" onClick={()=>changeLocation(site)}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="font-medium text-gray-900">{site.siteName}</div>
                           </td>

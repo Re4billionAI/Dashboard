@@ -9,7 +9,7 @@ import EnergyConsumption from './EnergyConsumptions';
 import Graph from './graphs';
 import ParameterRepresentation from './parameter';
 
-const Home = () => {
+const Home = ({ handlePageChange}) => {
   const device = useSelector((state) => state.location.device);
   const [activeTab, setActiveTab] = useState('Overview');
   const [loading, setLoading] = useState(true);
@@ -150,6 +150,7 @@ const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
   return (
     <div className="h flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
       <div>
+        <button onClick={()=>handlePageChange()}>back</button>
         {/* Tab Navigation */}
         <div className='flex justify-center'>
           <div className="inline-flex border items-center rounded-full bg-white justify-center border-gray-300">

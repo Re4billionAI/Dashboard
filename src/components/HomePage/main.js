@@ -14,7 +14,7 @@ const Main = () => {
 
   return (
     <>
-      {specificPage ? <Home /> : <BrieData handlePageChange={handlePageChange}/>}
+      {specificPage ? <Home  handlePageChange={handlePageChange} /> : <BrieData handlePageChange={handlePageChange}/>}
     </>
   );
 };
