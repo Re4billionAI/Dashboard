@@ -7,7 +7,7 @@ import { updateLocation } from '../Redux/CounterSlice'
 import { useDispatch, useSelector } from 'react-redux';
 
 // Define the initial data URL
-const DATA_URL = 'http://127.0.0.1:5001/rmstesting-d5aa6/us-central1/firebackend/admin/allSitesBriefData';
+const DATA_URL =`${process.env.REACT_APP_HOST}/admin/allSitesBriefData`;
 
 // Colors for the charts
 const COLORS = ['#34a853', '#1a73e8', '#fbbc05'];
@@ -74,35 +74,24 @@ const dispatch=useDispatch()
 
 
   const changeLocation = (site) => {
-
-    const splitIndex = site.name.indexOf('-');
-    let siteName
-    if (splitIndex !== -1) {
-       siteName = splitIndex.slice(splitIndex + 1);
-      return siteName;
-    }
-
-  
-    
-
-console.log(splitIndex)
+console.log(site)
+const data=additionalData.find((item) => item.name === site.siteName);
 
    
-   
-    //  dispatch(updateLocation(data));
-    //  setSelectedLocation(data);
+     dispatch(updateLocation(data));
+     setSelectedLocation(data);
  
-    //  Cookies.set("locationName", data.name);
-    //  Cookies.set("locationPath", data.path);
-    //  Cookies.set("locationBoard", data.board);
-    //  Cookies.set("locationType", data.type);
-    //  Cookies.set("locationTimeInterval", data.timeInterval);
-    //  Cookies.set("locationGeocode", JSON.stringify(data.geocode));
+     Cookies.set("locationName", data.name);
+     Cookies.set("locationPath", data.path);
+     Cookies.set("locationBoard", data.board);
+     Cookies.set("locationType", data.type);
+     Cookies.set("locationTimeInterval", data.timeInterval);
+     Cookies.set("locationGeocode", JSON.stringify(data.geocode));
    
-    //  navigate("/");
-    //  setSearchTerm("")
+     navigate("/");
+     setSearchTerm("")
      
-     
+     handlePageChange()
    };
 
 
@@ -112,10 +101,6 @@ console.log(splitIndex)
 
 
 
-  const updatesite = () => {
-    handlePageChange()
-
-  }
   
   const refreshData = () => {
     setLoading(true);
@@ -241,7 +226,7 @@ console.log(splitIndex)
       ) : (
         <div className="container mx-auto px-4 py-8">
           <header className="mb-8">
-            <button onClick={()=>handlePageChange()}>back</button>
+            
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 flex items-center">
