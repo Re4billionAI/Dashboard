@@ -22,7 +22,8 @@ const initialDevice = {
   path: getCookie('locationPath') || 'ftb001',
   board: getCookie('locationBoard') || 'ftb001',
   type: getCookie('locationType') || '24v',
-  geocode: parsedGeocode, timeInterval: getCookie('locationTimeInterval') || '1'
+  geocode: parsedGeocode, 
+  timeInterval: getCookie('locationTimeInterval') || '1'
 };
 
 // Additional locations data
@@ -83,7 +84,11 @@ const additionalData = [
 
 export const locationSlice = createSlice({
   name: 'location',
-  initialState: { device: initialDevice, locations: additionalData },
+  initialState: { 
+    device: initialDevice, 
+    locations: additionalData,
+    specificPage: "mainPage"  // Added page state
+  },
   reducers: {
     updateLocation: (state, action) => {
       state.device = action.payload;
@@ -93,11 +98,25 @@ export const locationSlice = createSlice({
     },
     setLocations: (state, action) => {
       state.locations = action.payload;
+    },
+    // Added page change reducer
+    toggleSpecificPage: (state, action) => {
+      
+      state.specificPage = action.payload;
+    },
+    setSpecificPage: (state, action) => {
+      state.specificPage = action.payload;
     }
   }
 });
 
 // Action creators
-export const { updateLocation, addLocation, setLocations } = locationSlice.actions;
+export const { 
+  updateLocation, 
+  addLocation, 
+  setLocations, 
+  toggleSpecificPage, 
+  setSpecificPage 
+} = locationSlice.actions;
 
 export default locationSlice.reducer;

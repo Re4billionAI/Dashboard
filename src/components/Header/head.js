@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Menu, Search, LogOut } from "lucide-react";
 import { useSelector, useDispatch } from 'react-redux'
 import { updateLocation } from "../Redux/CounterSlice"
-
+import { toggleSpecificPage, setSpecificPage } from "../Redux/CounterSlice"
 
 
 
@@ -19,7 +19,6 @@ const Head = ({ toggleSidebar }) => {
   const [query, setQuery] = useState("");
   const [filteredLocations, setFilteredLocations] = useState([]);
 
-  
 const locations = useSelector((state) => state.location.locations);
 
  
@@ -28,6 +27,19 @@ const locations = useSelector((state) => state.location.locations);
 
 
 const dispatch=useDispatch()
+
+
+
+    const specificPage = useSelector(state => state.location.specificPage);
+  
+  
+    const handlePageChange = () => {
+    
+      dispatch(toggleSpecificPage("specificPage"));
+      
+    
+    }
+
 
 const desktopSearchRef = useRef(null);
 const mobileSearchRef = useRef(null);
@@ -149,7 +161,7 @@ const mobileSearchRef = useRef(null);
       {filteredLocations.length > 0 && (
         <ul className="absolute   bg-white border rounded  shadow">
           {filteredLocations.map((location, index) => (
-            <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => changeLocation(location)}>
+            <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => {changeLocation(location); handlePageChange();}}>
               {location.name}
             </li>
           ))}

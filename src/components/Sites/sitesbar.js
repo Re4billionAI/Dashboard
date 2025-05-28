@@ -1,13 +1,32 @@
 import { useState } from "react";
 import { FiX, FiSearch } from "react-icons/fi";
 import { useSelector, useDispatch } from 'react-redux'
-import { updateLocation } from '../Redux/CounterSlice'
+import { updateLocation, toggleSpecificPage } from '../Redux/CounterSlice'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 
+
+
+
+
+
+
+
 export default function Sitesbar({ isOpen, toggleSidebar }) {
   // Additional data items
+  
+
+    const dispatch = useDispatch();
+    const specificPage = useSelector(state => state.location.specificPage);
+  
+  
+    const handlePageChange = () => {
+    
+      dispatch(toggleSpecificPage("specificPage"));
+      
+    
+    }
   
 
  const additionalData = useSelector((state) => state.location.locations);
@@ -25,7 +44,7 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
   const [selectedLocation, setSelectedLocation] = useState({name: getCookie("locationName"), path: getCookie("locationPath"), board: getCookie("locationBoard"), type: getCookie("locationType"), timeInterval:getCookie("locationTimeInterval") });
   const [searchTerm, setSearchTerm] = useState("");
 
-const dispatch=useDispatch()
+
 
  
 
@@ -36,6 +55,7 @@ const changeLocation = (data) => {
   dispatch(updateLocation(data));
   setSelectedLocation(data);
   toggleSidebar()
+  
   Cookies.set("locationName", data.name);
   Cookies.set("locationPath", data.path);
   Cookies.set("locationBoard", data.board);
@@ -92,7 +112,11 @@ const changeLocation = (data) => {
           {filteredData.map((data, index) => (
             <li
               key={index}
-              onClick={() => changeLocation(data)}
+              onClick={() => {
+                handlePageChange();
+                changeLocation(data);
+                
+              }}
               className={`px-4 py-2 mr-2 rounded-lg cursor-pointer transition-colors  text-sm ${
                 selectedLocation.name === data.name
                   ? "bg-white text-gray-700"

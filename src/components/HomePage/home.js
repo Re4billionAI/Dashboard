@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Spinner from "../Loader/loader"
-
+import { ArrowLeft } from 'lucide-react';
 import StatusCard from './statusCard';
 import EnergyConsumption from './EnergyConsumptions';
 import Graph from './graphs';
@@ -150,7 +150,8 @@ const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
   return (
     <div className="h flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
       <div>
-        <button onClick={()=>handlePageChange()}>back</button>
+        <button className="bg-blue-500 text-white rounded-full hover:bg-blue-600 py-1 px-3" onClick={()=>handlePageChange("mainPage")}>
+             <ArrowLeft size={24} color="white" /></button>
         {/* Tab Navigation */}
         <div className='flex justify-center'>
           <div className="inline-flex border items-center rounded-full bg-white justify-center border-gray-300">
