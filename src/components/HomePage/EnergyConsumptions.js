@@ -91,7 +91,7 @@ const EnergyConsumption = ({ generation }) => {
              
                 <div>
                   <h1 className="text-gray-600 text-sm md:text-xl">
-                    Load<br/>Consumptions
+                    Load<br/>Consumption
                   </h1>
                   <p className="text-xl md:text-xl font-bold flex flex-row   text-red-600 mt-1">
                   {loading ? (

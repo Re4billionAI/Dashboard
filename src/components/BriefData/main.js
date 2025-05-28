@@ -20,7 +20,7 @@ export default function BrieData({handlePageChange}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'siteName', direction: 'ascending' });
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', or 'inactive'
-  const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
+  const [viewMode, setViewMode] = useState('table'); // 'cards' or 'table'
 
   const additionalData = useSelector((state) => state.location.locations);
  
@@ -173,11 +173,7 @@ export default function BrieData({handlePageChange}) {
   };
 
   // Prepare data for the energy distribution pie chart
-  const energyDistribution = data ? [
-    { name: 'Solar Energy', value: parseFloat(data.aggregateSummary.totalSolarEnergy) },
-    { name: 'Grid Energy', value: parseFloat(data.aggregateSummary.totalGridEnergy) },
-    { name: 'Inverter Energy', value: parseFloat(data.aggregateSummary.totalInverterEnergy) }
-  ] : [];
+ 
 
   // Calculate total active and inactive sites
   const activeSitesCount = data?.sites?.filter(site => calculateSiteStatus(site).isActive)?.length || 0;

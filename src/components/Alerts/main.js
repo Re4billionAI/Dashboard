@@ -116,29 +116,16 @@ const Alerts = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 pb-10">
       {/* Header */}
-      <header className="bg-white shadow-md sticky top-0 z-10">
+      <header className="bg-white shadow-md sticky top-0 z-10 mb-5">
         <div className="max-w-7xl mx-auto py-4 px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <h1 className="text-2xl font-bold text-indigo-700">System Alerts Dashboard</h1>
             
             {/* Date Selector */}
             <div className="relative">
-              <button 
-                onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-                className="bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center gap-2 hover:bg-gray-50 transition-all shadow-sm"
-              >
-                <Calendar className="w-5 h-5 text-indigo-600" />
-                <span className="font-medium">{formatDateForDisplay(date)}</span>
-                {isDatePickerOpen ? (
-                  <ChevronUp className="w-4 h-4 text-gray-500" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
-                )}
-              </button>
+             
               
-              {isDatePickerOpen && (
-                <div className="absolute mt-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-20">
-                  <div className="mb-3">
+            <div className="mb-3">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
                     <input
                       type="date"
@@ -147,70 +134,16 @@ const Alerts = () => {
                       className="border p-2 rounded-lg w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => {
-                        fetchData();
-                        setIsDatePickerOpen(false);
-                      }}
-                      className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all text-sm"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
       </header>
 
       {/* Controls Bar */}
-      <div className="bg-white shadow-sm mb-8 py-3">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                  placeholder="Filter by site name..."
-                  className="pl-10 p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 w-64 transition-all"
-                />
-              </div>
-              <button
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-all flex items-center gap-1"
-              >
-                <Filter className="w-4 h-4" />
-                Sort {sortOrder === 'asc' ? (
-                  <ChevronUp className="w-4 h-4" />
-                ) : (
-                  <ChevronDown className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-            
-            <div className="flex items-center">
-              <span className="text-sm text-gray-500 mr-3">
-                {filteredData.length} {filteredData.length === 1 ? 'alert' : 'alerts'} found
-              </span>
-              <button
-                onClick={fetchData}
-                className="flex items-center gap-2 bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 transition-all shadow-sm"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Refresh
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+     
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-8xl mx-auto px-6">
         {/* Alerts Grid */}
         {paginatedData.length === 0 ? (
           <div className="bg-white rounded-xl shadow-lg p-12 text-center">
