@@ -73,8 +73,7 @@ const additionalData = [
   { name: "Tarsadi-GJ", path: "Tarsadi-GJ", board: "rmsv36_023",type:"24v", geocode: [21.061978, 73.132792],timeInterval:5 },
 
   
-  { name: "Gothada-GJ", path: "Gothada-GJ", board: "rmsv36_016",type:"24v", geocode: [21.107653, 73.067836],timeInterval:5 },
-  { name: "Tundav-GJ", path: "Tundav-GJ", board: "rmsv36_023",type:"24v", geocode: [21.264865, 73.096398],timeInterval:5 },
+  { name: "Gothada-GJ", path: "Gothada-GJ", board: "rmsv36_024",type:"24v", geocode: [21.107653, 73.067836],timeInterval:5 },
   { name: "Dhantej-GJ", path: "Dhantej-GJ", board: "rmsv36_018",type:"24v", geocode: [21.264865, 73.096398],timeInterval:5 },
 
   { name: "Testing-01", path: "rmsv36_012", board: "rmsv36_012",type:"testing 1", geocode: [12.96227, 80.257758],timeInterval:1 },
