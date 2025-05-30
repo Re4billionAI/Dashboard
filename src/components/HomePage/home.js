@@ -65,20 +65,28 @@ const Home = ({ handlePageChange}) => {
             const check = data.dataCharts[data.dataCharts.length - 1].ccAxisXValue;
             console.log("Last recorded time:", check);
           
-            // Convert HH:mm format to Date object (Asia/Kolkata timezone)
+            // Parse currTime and check (both in "HH:mm" format)
             const [currHours, currMinutes] = currTime.split(":").map(Number);
-            const currentDateTime = new Date();
-            currentDateTime.setHours(currHours, currMinutes, 0, 0); // Set time
-          
             const [checkHours, checkMinutes] = check.split(":").map(Number);
-            const checkDateTime = new Date();
-            checkDateTime.setHours(checkHours, checkMinutes, 0, 0); // Set time
+          
+            // Create Date objects for both times
+            const now = new Date();
+            const currentDateTime = new Date(now);
+            currentDateTime.setHours(currHours, currMinutes, 0, 0);
+          
+            const checkDateTime = new Date(now);
+            checkDateTime.setHours(checkHours, checkMinutes, 0, 0);
+          
+            // If check time is ahead of current time, assume it's from the previous day
+            if (checkDateTime > currentDateTime) {
+              checkDateTime.setDate(checkDateTime.getDate() - 1);
+            }
           
             // Calculate the absolute difference in minutes
             const diffInMinutes = Math.abs((currentDateTime - checkDateTime) / (1000 * 60));
-          
             console.log("Time Difference (minutes):", diffInMinutes);
           
+            // Compare and trigger alert
             if (diffInMinutes <= 30) {
               console.log("✅ Success:", diffInMinutes);
               showAlert("success");
@@ -87,6 +95,7 @@ const Home = ({ handlePageChange}) => {
               showAlert("danger");
             }
           }
+          
         } else {
           showAlert("danger");
         }
