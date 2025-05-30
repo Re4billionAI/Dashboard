@@ -9,7 +9,7 @@ import ProtectedRoute from "../src/components/ProtectedApp/protectedApp"
 import Dashboard from "./components/Dashboard/main"
 import Alerts from "./components/Alerts/main"
 import Location from "./components/location/main"
-import BrieData from "./components/BriefData/main"
+
 
 function App() {
   return (

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Activity, Grid, Sun, Power, Search, Zap, LayoutGrid,Clock, List, Globe } from 'lucide-react';
+import { Activity, Grid, Sun, Power, Search, Zap } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-
 import { updateLocation } from '../Redux/CounterSlice'
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -20,10 +19,11 @@ export default function BrieData({handlePageChange}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'siteName', direction: 'ascending' });
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', or 'inactive'
-  const [viewMode, setViewMode] = useState('table'); // 'cards' or 'table'
+
 
   const additionalData = useSelector((state) => state.location.locations);
  
+
   const getCookie = (name) => {
     const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
     return matches ? decodeURIComponent(matches[1]) : null;
@@ -32,7 +32,11 @@ export default function BrieData({handlePageChange}) {
   const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState({name: getCookie("locationName"), path: getCookie("locationPath"), board: getCookie("locationBoard"), type: getCookie("locationType"), timeInterval:getCookie("locationTimeInterval") });
  
-  const dispatch=useDispatch()
+
+const dispatch=useDispatch()
+
+
+
 
   // Fetch data on component mount 
   useEffect(() => {
@@ -66,25 +70,37 @@ export default function BrieData({handlePageChange}) {
     fetchData();
   }, []);
 
-  const changeLocation = (site) => {
-    console.log(site)
-    const data=additionalData.find((item) => item.name === site.siteName);
 
-    dispatch(updateLocation(data));
-    setSelectedLocation(data);
- 
-    Cookies.set("locationName", data.name);
-    Cookies.set("locationPath", data.path);
-    Cookies.set("locationBoard", data.board);
-    Cookies.set("locationType", data.type);
-    Cookies.set("locationTimeInterval", data.timeInterval);
-    Cookies.set("locationGeocode", JSON.stringify(data.geocode));
+
+
+  const changeLocation = (site) => {
+console.log(site)
+const data=additionalData.find((item) => item.name === site.siteName);
+
    
-    navigate("/");
-    setSearchTerm("")
+     dispatch(updateLocation(data));
+     setSelectedLocation(data);
+ 
+     Cookies.set("locationName", data.name);
+     Cookies.set("locationPath", data.path);
+     Cookies.set("locationBoard", data.board);
+     Cookies.set("locationType", data.type);
+     Cookies.set("locationTimeInterval", data.timeInterval);
+     Cookies.set("locationGeocode", JSON.stringify(data.geocode));
+   
+     navigate("/");
+     setSearchTerm("")
      
-    handlePageChange("specificPage")
-  };
+     handlePageChange("specificPage")
+   };
+
+
+
+
+
+
+
+
   
   const refreshData = () => {
     setLoading(true);
@@ -101,30 +117,31 @@ export default function BrieData({handlePageChange}) {
   };
 
   // Calculate site status based on new logic
-  const calculateSiteStatus = (site) => {
-    const currentTime = Date.now(); // Current time in milliseconds
-    const lastUpdateTime = site.latestValues?.tValue || 0; // Last update time in seconds
-    const lastUpdateInMs = lastUpdateTime * 1000; // Convert to milliseconds
-    
-    // Calculate time difference in minutes
-    const timeDifferenceMinutes = (currentTime - lastUpdateInMs) / (1000 * 60);
-    
-    const batteryVoltage = site.latestValues?.batteryVoltage || 0;
-    
-    let status, statusColor;
-    
-    // Site is inactive if more than 30 minutes have passed OR battery is critically low
-    if (timeDifferenceMinutes > 30 || batteryVoltage <= 0.1) {
-      status = "Inactive";
-      statusColor = "bg-red-100 text-red-800";
-    } else {
-      status = "Active";
-      statusColor = "bg-green-100 text-green-800";
-    }
-    
-    return { status, statusColor, isActive: status === "Active" };
-  };
+ const calculateSiteStatus = (site) => {
+  const currentTime = Date.now(); // Current time in milliseconds
+  const lastUpdateTime = site.latestValues?.tValue || 0; // Last update time in seconds
+  const lastUpdateInMs = lastUpdateTime * 1000; // Convert to milliseconds
   
+  // Calculate time difference in minutes
+  const timeDifferenceMinutes = (currentTime - lastUpdateInMs) / (1000 * 60);
+  
+  const batteryVoltage = site.latestValues?.batteryVoltage || 0;
+  
+  let status, statusColor;
+  
+  // Site is inactive if more than 30 minutes have passed OR battery is critically low
+  if (timeDifferenceMinutes > 30 || batteryVoltage <= 0.1) {
+    status = "Inactive";
+    statusColor = "bg-red-100 text-red-800";
+  } else {
+    status = "Active";
+    statusColor = "bg-green-100 text-green-800";
+  }
+  
+  return { status, statusColor, isActive: status === "Active" };
+};
+  
+
   // Filter sites based on search term and active tab
   const filteredSites = data?.sites?.filter(site => {
     const matchesSearch = site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -173,98 +190,15 @@ export default function BrieData({handlePageChange}) {
   };
 
   // Prepare data for the energy distribution pie chart
- 
+  const energyDistribution = data ? [
+    { name: 'Solar Energy', value: parseFloat(data.aggregateSummary.totalSolarEnergy) },
+    { name: 'Grid Energy', value: parseFloat(data.aggregateSummary.totalGridEnergy) },
+    { name: 'Inverter Energy', value: parseFloat(data.aggregateSummary.totalInverterEnergy) }
+  ] : [];
 
   // Calculate total active and inactive sites
   const activeSitesCount = data?.sites?.filter(site => calculateSiteStatus(site).isActive)?.length || 0;
   const inactiveSitesCount = (data?.totalSites || 0) - activeSitesCount;
-
-  // Card Component for individual site
-
-
-
-  const SiteCard = ({ site }) => {
-    console.log(site)
-    const { status, statusColor } = calculateSiteStatus(site);
-  
-    return (
-      <div 
-        className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-6 border border-zinc-200 cursor-pointer group"
-        onClick={() => changeLocation(site)}
-      >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
-            <div className="bg-zinc-100 group-hover:bg-blue-100 transition-colors w-10 h-10 rounded-lg flex items-center justify-center">
-              <Globe className="text-zinc-600 w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-800">{site.siteName}</h3>
-          </div>
-          <span className={`px-3 py-0.5 text-xs font-medium rounded-full ${statusColor} shadow-sm`}>
-            {status}
-          </span>
-        </div>
-  
-        {/* Info Cards */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <InfoCard 
-            Icon={Sun}
-            label="Solar"
-            value={`${site.dailySummary.solarEnergy} kWh`}
-            color="text-green-600"
-            bg="bg-green-50"
-            border="border border-green-100"
-          />
-          <InfoCard 
-            Icon={Power}
-            label="Grid"
-            value={`${site.dailySummary.gridEnergy} kWh`}
-            color="text-amber-600"
-            bg="bg-amber-50"
-            border="border border-amber-100"
-          />
-          <InfoCard 
-            Icon={Zap}
-            label="Inverter"
-            value={`${site.dailySummary.inverterEnergy} kWh`}
-            color="text-purple-600"
-            bg="bg-purple-50"
-            border="border border-purple-100"
-          />
-          <InfoCard 
-            Icon={Activity}
-            label="Battery"
-            value={`${site.latestValues.batteryVoltage.toFixed(2)} V`}
-            color="text-blue-600"
-            bg="bg-blue-50"
-            border="border border-blue-100"
-          />
-        </div>
-  
-        {/* Footer */}
-        <div className="flex items-center justify-between text-xs text-zinc-500 pt-4 border-t border-zinc-200">
-          <div className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4" />
-            <span className="font-medium">Last update:</span>
-          </div>
-          <span className="font-medium">{site.latestValues.tValue ? formatDate(site.latestValues.tValue * 1000) : 'N/A'}</span>
-        </div>
-      </div>
-    );
-  };
-  
-  // Reusable InfoCard component
-  const InfoCard = ({ Icon, label, value, color, bg, border }) => (
-    <div className={`rounded-xl ${bg} ${border} p-4`}>
-      <div className="flex items-center mb-1.5">
-        <Icon className={`${color} w-4 h-4 mr-2`} />
-        <span className="text-sm font-medium text-slate-700">{label}</span>
-      </div>
-      <p className={`text-base font-semibold ${color}`}>{value}</p>
-    </div>
-  );
-  
-
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -292,12 +226,14 @@ export default function BrieData({handlePageChange}) {
       ) : (
         <div className="container mx-auto px-4 py-8">
           <header className="mb-8">
+            
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                   <Sun className="mr-2 text-yellow-500" size={32} />
                   Solar Sites Monitoring Dashboard
                 </h1>
+               
               </div>
               <button 
                 onClick={refreshData} 
@@ -332,7 +268,8 @@ export default function BrieData({handlePageChange}) {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 uppercase">Solar Energy</p>
-                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalSolarEnergy || 0}kWh</p>
+                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalSolarEnergy
+ || 0}kWh</p>
                 </div>
               </div>
             </div>
@@ -344,7 +281,8 @@ export default function BrieData({handlePageChange}) {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 uppercase">Grid Energy</p>
-                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalGridEnergy || 0}kWh</p>
+                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalGridEnergy
+ || 0}kWh</p>
                 </div>
               </div>
             </div>
@@ -362,50 +300,23 @@ export default function BrieData({handlePageChange}) {
             </div>
           </div>
 
-          {/* Site Data Section */}
+          {/* Charts - Now with just the Energy Distribution chart */}
+          
+
+          {/* Site Data Table */}
           <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
             <div className="p-6 border-b">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <h2 className="text-xl font-bold">Site Data</h2>
-                
-                <div className="flex items-center gap-4">
-                  {/* Search Input */}
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search sites..."
-                      className="pl-10 pr-4 py-2 border rounded-lg"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
-                  </div>
-                  
-                  {/* View Mode Toggle */}
-                  <div className="flex bg-gray-100 rounded-lg p-1">
-                    <button
-                      className={`px-3 py-2 rounded-md flex items-center gap-2 transition-colors ${
-                        viewMode === 'cards' 
-                          ? 'bg-white text-blue-600 shadow-sm' 
-                          : 'text-gray-600 hover:text-blue-600'
-                      }`}
-                      onClick={() => setViewMode('cards')}
-                    >
-                      <LayoutGrid size={16} />
-                      Cards
-                    </button>
-                    <button
-                      className={`px-3 py-2 rounded-md flex items-center gap-2 transition-colors ${
-                        viewMode === 'table' 
-                          ? 'bg-white text-blue-600 shadow-sm' 
-                          : 'text-gray-600 hover:text-blue-600'
-                      }`}
-                      onClick={() => setViewMode('table')}
-                    >
-                      <List size={16} />
-                      Table
-                    </button>
-                  </div>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <h2 className="text-xl font-bold mb-4 md:mb-0">Site Data</h2>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search sites..."
+                    className="pl-10 pr-4 py-2 border rounded-lg"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
                 </div>
               </div>
             </div>
@@ -444,130 +355,113 @@ export default function BrieData({handlePageChange}) {
               </button>
             </div>
             
-            {/* Content based on view mode */}
-            {viewMode === 'cards' ? (
-              // Cards View
-              <div className="p-6">
-                {sortedSites.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {sortedSites.map((site) => (
-                      <SiteCard key={site.siteId} site={site} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500">No sites found matching your search criteria.</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              // Table View
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                        onClick={() => requestSort('siteName')}
-                      >
-                        Site Name
-                        {sortConfig.key === 'siteName' && (
-                          <span className="ml-2">
-                            {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                          </span>
-                        )}
-                      </th>
-                     
-                      <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100"
-                        onClick={() => requestSort('dailySummary.solarEnergy')}
-                      >
-                        Solar Energy (kWh)
-                        {sortConfig.key === 'dailySummary.solarEnergy' && (
-                          <span className="ml-2">
-                            {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                          </span>
-                        )}
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100"
-                        onClick={() => requestSort('dailySummary.gridEnergy')}
-                      >
-                        Grid Energy (kWh)
-                        {sortConfig.key === 'dailySummary.gridEnergy' && (
-                          <span className="ml-2">
-                            {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                          </span>
-                        )}
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100"
-                        onClick={() => requestSort('dailySummary.inverterEnergy')}
-                      >
-                        Inverter Energy (kWh)
-                        {sortConfig.key === 'dailySummary.inverterEnergy' && (
-                          <span className="ml-2">
-                            {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                          </span>
-                        )}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                        Battery Voltage
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                        Last Update
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {sortedSites.length > 0 ? (
-                      sortedSites.map((site) => {
-                        // Get status using the new logic
-                        const { status, statusColor } = calculateSiteStatus(site);
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                      onClick={() => requestSort('siteName')}
+                    >
+                      Site Name
+                      {sortConfig.key === 'siteName' && (
+                        <span className="ml-2">
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                        </span>
+                      )}
+                    </th>
+                   
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                      onClick={() => requestSort('dailySummary.solarEnergy')}
+                    >
+                      Solar Energy (kWh)
+                      {sortConfig.key === 'dailySummary.solarEnergy' && (
+                        <span className="ml-2">
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                        </span>
+                      )}
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                      onClick={() => requestSort('dailySummary.gridEnergy')}
+                    >
+                      Grid Energy (kWh)
+                      {sortConfig.key === 'dailySummary.gridEnergy' && (
+                        <span className="ml-2">
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                        </span>
+                      )}
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                      onClick={() => requestSort('dailySummary.inverterEnergy')}
+                    >
+                      Inverter Energy (kWh)
+                      {sortConfig.key === 'dailySummary.inverterEnergy' && (
+                        <span className="ml-2">
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                        </span>
+                      )}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Battery Voltage
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Last Update
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {sortedSites.length > 0 ? (
+                    sortedSites.map((site) => {
+                      // Get status using the new logic
+                      const { status, statusColor } = calculateSiteStatus(site);
+                      
+                      return (
+                        <tr key={site.siteId} className="hover:bg-gray-50" onClick={()=>changeLocation(site)}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="font-medium text-gray-900">{site.siteName}</div>
+                          </td>
                         
-                        return (
-                          <tr key={site.siteId} className="hover:bg-gray-50 cursor-pointer" onClick={()=>changeLocation(site)}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium text-gray-900">{site.siteName}</div>
-                            </td>
-                          
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {site.dailySummary.solarEnergy}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {site.dailySummary.gridEnergy}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {site.dailySummary.inverterEnergy}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {site.latestValues.batteryVoltage.toFixed(2)} V
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {site.latestValues.tValue*1000 ? formatDate(site.latestValues.tValue*1000) : 'N/A'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}`}>
-                                {status}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
-                          No sites found matching your search criteria.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {site.dailySummary.solarEnergy}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {site.dailySummary.gridEnergy}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {site.dailySummary.inverterEnergy}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {site.latestValues.batteryVoltage.toFixed(2)} V
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {site.latestValues.tValue*1000 ? formatDate(site.latestValues.tValue*1000) : 'N/A'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}`}>
+                              {status}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="8" className="px-6 py-4 text-center text-sm text-gray-500">
+                        No sites found matching your search criteria.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            
           </div>  
         </div>
       )}

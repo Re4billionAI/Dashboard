@@ -99,6 +99,7 @@ console.log({graphValues2:graphValues})
         { label: "Voltage2", key: "showVoltage2", dataKey: "BatteryVoltage2" },
         { label: "Voltage3", key: "showVoltage3", dataKey: "BatteryVoltage3" },
         { label: "Voltage4", key: "showVoltage4", dataKey: "BatteryVoltage4" },
+        { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
       ];
     } else if (siteType === "24v") {
       return [
@@ -352,6 +353,7 @@ console.log({graphValues2:graphValues})
                         />
                       )
                     ))}
+                    
                     
                     <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
                   </LineChart>
