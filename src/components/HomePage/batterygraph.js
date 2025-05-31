@@ -10,7 +10,6 @@ import {
   Tooltip,
   Brush,
   ResponsiveContainer,
-  Area,
 } from "recharts";
 import { Maximize2, ChevronDown } from 'lucide-react';
 
@@ -254,7 +253,6 @@ console.log({graphValues2:graphValues})
                   new Intl.NumberFormat().format(Math.round(value))
                 }
               />
-              
               <Tooltip content={<CustomTooltip />} />
               
               {/* Render lines based only on allowed parameters for this site */}
