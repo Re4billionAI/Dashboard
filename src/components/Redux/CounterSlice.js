@@ -74,9 +74,9 @@ const additionalData = [
 
   
   { name: "Gothada-GJ", path: "Gothada-GJ", board: "rmsv36_024",type:"24v", geocode: [21.107653, 73.067836],timeInterval:5 },
-  { name: "Dhantej-GJ", path: "Dhantej-GJ", board: "rmsv36_018",type:"24v", geocode: [21.264865, 73.096398],timeInterval:5 },
-  { name: "KarelaPada-MH", path: "KarelaMH", board: "rmsv31_01",type:"48v", geocode: [21.264865, 73.096398],timeInterval:5 },
-  { name: "GhayGotha-MH", path: "GhayGotha-MH", board: "rmsv31_02",type:"48v", geocode: [21.264865, 73.096398],timeInterval:5 },
+  { name: "Dhantej-GJ", path: "Dhantej-GJ", board: "rmsv36_018",type:"24v", geocode: [22.596109, 73.360173],timeInterval:5 },
+  { name: "KarelaPada-MH", path: "KarelaMH", board: "rmsv31_01",type:"48v", geocode: [19.517194, 73.022524],timeInterval:5 },
+  { name: "GhayGotha-MH", path: "GhayGotha-MH", board: "rmsv31_02",type:"48v", geocode: [19.523652, 73.012513],timeInterval:5 },
 
   { name: "Testing-01", path: "rmsv36_012", board: "rmsv36_012",type:"testing 1", geocode: [12.96227, 80.257758],timeInterval:1 },
   { name: "Testing-02", path: "rmsv36_020", board: "rmsv36_020",type:"testing 2",geocode: [12.96227, 80.257758], timeInterval:1 },
