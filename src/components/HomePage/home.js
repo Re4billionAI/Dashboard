@@ -193,13 +193,15 @@ const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
               <div>
                 <StatusCard 
                   device={device?.name || 'kollar'} 
+                  type={device?.type || 'unknown'}
                   alert={alert} 
                   lastupdate={liveData.data.snapshot.tValue}
                   updatedEngergies={updatedEngergies}
                  
                 />
                 <EnergyConsumption generation={energies}  />
-                <ParameterRepresentation parameters={liveData.data.snapshot} />
+                <ParameterRepresentation parameters={liveData.data.snapshot}  device={device?.name || 'kollar'} 
+                  type={device?.type || 'unknown'} />
               </div>
             )}
             {activeTab === 'Analytics' && (

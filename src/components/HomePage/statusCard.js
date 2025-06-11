@@ -8,7 +8,7 @@ import { Calendar, Download, CircleAlert,  MapPin, CheckCircle } from "lucide-re
 import axios from "axios"
 import { useSelector } from 'react-redux';
 
-export default function StatusCard({device, alert,  lastupdate, updatedEngergies}) {
+export default function StatusCard({device, alert,type,  lastupdate, updatedEngergies}) {
  
   const devicelocation = useSelector((state) => state.location.device);
   

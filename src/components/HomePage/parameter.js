@@ -1,112 +1,161 @@
-import React from "react";
+
 import { Sun, Zap, Battery, PlugZap } from "lucide-react";
 
-const data = [
-  { name: "Solar Voltage", icon: <Sun />,  value:"solarVoltage", measure:"V" },
-  { name: "Solar Current", icon: <Sun />,   value:"solarCurrent",  measure:"A" },
-  { name: "Inverter Voltage", icon: <Zap />,   value:"inverterVoltage",  measure:"V" },
-  { name: "Inverter Current", icon: <Zap />,   value:"inverterCurrent",  measure:"A" },
-  { name: "Grid Voltage", icon: <PlugZap />,   value:"gridVoltage",  measure:"V" },
-  { name: "Grid Current", icon: <PlugZap />,   value:"gridCurrent",  measure:"A" },
-  { name: "Battery", icon: <Battery />,   value:"batteryVoltage",  measure:"V" },
-];
+const getColorAndWidth = (name, type, value) => {
+  console.log(name, type, value)
+  let color = "bg-gray-500";
+  let widthPercentage = "0%";
 
-const Card = ({ icon, name, value, measure }) => {
-  let widthPercentage 
-let color
-
-if (name==="Solar Voltage"){
-  if (value < 30) {
-    color = "bg-red-500"; // Low value
-    widthPercentage = "25%";
-  } else if (value > 90) {
-    color = "bg-yellow-500"; // High value
-    widthPercentage = "100%";
-  }else{
-    color = "bg-green-500"; // High value
-    widthPercentage = "50%"
+  if (["Battery 1 Voltage", "Battery 2 Voltage", "Battery 3 Voltage", "Battery 4 Voltage"].includes(name)) {
+    if (type === "48v") {
+      if (value < 11) {
+        color = "bg-red-500";
+        widthPercentage = "25%";
+      } else if (value >= 15) {
+        color = "bg-yellow-500";
+        widthPercentage = "100%";
+      } else {
+        color = "bg-green-500";
+        widthPercentage = "50%";
+      }
+    } else if (type === "24v") {
+      if (value < 21) {
+        color = "bg-red-500";
+        widthPercentage = "25%";
+      } else if (value >= 30) {
+        color = "bg-yellow-500";
+        widthPercentage = "100%";
+      } else {
+        color = "bg-green-500";
+        widthPercentage = "50%";
+      }
+    } 
   }
-} // Default width
 
+  if (name === "Solar Voltage") {
+    if (type === "48v") {
+      if (value < 90) {
+        color = "bg-red-500";
+        widthPercentage = "25%";
+      } else if (value > 150) {
+        color = "bg-yellow-500";
+        widthPercentage = "100%";
+      } else {
+        color = "bg-green-500";
+        widthPercentage = "50%";
+      }
+    } else if (type === "24v") {
+      if (value < 40) {
+        color = "bg-red-500";
+        widthPercentage = "25%";
+      } else if (value > 70) {
+        color = "bg-yellow-500";
+        widthPercentage = "100%";
+      } else {
+        color = "bg-green-500";
+        widthPercentage = "50%";
+      }
+    } 
+  }
 
-if (name==="Solar Current"){
-  if (value < 2) {
-    color = "bg-red-500"; // Low value
-    widthPercentage = "25%";
-  } else if (value > 10) {
-    color = "bg-yellow-500"; // High value
-    widthPercentage = "100%";
-  }else{
-    color = "bg-green-500"; // High value
-    widthPercentage = "50%"
+  if (name === "Solar Current") {
+    if (type === "48v") {
+      if (value < 5) {
+        color = "bg-red-500";
+        widthPercentage = "25%";
+      } else if (value > 20) {
+        color = "bg-yellow-500";
+        widthPercentage = "100%";
+      } else {
+        color = "bg-green-500";
+        widthPercentage = "50%";
+      }
+    } else if (type === "24v") {
+      if (value < 3) {
+        color = "bg-red-500";
+        widthPercentage = "25%";
+      } else if (value > 15) {
+        color = "bg-yellow-500";
+        widthPercentage = "100%";
+      } else {
+        color = "bg-green-500";
+        widthPercentage = "50%";
+      }
+    } 
   }
-} // Default width
 
-if (name==="Inverter Voltage"){
-  if (value < 150) {
-    color = "bg-red-500"; // Low value
-    widthPercentage = "25%";
-  } else if (value > 200) {
-    color = "bg-yellow-500"; // High value
-    widthPercentage = "100%";
-  }else{
-    color = "bg-green-500"; // High value
-    widthPercentage = "50%"
+  if (name === "Inverter Voltage") {
+    if (value < 150) {
+      color = "bg-red-500";
+      widthPercentage = "25%";
+    } else if (value > 200) {
+      color = "bg-yellow-500";
+      widthPercentage = "100%";
+    } else {
+      color = "bg-green-500";
+      widthPercentage = "50%";
+    }
   }
-} // Default width
 
-if (name==="Inverter Current"){
-  if (value < 2) {
-    color = "bg-red-500"; // Low value
-    widthPercentage = "25%";
-  } else if (value > 4) {
-    color = "bg-yellow-500"; // High value
-    widthPercentage = "100%";
-  }else{
-    color = "bg-green-500"; // High value
-    widthPercentage = "50%"
+  if (name === "Inverter Current") {
+    if (value < 2) {
+      color = "bg-red-500";
+      widthPercentage = "25%";
+    } else if (value > 4) {
+      color = "bg-yellow-500";
+      widthPercentage = "100%";
+    } else {
+      color = "bg-green-500";
+      widthPercentage = "50%";
+    }
   }
-}
 
+  if (name === "Grid Voltage") {
+    if (value < 150) {
+      color = "bg-red-500";
+      widthPercentage = "25%";
+    } else if (value > 240) {
+      color = "bg-yellow-500";
+      widthPercentage = "100%";
+    } else {
+      color = "bg-green-500";
+      widthPercentage = "50%";
+    }
+  }
 
-if (name==="Grid Voltage"){
-  if (value < 150) {
-    color = "bg-red-500"; // Low value
-    widthPercentage = "25%";
-  } else if (value > 240) {
-    color = "bg-yellow-500"; // High value
-    widthPercentage = "100%";
-  }else{
-    color = "bg-green-500"; // High value
-    widthPercentage = "50%"
+  if (name === "Grid Current") {
+    if (value < 2) {
+      color = "bg-red-500";
+      widthPercentage = "25%";
+    } else if (value > 6) {
+      color = "bg-yellow-500";
+      widthPercentage = "100%";
+    } else {
+      color = "bg-green-500";
+      widthPercentage = "50%";
+    }
   }
-}
-  
-if (name==="Grid Current"){
-  if (value < 2) {
-    color = "bg-red-500"; // Low value
-    widthPercentage = "25%";
-  } else if (value > 6) {
-    color = "bg-yellow-500"; // High value
-    widthPercentage = "100%";
-  }else{
-    color = "bg-green-500"; // High value
-    widthPercentage = "50%"
+
+  if (["Battery 1 Current"].includes(name)) {
+    if (value < 2) {
+      color = "bg-red-500";
+      widthPercentage = "25%";
+    } else if (value > 4) {
+      color = "bg-yellow-500";
+      widthPercentage = "100%";
+    } else {
+      color = "bg-green-500";
+      widthPercentage = "50%";
+    }
   }
-}
-if (name==="Battery"){
-  if (value < 20) {
-    color = "bg-red-500"; // Low value
-    widthPercentage = "25%";
-  } else if (value > 25) {
-    color = "bg-yellow-500"; // High value
-    widthPercentage = "100%";
-  }else{
-    color = "bg-green-500"; // High value
-    widthPercentage = "50%"
-  }
-}
-  
+
+  return { color, widthPercentage };
+};
+
+const Card = ({ icon, name, value, measure, type }) => {
+  if (value === "N/A") return null;
+
+  const { color, widthPercentage } = getColorAndWidth(name, type, value);
 
   return (
     <div className="bg-white w-full border border-gray-300 rounded-xl p-3 flex flex-col min-w-0">
@@ -125,11 +174,26 @@ if (name==="Battery"){
   );
 };
 
+const ParameterRepresentation = ({ parameters, device, type }) => {
+  const baseData = [
+    { name: "Solar Voltage", icon: <Sun />, value: "solarVoltage", measure: "V" },
+    { name: "Solar Current", icon: <Sun />, value: "solarCurrent", measure: "A" },
+    { name: "Inverter Voltage", icon: <Zap />, value: "inverterVoltage", measure: "V" },
+    { name: "Inverter Current", icon: <Zap />, value: "inverterCurrent", measure: "A" },
+    { name: "Grid Voltage", icon: <PlugZap />, value: "gridVoltage", measure: "V" },
+    { name: "Grid Current", icon: <PlugZap />, value: "gridCurrent", measure: "A" },
+    { name: "Battery 1 Voltage", icon: <Battery />, value: "batteryVoltage", measure: "V" },
+    { name: "Battery 2 Voltage", icon: <Battery />, value: "batteryVoltage2", measure: "V" },
+    { name: "Battery 3 Voltage", icon: <Battery />, value: "batteryVoltage3", measure: "V" },
+    { name: "Battery 4 Voltage", icon: <Battery />, value: "batteryVoltage4", measure: "V" },
+  ];
 
+  const batteryCurrents = [
+    { name: "Battery 1 Current", icon: <Battery />, value: "batteryCurrent", measure: "A" },
+  ].filter(item => parameters[item.value] !== undefined && parameters[item.value] !== null);
 
+  const data = [...baseData, ...batteryCurrents];
 
-const ParameterRepresentation = ({ parameters }) => {
-  console.log(parameters)
   return (
     <div className="p-4 md:p-6 lg:p-8 rounded-xl bg-white mx-4 md:mx-0">
       <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">
@@ -137,15 +201,15 @@ const ParameterRepresentation = ({ parameters }) => {
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {data.map((item, index) => {
-           const parameterValue = parameters[item.value] ?? "N/A"; // Fetch value dynamically, default to "N/A"
+          const parameterValue = parameters[item.value];
           return (
             <Card
               key={index}
               icon={item.icon}
               name={item.name}
-              color={item.color}
-              value={parameterValue} 
-              measure={item.measure}// Default to "N/A" if no data
+              value={parameterValue ?? "N/A"}
+              measure={item.measure}
+              type={type}
             />
           );
         })}
