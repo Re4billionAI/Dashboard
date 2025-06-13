@@ -1,42 +1,44 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Activity, Grid, Sun, Power, Search, Zap } from 'lucide-react';
+import { Activity, Grid, Sun, Power, Search, Zap, Battery } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { BsBatteryCharging } from "react-icons/bs";
 import Cookies from 'js-cookie';
-import { updateLocation } from '../Redux/CounterSlice'
+import { updateLocation } from '../Redux/CounterSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Define the initial data URL
-const DATA_URL =`${process.env.REACT_APP_HOST}/admin/allSitesBriefData`;
+const DATA_URL = `${process.env.REACT_APP_HOST}/admin/allSitesBriefData`;
 
 // Colors for the charts
 const COLORS = ['#34a853', '#1a73e8', '#fbbc05'];
 
-export default function BrieData({handlePageChange}) {
+export default function BrieData({ handlePageChange }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'siteName', direction: 'ascending' });
-  const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', or 'inactive'
-
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', 'inactive'
+  const [voltageFilter, setVoltageFilter] = useState('all'); // 'all', '24v', '48v'
 
   const additionalData = useSelector((state) => state.location.locations);
  
-
   const getCookie = (name) => {
     const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
     return matches ? decodeURIComponent(matches[1]) : null;
   };
   const location = useLocation();
   const navigate = useNavigate();
-  const [selectedLocation, setSelectedLocation] = useState({name: getCookie("locationName"), path: getCookie("locationPath"), board: getCookie("locationBoard"), type: getCookie("locationType"), timeInterval:getCookie("locationTimeInterval") });
+  const [selectedLocation, setSelectedLocation] = useState({
+    name: getCookie("locationName"),
+    path: getCookie("locationPath"),
+    board: getCookie("locationBoard"),
+    type: getCookie("locationType"),
+    timeInterval: getCookie("locationTimeInterval")
+  });
  
-
-const dispatch=useDispatch()
-
-
-
+  const dispatch = useDispatch();
 
   // Fetch data on component mount 
   useEffect(() => {
@@ -50,8 +52,6 @@ const dispatch=useDispatch()
             // For demo purposes - in production this would be:
             const response = await fetch(DATA_URL);
             const jsonData = await response.json();
-            
-            // Using the sample data from the paste.txt file  
             
             // Add a simulated delay for loading
             setData(jsonData);
@@ -70,38 +70,26 @@ const dispatch=useDispatch()
     fetchData();
   }, []);
 
-
-
-
   const changeLocation = (site) => {
-console.log(site)
-const data=additionalData.find((item) => item.name === site.siteName);
+    console.log(site);
+    const data = additionalData.find((item) => item.name === site.siteName);
 
-   
-     dispatch(updateLocation(data));
-     setSelectedLocation(data);
- 
-     Cookies.set("locationName", data.name);
-     Cookies.set("locationPath", data.path);
-     Cookies.set("locationBoard", data.board);
-     Cookies.set("locationType", data.type);
-     Cookies.set("locationTimeInterval", data.timeInterval);
-     Cookies.set("locationGeocode", JSON.stringify(data.geocode));
-   
-     navigate("/");
-     setSearchTerm("")
-     
-     handlePageChange("specificPage")
-   };
+    dispatch(updateLocation(data));
+    setSelectedLocation(data);
 
+    Cookies.set("locationName", data.name);
+    Cookies.set("locationPath", data.path);
+    Cookies.set("locationBoard", data.board);
+    Cookies.set("locationType", data.type);
+    Cookies.set("locationTimeInterval", data.timeInterval);
+    Cookies.set("locationGeocode", JSON.stringify(data.geocode));
 
+    navigate("/");
+    setSearchTerm("");
+    
+    handlePageChange("specificPage");
+  };
 
-
-
-
-
-
-  
   const refreshData = () => {
     setLoading(true);
   
@@ -117,47 +105,63 @@ const data=additionalData.find((item) => item.name === site.siteName);
   };
 
   // Calculate site status based on new logic
- const calculateSiteStatus = (site) => {
-  const currentTime = Date.now(); // Current time in milliseconds
-  const lastUpdateTime = site.latestValues?.tValue || 0; // Last update time in seconds
-  const lastUpdateInMs = lastUpdateTime * 1000; // Convert to milliseconds
-  
-  // Calculate time difference in minutes
-  const timeDifferenceMinutes = (currentTime - lastUpdateInMs) / (1000 * 60);
-  
-  const batteryVoltage = site.latestValues?.batteryVoltage || 0;
-  
-  let status, statusColor;
-  
-  // Site is inactive if more than 30 minutes have passed OR battery is critically low
-  if (timeDifferenceMinutes > 30 || batteryVoltage <= 0.1) {
-    status = "Inactive";
-    statusColor = "bg-red-100 text-red-800";
-  } else {
-    status = "Active";
-    statusColor = "bg-green-100 text-green-800";
-  }
-  
-  return { status, statusColor, isActive: status === "Active" };
-};
-  
-
-  // Filter sites based on search term and active tab
-  const filteredSites = data?.sites?.filter(site => {
-    const matchesSearch = site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          site.siteId.toLowerCase().includes(searchTerm.toLowerCase());
+  const calculateSiteStatus = (site) => {
+    const currentTime = Date.now(); // Current time in milliseconds
+    const lastUpdateTime = site.latestValues?.tValue || 0; // Last update time in seconds
+    const lastUpdateInMs = lastUpdateTime * 1000; // Convert to milliseconds
     
-    const siteStatus = calculateSiteStatus(site);
+    // Calculate time difference in minutes
+    const timeDifferenceMinutes = (currentTime - lastUpdateInMs) / (1000 * 60);
     
-    if (activeTab === 'all') {
-      return matchesSearch;
-    } else if (activeTab === 'active') {
-      return matchesSearch && siteStatus.isActive;
-    } else if (activeTab === 'inactive') {
-      return matchesSearch && !siteStatus.isActive;
+    const batteryVoltage = site.latestValues?.batteryVoltage || 0;
+    
+    let status, statusColor;
+    
+    // Site is inactive if more than 30 minutes have passed OR battery is critically low
+    if (timeDifferenceMinutes > 30 || batteryVoltage <= 0.1) {
+      status = "Inactive";
+      statusColor = "bg-red-100 text-red-800";
+    } else {
+      status = "Active";
+      statusColor = "bg-green-100 text-green-800";
     }
     
-    return matchesSearch;
+    return { status, statusColor, isActive: status === "Active" };
+  };
+
+  // Extract voltage category from site name
+  const getVoltageCategoryFromName = (siteName) => {
+    if (!siteName) return 'other';
+    const parts = siteName.split('-');
+    const lastPart = parts[parts.length - 1].toLowerCase();
+    if (lastPart === '24v') return '24v';
+    if (lastPart === '48v') return '48v';
+    return 'other';
+  };
+
+  // Filter sites based on search term, active tab, and voltage filter
+  const filteredSites = data?.sites?.filter(site => {
+    const matchesSearch = site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         site.siteId.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const siteStatus = calculateSiteStatus(site);
+    const voltageCategory = getVoltageCategoryFromName(site.siteName);
+    
+    // Apply voltage filter
+    let matchesVoltageFilter = true;
+    if (voltageFilter !== 'all') {
+      matchesVoltageFilter = voltageCategory === voltageFilter;
+    }
+    
+    // Apply tab filter
+    let matchesTabFilter = true;
+    if (activeTab === 'active') {
+      matchesTabFilter = siteStatus.isActive;
+    } else if (activeTab === 'inactive') {
+      matchesTabFilter = !siteStatus.isActive;
+    }
+    
+    return matchesSearch && matchesTabFilter && matchesVoltageFilter;
   }) || [];
 
   // Sort sites based on sort configuration
@@ -196,9 +200,26 @@ const data=additionalData.find((item) => item.name === site.siteName);
     { name: 'Inverter Energy', value: parseFloat(data.aggregateSummary.totalInverterEnergy) }
   ] : [];
 
-  // Calculate total active and inactive sites
-  const activeSitesCount = data?.sites?.filter(site => calculateSiteStatus(site).isActive)?.length || 0;
-  const inactiveSitesCount = (data?.totalSites || 0) - activeSitesCount;
+  // Calculate counts with voltage filter applied
+  const getFilteredCounts = () => {
+    if (!data?.sites) return { active: 0, inactive: 0, total: 0 };
+    
+    const sitesWithVoltageFilter = data.sites.filter(site => {
+      if (voltageFilter === 'all') return true;
+      return getVoltageCategoryFromName(site.siteName) === voltageFilter;
+    });
+    
+    const activeSites = sitesWithVoltageFilter.filter(site => calculateSiteStatus(site).isActive);
+    const inactiveSites = sitesWithVoltageFilter.filter(site => !calculateSiteStatus(site).isActive);
+    
+    return {
+      active: activeSites.length,
+      inactive: inactiveSites.length,
+      total: sitesWithVoltageFilter.length
+    };
+  };
+
+  const counts = getFilteredCounts();
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -226,14 +247,12 @@ const data=additionalData.find((item) => item.name === site.siteName);
       ) : (
         <div className="container mx-auto px-4 py-8">
           <header className="mb-8">
-            
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                   <Sun className="mr-2 text-yellow-500" size={32} />
                   Solar Sites Monitoring Dashboard
                 </h1>
-               
               </div>
               <button 
                 onClick={refreshData} 
@@ -268,8 +287,7 @@ const data=additionalData.find((item) => item.name === site.siteName);
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 uppercase">Solar Energy</p>
-                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalSolarEnergy
- || 0}kWh</p>
+                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalSolarEnergy || 0}kWh</p>
                 </div>
               </div>
             </div>
@@ -281,8 +299,7 @@ const data=additionalData.find((item) => item.name === site.siteName);
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 uppercase">Grid Energy</p>
-                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalGridEnergy
- || 0}kWh</p>
+                  <p className="text-2xl font-bold">{data?.aggregateSummary.totalGridEnergy || 0}kWh</p>
                 </div>
               </div>
             </div>
@@ -300,58 +317,92 @@ const data=additionalData.find((item) => item.name === site.siteName);
             </div>
           </div>
 
-          {/* Charts - Now with just the Energy Distribution chart */}
-          
-
           {/* Site Data Table */}
           <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
             <div className="p-6 border-b">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-                <h2 className="text-xl font-bold mb-4 md:mb-0">Site Data</h2>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search sites..."
-                    className="pl-10 pr-4 py-2 border rounded-lg"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <h2 className="text-xl font-bold">Site Data</h2>
+                <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                  {/* Voltage Filter Buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setVoltageFilter('all')}
+                      className={`px-4 py-2 rounded-lg flex items-center ${
+                        voltageFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                     
+                      All
+                    </button>
+                    <button
+                      onClick={() => setVoltageFilter('24v')}
+                      className={`px-4 py-2 rounded-lg flex items-center ${
+                        voltageFilter === '24v' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      <Battery className="mr-2" size={16} />
+                      24V
+                    </button>
+                    <button
+                      onClick={() => setVoltageFilter('48v')}
+                      className={`px-4 py-2 rounded-lg flex items-center ${
+                        voltageFilter === '48v' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                     <BsBatteryCharging className="mr-2" size={16}/>
+                      48V
+                    </button>
+                  </div>
+                  
+                  {/* Search Input */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search sites..."
+                      className="pl-10 pr-4 py-2 text-gray-500 border  border-gray-500 rounded-lg"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <Search className="absolute left-3 top-2.5 text-gray-600" size={16} />
+                  </div>
                 </div>
               </div>
             </div>
             
-            {/* Tab Navigation */}
-            <div className="flex border-b">
+            {/* Tab Navigation - Updated with dynamic counts */}
+            <div className="flex border-b overflow-x-auto">
               <button
-                className={`px-6 py-3 font-medium ${
+                className={`px-6 py-3 font-medium whitespace-nowrap ${
                   activeTab === 'all' 
                     ? 'border-b-2 border-blue-500 text-blue-600' 
                     : 'text-blue-500 hover:text-blue-700'
                 }`}
-                onClick={() => setActiveTab('all')}
+                onClick={() => {
+                  setActiveTab('all');
+                  setVoltageFilter('all');
+                }}
               >
-                All Sites ({data?.totalSites || 0})
+                All Sites ({counts.total})
               </button>
               <button
-                className={`px-6 py-3 font-medium ${
+                className={`px-6 py-3 font-medium whitespace-nowrap ${
                   activeTab === 'active' 
                     ? 'border-b-2 border-green-500 text-green-600' 
                     : 'text-green-500 hover:text-green-700'
                 }`}
                 onClick={() => setActiveTab('active')}
               >
-                Active Sites ({activeSitesCount})
+                Active Sites ({counts.active})
               </button>
               <button
-                className={`px-6 py-3 font-medium ${
+                className={`px-6 py-3 font-medium whitespace-nowrap ${
                   activeTab === 'inactive' 
                     ? 'border-b-2 border-red-500 text-red-600' 
                     : 'text-red-500 hover:text-red-700'
                 }`}
                 onClick={() => setActiveTab('inactive')}
               >
-                Inactive Sites ({inactiveSitesCount})
+                Inactive Sites ({counts.inactive})
               </button>
             </div>
             
@@ -366,52 +417,63 @@ const data=additionalData.find((item) => item.name === site.siteName);
                       Site Name
                       {sortConfig.key === 'siteName' && (
                         <span className="ml-2">
-                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}
                         </span>
                       )}
                     </th>
                    
                     <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100"
                       onClick={() => requestSort('dailySummary.solarEnergy')}
                     >
                       Solar Energy (kWh)
                       {sortConfig.key === 'dailySummary.solarEnergy' && (
                         <span className="ml-2">
-                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}
                         </span>
                       )}
                     </th>
                     <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100"
                       onClick={() => requestSort('dailySummary.gridEnergy')}
                     >
                       Grid Energy (kWh)
                       {sortConfig.key === 'dailySummary.gridEnergy' && (
                         <span className="ml-2">
-                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}
                         </span>
                       )}
                     </th>
                     <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100"
                       onClick={() => requestSort('dailySummary.inverterEnergy')}
                     >
                       Inverter Energy (kWh)
                       {sortConfig.key === 'dailySummary.inverterEnergy' && (
                         <span className="ml-2">
-                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}↓
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}
                         </span>
                       )}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100"
+                      onClick={() => requestSort('latestValues.batteryVoltage')}
+                    >
                       Battery Voltage
+                      {sortConfig.key === 'latestValues.batteryVoltage' && (
+                        <span className="ml-2">
+                          {sortConfig.direction === 'ascending' ? '↑' : '↓'}
+                        </span>
+                      )}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                       Last Update
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                       Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
+                      System Type
                     </th>
                   </tr>
                 </thead>
@@ -420,9 +482,10 @@ const data=additionalData.find((item) => item.name === site.siteName);
                     sortedSites.map((site) => {
                       // Get status using the new logic
                       const { status, statusColor } = calculateSiteStatus(site);
+                      const voltageCategory = getVoltageCategoryFromName(site.siteName);
                       
                       return (
-                        <tr key={site.siteId} className="hover:bg-gray-50" onClick={()=>changeLocation(site)}>
+                        <tr key={site.siteId} className="hover:bg-gray-50 cursor-pointer" onClick={() => changeLocation(site)}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="font-medium text-gray-900">{site.siteName}</div>
                           </td>
@@ -440,11 +503,20 @@ const data=additionalData.find((item) => item.name === site.siteName);
                             {site.latestValues.batteryVoltage.toFixed(2)} V
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {site.latestValues.tValue*1000 ? formatDate(site.latestValues.tValue*1000) : 'N/A'}
+                            {site.latestValues.tValue * 1000 ? formatDate(site.latestValues.tValue * 1000) : 'N/A'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}`}>
                               {status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              voltageCategory === '24v' ? 'bg-orange-100 text-orange-800' :
+                              voltageCategory === '48v' ? 'bg-indigo-100 text-indigo-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {voltageCategory === '24v' ? '24V' : voltageCategory === '48v' ? '48V' : 'Other'}
                             </span>
                           </td>
                         </tr>
@@ -460,8 +532,6 @@ const data=additionalData.find((item) => item.name === site.siteName);
                 </tbody>
               </table>
             </div>
-            
-            
           </div>  
         </div>
       )}
