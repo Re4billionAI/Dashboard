@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 
 
  
-const Head = ({ toggleSidebar }) => {
+const Head = () => {
   const [showSearch, setShowSearch] = useState(false);
   
   const [query, setQuery] = useState("");
@@ -128,12 +128,7 @@ const mobileSearchRef = useRef(null);
       {/* Left Section - Company Logo & Sidebar Toggle */}
       <div className="flex items-center gap-2">
           {/* Sidebar Toggle Button */}
-          <button
-          onClick={toggleSidebar}
-          className="p-2 bg-blue-600 text-white rounded-md shadow-md flex items-center"
-        >
-          <Menu size={20} />
-        </button>
+         
         {/* Company Logo */}
         <img 
           src="https://res.cloudinary.com/dky72aehn/image/upload/v1746253013/Layer_2_pvgh9s.png" // Replace with your logo's path

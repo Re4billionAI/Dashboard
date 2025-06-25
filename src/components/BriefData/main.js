@@ -133,7 +133,7 @@ export default function BrieData({ handlePageChange }) {
         throw new Error('Failed to format date');
       }
 
-      console.log('Sending payload:', { date: formattedDate }); // Debug: Log payload
+      // console.log('Sending payload:', { date: formattedDate }); // Debug: Log payload
 
       const response = await fetch(DATA_URL, {
         method: 'POST',
@@ -162,7 +162,7 @@ export default function BrieData({ handlePageChange }) {
       }
 
       const jsonData = await response.json();
-      console.log('API Response:', jsonData); // Debug: Log response
+      // console.log('API Response:', jsonData); // Debug: Log response
 
       // Basic response validation
       if (!jsonData || typeof jsonData !== 'object') {
@@ -209,6 +209,7 @@ export default function BrieData({ handlePageChange }) {
       navigate("/");
       setSearchTerm("");
       handlePageChange("specificPage");
+
     } catch (err) {
       console.error('Change location error:', err.message);
       setError('Failed to change location. Please try again.');
@@ -456,7 +457,7 @@ export default function BrieData({ handlePageChange }) {
             <div className="flex justify-between items-center flex-wrap gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 flex items-center">
-                  <Sun className="mr-2 text-yellow-500" size={32} />
+                 
                   Solar Sites Monitoring Dashboard
                 </h1>
                

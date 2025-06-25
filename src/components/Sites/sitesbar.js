@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FiX, FiSearch } from "react-icons/fi";
 import { useSelector, useDispatch } from 'react-redux'
-import { updateLocation, toggleSpecificPage } from '../Redux/CounterSlice'
+import { updateLocation, toggleSpecificPage, toggleSidebar } from '../Redux/CounterSlice'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
@@ -13,13 +13,15 @@ import Cookies from "js-cookie";
 
 
 
-export default function Sitesbar({ isOpen, toggleSidebar }) {
+export default function Sitesbar() {
   // Additional data items
   
 
     const dispatch = useDispatch();
     const specificPage = useSelector(state => state.location.specificPage);
-  
+    
+   
+  const isOpen = useSelector((state) => state.location.isSidebarOpen);
   
     const handlePageChange = () => {
     
@@ -27,6 +29,9 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
       
     
     }
+      const handleToggle = () => {
+    dispatch(toggleSidebar());
+  };
   
 
  const additionalData = useSelector((state) => state.location.locations);
@@ -51,11 +56,11 @@ export default function Sitesbar({ isOpen, toggleSidebar }) {
 
 
 const changeLocation = (data) => {
- console.log(data)
+  console.log(data);
   dispatch(updateLocation(data));
   setSelectedLocation(data);
-  toggleSidebar()
-  
+  dispatch(toggleSidebar()); // ✅ properly close the sidebar
+
   Cookies.set("locationName", data.name);
   Cookies.set("locationPath", data.path);
   Cookies.set("locationBoard", data.board);
@@ -64,10 +69,9 @@ const changeLocation = (data) => {
   Cookies.set("locationGeocode", JSON.stringify(data.geocode));
 
   navigate("/");
-  setSearchTerm("")
-  
-  
+  setSearchTerm("");
 };
+
 
 
   // Filter the data based on search term (case-insensitive)
@@ -87,7 +91,7 @@ const changeLocation = (data) => {
           sites
         </button>
         <button
-          onClick={toggleSidebar}
+          onClick={handleToggle}
           className="text-indigo-200 hover:text-white transition-colors"
         >
           <FiX className="text-2xl" />

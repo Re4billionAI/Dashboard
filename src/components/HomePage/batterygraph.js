@@ -20,6 +20,8 @@ const tooltipProps = {
   BatteryVoltage3: { color: "red" },
   BatteryVoltage4: { color: "purple" },
   BatteryCurrent: { color: "orange" },
+  BatteryChrgCurrent: { color: "teal" },
+  BatteryDisCurrent: { color: "brown" },
 };
 
 // Format the X-axis ticks (time labels)
@@ -39,9 +41,11 @@ const formatTick = (tick) => {
 const units = {
   BatteryVoltage: "V",
   BatteryVoltage2: "V",
-  BatteryVoltage3: "V", 
+  BatteryVoltage3: "V",
   BatteryVoltage4: "V",
   BatteryCurrent: "A",
+  BatteryChrgCurrent: "A",
+  BatteryDisCurrent: "A",
 };
 
 // Custom Tooltip component displaying Battery units
@@ -67,11 +71,9 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-
 const BatteryGraph = ({ graphValues }) => {
-console.log({graphValues2:graphValues})
   const site = useSelector((state) => state.location.device);
-  
+
   // Define site-specific parameters
   const getParameters = (siteType, siteName) => {
     if (siteType === "testing 1") {
@@ -81,17 +83,23 @@ console.log({graphValues2:graphValues})
         { label: "Voltage3", key: "showVoltage3", dataKey: "BatteryVoltage3" },
         { label: "Voltage4", key: "showVoltage4", dataKey: "BatteryVoltage4" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
       ];
     } else if (siteType === "testing 2") {
       return [
         { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
         { label: "Voltage2", key: "showVoltage2", dataKey: "BatteryVoltage2" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
       ];
     } else if (siteType === "testing 3" || siteName === "Saram-TN") {
       return [
         { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
       ];
     } else if (siteType === "48v") {
       return [
@@ -100,20 +108,28 @@ console.log({graphValues2:graphValues})
         { label: "Voltage3", key: "showVoltage3", dataKey: "BatteryVoltage3" },
         { label: "Voltage4", key: "showVoltage4", dataKey: "BatteryVoltage4" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
       ];
     } else if (siteType === "24v") {
       return [
         { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
       ];
     }
-
     // Default case
-   
+    return [
+      { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
+      { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
+      { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
+      { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
+    ];
   };
 
   // Get parameters for current site
   const [parameters, setParameters] = useState(() => getParameters(site.type, site.name));
-  
+
   // Initialize visibility state based on parameters
   const [visibility, setVisibility] = useState(() => {
     const initialVisibility = {};
@@ -122,13 +138,12 @@ console.log({graphValues2:graphValues})
     });
     return { Battery: initialVisibility };
   });
-  
+
   // Update parameters and visibility when site changes
   useEffect(() => {
     const newParameters = getParameters(site.type, site.name);
     setParameters(newParameters);
-    
-    // Reset visibility state with only the allowed parameters
+
     const newVisibility = {};
     newParameters.forEach(param => {
       newVisibility[param.key] = true;
@@ -146,7 +161,7 @@ console.log({graphValues2:graphValues})
 
   // Toggle visibility for parameters
   const handleCheckboxChange = useCallback((category, key, checked) => {
-    setVisibility((prev) => ({
+    setVisibility(prev => ({
       ...prev,
       [category]: {
         ...prev[category],
@@ -158,24 +173,19 @@ console.log({graphValues2:graphValues})
   // Calculate Y-axis domain based on visible parameters
   const calculateYDomain = () => {
     const activeDataKeys = parameters
-      .filter(param => visibility.Battery && visibility.Battery[param.key])
+      .filter(param => visibility.Battery[param.key])
       .map(param => param.dataKey);
 
     if (activeDataKeys.length === 0) {
       return [0, 100];
     }
 
-    const values = graphValues.flatMap((data) =>
-      activeDataKeys.map((key) => data[key] || 0)
+    const values = graphValues.flatMap(data =>
+      activeDataKeys.map(key => data[key] || 0)
     );
 
     const max = values.length ? Math.max(...values) : 100;
     return [0, max + 20];
-  };
-
-  // Get only the allowed data keys for current site type
-  const getAllowedDataKeys = () => {
-    return parameters.map(param => param.dataKey);
   };
 
   return (
@@ -188,173 +198,89 @@ console.log({graphValues2:graphValues})
           <div className="flex gap-2">
             <div className="relative group inline-block">
               {/* Tooltip trigger */}
-              <div className="cursor-pointer px-2 py-1 flex bg-gray-200 rounded-full text-sm">
-                Options <ChevronDown/>
-              </div>
+              <div className="cursor-pointer px-2 py-1 flex bg-gray-200 rounded-full text-sm">Options <ChevronDown/></div>
 
               {/* Tooltip content */}
               <div className="absolute hidden group-hover:block z-10 mt-0 p-3 bg-white border rounded-lg shadow-lg min-w-[160px] transform -translate-x-14 space-y-3">
                 <div className="flex flex-col gap-1">
-                  {parameters.map((param) => {
+                  {parameters.map(param => {
                     const color = tooltipProps[param.dataKey].color;
                     return (
                       <button
                         key={param.key}
-                        onClick={() =>
-                          handleCheckboxChange(
-                            "Battery",
-                            param.key,
-                            !visibility.Battery[param.key]
-                          )
-                        }
+                        onClick={() => handleCheckboxChange("Battery", param.key, !visibility.Battery[param.key])}
                         style={{
-                          backgroundColor: visibility.Battery[param.key]
-                            ? color
-                            : "transparent",
-                          border: `2px solid ${
-                            visibility.Battery[param.key] ? color : "black"
-                          }`,
+                          backgroundColor: visibility.Battery[param.key] ? color : "transparent",
+                          border: `2px solid ${visibility.Battery[param.key] ? color : "black"}`,
                           color: visibility.Battery[param.key] ? "white" : "black",
                         }}
                         className="w-full px-1 py-1 rounded-full text-sm transition-colors flex items-center justify-center"
-                      >
-                        {param.label}
-                      </button>
+                      >{param.label}</button>
                     );
                   })}
                 </div>
               </div>
             </div>
-            <button 
-              onClick={() => handleModalToggle("Battery")}
-              className="text-gray-600 bg-white rounded-lg md:block hidden border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
-            >
+            <button onClick={() => handleModalToggle("Battery")} className="text-gray-600 bg-white rounded-lg md:block hidden border border-gray hover:text-gray-800 p-2 hover:bg-gray-100">
               <Maximize2 className="h-4 w-4" />
             </button>
           </div>
         </div>
         <div className="p-0 pb-5 relative z-1">
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={graphValues}
-              margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
-            >
+            <LineChart data={graphValues} margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="ccAxisXValue"
-                tickFormatter={formatTick}
-                tick={{ fontSize: 12 }}
-              />
-              <YAxis
-                domain={calculateYDomain()}
-                tickCount={10}
-                tick={{ fontSize: 12 }}
-                tickFormatter={(value) =>
-                  new Intl.NumberFormat().format(Math.round(value))
-                }
-              />
+              <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick} tick={{ fontSize: 12 }} />
+              <YAxis domain={calculateYDomain()} tickCount={10} tick={{ fontSize: 12 }} tickFormatter={val => new Intl.NumberFormat().format(Math.round(val))} />
               <Tooltip content={<CustomTooltip />} />
-              
-              {/* Render lines based only on allowed parameters for this site */}
               {parameters.map(param => (
-                visibility.Battery && visibility.Battery[param.key] && (
-                  <Line
-                    key={param.dataKey}
-                    type="monotone"
-                    dataKey={param.dataKey}
-                    stroke={tooltipProps[param.dataKey].color}
-                    dot={false}
-                  />
-                )
+                visibility.Battery[param.key] && <Line key={param.dataKey} type="monotone" dataKey={param.dataKey} stroke={tooltipProps[param.dataKey].color} dot={false} />
               ))}
-              
               <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
-      
+
       {/* Modal */}
       {activeModal && (
         <div className="fixed inset-0 flex items-center justify-center z-10">
-          <div
-            className="absolute inset-0 bg-gray-800 opacity-75"
-            onClick={() => handleModalToggle(null)}
-          ></div>
+          <div className="absolute inset-0 bg-gray-800 opacity-75" onClick={() => handleModalToggle(null)} />
           <div className="relative bg-white rounded-lg shadow-xl w-11/12 md:w-3/4">
             <div className="flex justify-between items-center p-2 gap-2 bg-gray-100 border border-b-gray-300 text-black rounded-t-lg">
-              <h3 className="md:text-lg text-sm text-black font-bold">{activeModal} Readings</h3>
+              <h3 className="md:text-lg text-sm text-black font-bold">{`${activeModal} Readings`}</h3>
               <div className="flex gap-2">
-                {parameters.map((param) => {
+                {parameters.map(param => {
                   const color = tooltipProps[param.dataKey].color;
-                  
                   return (
                     <button
                       key={param.key}
-                      onClick={() => handleCheckboxChange(
-                        activeModal, 
-                        param.key, 
-                        !visibility[activeModal][param.key]
-                      )}
+                      onClick={() => handleCheckboxChange(activeModal, param.key, !visibility[activeModal][param.key])}
                       style={{
-                        backgroundColor: visibility[activeModal] && visibility[activeModal][param.key] ? color : 'transparent',
+                        backgroundColor: visibility[activeModal][param.key] ? color : 'transparent',
                         border: `2px solid ${color}`,
-                        color: visibility[activeModal] && visibility[activeModal][param.key] ? 'white' : color,
+                        color: visibility[activeModal][param.key] ? 'white' : color,
                       }}
-                      className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] font-small transition-colors"
-                    >
-                      {param.label}
-                    </button>
+                      className="md:px-2 px-1 py-1 rounded-full md:text-[12px] text-[10px] transition-colors"
+                    >{param.label}</button>
                   );
                 })}
               </div>
-              <button
-                onClick={() => handleModalToggle(null)}
-                className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100"
-              >
+              <button onClick={() => handleModalToggle(null)} className="text-gray-600 bg-white rounded-lg border border-gray hover:text-gray-800 p-2 hover:bg-gray-100">
                 <FiX size={20} />
               </button>
             </div>
-            
             <div className="pr-2 bg-white shadow rounded-lg overflow-x-auto">
               <div className="p-0 bg-white shadow rounded-lg w-full h-[250px] sm:h-[200px] md:h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={graphValues}
-                    margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
-                    className="bg-gray-50"
-                  >
+                  <LineChart data={graphValues} margin={{ top: 10, right: 10, left: 0, bottom: 10 }} className="bg-gray-50">
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis
-                      dataKey="ccAxisXValue"
-                      tickFormatter={formatTick}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <YAxis
-                      domain={calculateYDomain()}
-                      tickCount={10}
-                      tick={{ fontSize: 12 }}
-                      tickFormatter={(value) =>
-                        new Intl.NumberFormat().format(Math.round(value))
-                      }
-                    />
+                    <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick} tick={{ fontSize: 12 }} />
+                    <YAxis domain={calculateYDomain()} tickCount={10} tick={{ fontSize: 12 }} tickFormatter={val => new Intl.NumberFormat().format(Math.round(val))} />
                     <Tooltip content={<CustomTooltip />} />
-                    
-                    {/* Render lines based only on allowed parameters for this site */}
                     {parameters.map(param => (
-                      visibility[activeModal] && visibility[activeModal][param.key] && (
-                        <Line
-                          key={param.dataKey}
-                          type="monotone"
-                          dataKey={param.dataKey}
-                          stroke={tooltipProps[param.dataKey].color}
-                          dot={false}
-                          className="transition duration-300 hover:opacity-80"
-                        />
-                      )
+                      visibility[activeModal][param.key] && <Line key={param.dataKey} type="monotone" dataKey={param.dataKey} stroke={tooltipProps[param.dataKey].color} dot={false} className="transition duration-300 hover:opacity-80" />
                     ))}
-                    
-                    
                     <Brush dataKey="ccAxisXValue" height={30} stroke="#007BFF" />
                   </LineChart>
                 </ResponsiveContainer>

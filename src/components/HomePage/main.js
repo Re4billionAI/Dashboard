@@ -1,24 +1,42 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Home from './home';
-import { useSelector, useDispatch  } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import BrieData from '../BriefData/main';
-import { toggleSpecificPage, setSpecificPage } from "../Redux/CounterSlice"
+import { toggleSpecificPage } from "../Redux/CounterSlice";
+import Cookies from 'js-cookie';
 
 const Main = () => {
   const dispatch = useDispatch();
-  const specificPage = useSelector(state => state.location.specificPage);
 
+  // Initialize state from cookie
+  const [page, setPage] = useState(() => Cookies.get('specificPage') || '');
 
-  const handlePageChange = (page) => {
-    dispatch(toggleSpecificPage(page));
-  
-  }
+  // Handle page toggle and update cookie + state
+  const handlePageChange = (newPage) => {
+    Cookies.set('specificPage', newPage); // update cookie
+    dispatch(toggleSpecificPage(newPage)); // optional: sync Redux
+    setPage(newPage); // trigger re-render
+  };
 
+  // Watch for cookie changes (in case changed outside manually)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const current = Cookies.get('specificPage');
+      if (current !== page) {
+        setPage(current);
+      }
+    }, 1000); // poll every 1s
+
+    return () => clearInterval(interval);
+  }, [page]);
 
   return (
     <>
-      {specificPage==="specificPage" ? <Home  handlePageChange={handlePageChange} /> : <BrieData handlePageChange={handlePageChange}/>}    </>
+      {page === "specificPage"
+        ? <Home handlePageChange={handlePageChange} />
+        : <BrieData handlePageChange={handlePageChange} />
+      }
+    </>
   );
 };
 

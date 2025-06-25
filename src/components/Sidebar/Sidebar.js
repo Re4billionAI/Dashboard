@@ -41,7 +41,7 @@ const Sidebar = () => {
         </div>
 
         <div className="flex-1 flex flex-col p-6 gap-2">
-          {[{ icon: Home, label: "Home", link: "" }, { icon: Grid, label: "Dashboard", link: "Dashboard" }, { icon: Bell, label: "Alerts", link: "Alerts" }, { icon: MapPin, label: "Location", link: "Location" }].map(
+          {[{ icon: Home, label: "Home", link: "" },{ icon: Bell, label: "Alerts", link: "Alerts" }, { icon: MapPin, label: "Location", link: "Location" }].map(
             (item, index) => (
               <button
                 key={item.label}

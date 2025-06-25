@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Spinner from "../Loader/loader"
@@ -7,7 +7,9 @@ import { ArrowLeft } from 'lucide-react';
 import StatusCard from './statusCard';
 import EnergyConsumption from './EnergyConsumptions';
 import Graph from './graphs';
+import { Menu,  } from "lucide-react";
 import ParameterRepresentation from './parameter';
+import { toggleSidebar } from '../Redux/CounterSlice'; 
 
 const Home = ({ handlePageChange}) => {
   const device = useSelector((state) => state.location.device);
@@ -125,6 +127,13 @@ const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
 }
 
 
+  const dispatch = useDispatch();
+  const isOpen = useSelector((state) => state.location.isSidebarOpen);
+
+  const handleToggle = () => {
+    dispatch(toggleSidebar());
+  };
+
   useEffect(() => {
     if (device?.path) fetchData(device.path, device.timeInterval);
   }, [device]);
@@ -159,6 +168,12 @@ const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
   return (
     <div className="h flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
       <div>
+         <button
+          onClick={handleToggle}
+          className="p-2 bg-blue-600 text-white m-2 rounded-md shadow-md flex items-center"
+        >
+          <Menu size={20} />
+        </button>
         <button className="bg-blue-500 text-white rounded-full hover:bg-blue-600 py-1 px-3" onClick={()=>handlePageChange("mainPage")}>
              <ArrowLeft size={24} color="white" /></button>
         {/* Tab Navigation */}

@@ -1,11 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Function to get cookie value by name
+// Helper to read cookies
 const getCookie = (name) => {
   const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
   return matches ? decodeURIComponent(matches[1]) : null;
 };
 
+// Helper to set cookies
+const setCookie = (name, value, days = 30) => {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+};
+
+// Parse geocode from cookie or fallback
 let parsedGeocode = [12.245914085514979, 79.59611009470636]; // default
 try {
   const geoCookie = getCookie('locationGeocode');
@@ -16,17 +23,20 @@ try {
   console.error('Failed to parse locationGeocode cookie:', error);
 }
 
-// Retrieve cookie values
+// Initial device configuration from cookies
 const initialDevice = {
   name: getCookie('locationName') || 'Kollar-TN',
   path: getCookie('locationPath') || 'ftb001',
   board: getCookie('locationBoard') || 'ftb001',
   type: getCookie('locationType') || '24v',
-  geocode: parsedGeocode, 
+  geocode: parsedGeocode,
   timeInterval: getCookie('locationTimeInterval') || '1'
 };
 
-// Additional locations data
+// Initial specificPage from cookie
+const initialSpecificPage = getCookie('specificPage') || 'mainPage';
+
+// Additional site location list
 const additionalData = [
   { name: "Kollar-TN-24V", path: "ftb001", board: "rms35_004", type: "24v", geocode: [12.245914085514979, 79.59611009470636], timeInterval: 1 },
   { name: "Modaiyur-TN-24V", path: "stb001", board: "stb001", type: "24v", geocode: [12.232884092747348, 79.49285273483387], timeInterval: 1 },
@@ -77,13 +87,14 @@ const additionalData = [
   { name: "Testing-03-testing 3", path: "rmsv36_004", board: "rmsv36_004 ", type: "testing 3", geocode: [12.96227, 80.257758], timeInterval: 1 },
 ];
 
-
+// Create the location slice
 export const locationSlice = createSlice({
   name: 'location',
-  initialState: { 
-    device: initialDevice, 
+  initialState: {
+    device: initialDevice,
     locations: additionalData,
-    specificPage: "mainPage"  // Added page state
+    specificPage: initialSpecificPage,
+    isSidebarOpen: false
   },
   reducers: {
     updateLocation: (state, action) => {
@@ -95,24 +106,32 @@ export const locationSlice = createSlice({
     setLocations: (state, action) => {
       state.locations = action.payload;
     },
-    // Added page change reducer
     toggleSpecificPage: (state, action) => {
-      
       state.specificPage = action.payload;
+      setCookie('specificPage', action.payload);
     },
     setSpecificPage: (state, action) => {
       state.specificPage = action.payload;
+      setCookie('specificPage', action.payload);
+    },
+    toggleSidebar: (state) => {
+      state.isSidebarOpen = !state.isSidebarOpen;
+    },
+    setSidebarState: (state, action) => {
+      state.isSidebarOpen = action.payload;
     }
   }
 });
 
-// Action creators
-export const { 
-  updateLocation, 
-  addLocation, 
-  setLocations, 
-  toggleSpecificPage, 
-  setSpecificPage 
+// Export actions
+export const {
+  updateLocation,
+  addLocation,
+  setLocations,
+  toggleSpecificPage,
+  setSpecificPage,
+  toggleSidebar,
+  setSidebarState
 } = locationSlice.actions;
 
 export default locationSlice.reducer;
