@@ -101,7 +101,7 @@ export const locationSlice = createSlice({
       state.device = action.payload;
     },
     addLocation: (state, action) => {
-      state.locations.push(action.payload);
+      state.locations.push(action.payload)
     },
     setLocations: (state, action) => {
       state.locations = action.payload;
