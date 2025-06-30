@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useSelector } from 'react-redux';
+import { ReferenceLine } from "recharts"; 
 import { FiX } from "react-icons/fi";
 import {
   LineChart,
@@ -172,21 +173,22 @@ const BatteryGraph = ({ graphValues }) => {
 
   // Calculate Y-axis domain based on visible parameters
   const calculateYDomain = () => {
-    const activeDataKeys = parameters
-      .filter(param => visibility.Battery[param.key])
-      .map(param => param.dataKey);
+  const activeDataKeys = parameters
+    .filter(param => visibility.Battery[param.key])
+    .map(param => param.dataKey);
 
-    if (activeDataKeys.length === 0) {
-      return [0, 100];
-    }
+  if (activeDataKeys.length === 0) {
+    return [0, 100];
+  }
 
-    const values = graphValues.flatMap(data =>
-      activeDataKeys.map(key => data[key] || 0)
-    );
+  const values = graphValues.flatMap(data =>
+    activeDataKeys.map(key => Number(data[key]) || 0)
+  );
 
-    const max = values.length ? Math.max(...values) : 100;
-    return [0, max + 20];
-  };
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  return [Math.floor(min - 5), Math.ceil(max + 5)];
+};
 
   return (
     <>
@@ -232,6 +234,7 @@ const BatteryGraph = ({ graphValues }) => {
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick} tick={{ fontSize: 12 }} />
               <YAxis domain={calculateYDomain()} tickCount={10} tick={{ fontSize: 12 }} tickFormatter={val => new Intl.NumberFormat().format(Math.round(val))} />
+                <ReferenceLine y={0} stroke="#999" strokeDasharray="3 3" />
               <Tooltip content={<CustomTooltip />} />
               {parameters.map(param => (
                 visibility.Battery[param.key] && <Line key={param.dataKey} type="monotone" dataKey={param.dataKey} stroke={tooltipProps[param.dataKey].color} dot={false} />
@@ -277,6 +280,7 @@ const BatteryGraph = ({ graphValues }) => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis dataKey="ccAxisXValue" tickFormatter={formatTick} tick={{ fontSize: 12 }} />
                     <YAxis domain={calculateYDomain()} tickCount={10} tick={{ fontSize: 12 }} tickFormatter={val => new Intl.NumberFormat().format(Math.round(val))} />
+                      <ReferenceLine y={0} stroke="#999" strokeDasharray="3 3" />
                     <Tooltip content={<CustomTooltip />} />
                     {parameters.map(param => (
                       visibility[activeModal][param.key] && <Line key={param.dataKey} type="monotone" dataKey={param.dataKey} stroke={tooltipProps[param.dataKey].color} dot={false} className="transition duration-300 hover:opacity-80" />

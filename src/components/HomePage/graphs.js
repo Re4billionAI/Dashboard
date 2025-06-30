@@ -191,7 +191,7 @@ const Graph = ({  dataCharts }) => {
           BatteryVoltage3: chart.BatteryVoltage3 || 0,
           BatteryVoltage4: chart.BatteryVoltage4 || 0,
           BatteryChrgCurrent: chart.BatteryChrgCurrent || 0,
-          BatteryDisCurrent: chart.BatteryDiscurrent || 0,
+          BatteryDisCurrent: chart.BatteryDiscurrent ,
 
         }));
         setGraphValues(newDataArray);
