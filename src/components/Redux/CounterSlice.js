@@ -45,7 +45,7 @@ const additionalData = [
   { name: "Sithalingamadam-TN-24V", path: "rmsv3_002", board: "rmsv34_004", type: "24v", geocode: [11.931114941309213, 79.28076590969235], timeInterval: 1 },
   { name: "Keelathalanur-TN-24V", path: "rmsv32_001", board: "rmsv32_001", type: "24v", geocode: [11.927369429691284, 79.1959115366784], timeInterval: 5 },
   { name: "Perumukkal-TN-24V", path: "rmsv33_001", board: "rmsv35_012", type: "24v", geocode: [12.2053318865419, 79.7426921929505], timeInterval: 5 },
-  { name: "Agalur-TN-24V", path: "rmsv33_002", board: "rmsv34_005", type: "24v", geocode: [12.322467202995817, 79.48391685202753], timeInterval: 5 },
+  { name: "Agalur-TN-24V", path: "rmsv33_002", board: "rmsv34_005", type: "24v", geocode: [12.322467202995817, 79.48391685202753], timeInterval: 1 },
   { name: "Melmalaiyanur-TN-48V", path: "rmsv4_001", board: "rmsv4_001", type: "48v", geocode: [12.3422024756704, 79.3258336162621], timeInterval: 1 },
   { name: "Saram-TN-24V", path: "Saram-TN", board: "rmsv33_005", type: "24v", geocode: [12.2351381051585, 79.6491610491931], timeInterval: 5 },
   { name: "Pootai-TN-24V", path: "rmsv34_002", board: "rmsv34_002", type: "24v", geocode: [11.8894874998255, 78.9136923623407], timeInterval: 1 },
