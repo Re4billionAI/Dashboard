@@ -115,6 +115,7 @@ const BatteryGraph = ({ graphValues }) => {
     } else if (siteType === "24v") {
       return [
         { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
+        { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
         { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
         { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
       ];

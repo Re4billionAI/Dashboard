@@ -679,7 +679,7 @@ export default function BrieData({ handlePageChange }) {
             
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 text-center">
                   <tr>
                     <th 
                       className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-1/6"
@@ -692,11 +692,11 @@ export default function BrieData({ handlePageChange }) {
                         </span>
                       )}
                     </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-1/8">
-  Kwp
+                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider w-1/8">
+  Solar PV Capacity(kWp)
 </th>
                     <th 
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
+                      className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
                       onClick={() => requestSort('solarEnergy.solarEnergy')}
                     >
                       Solar Energy (kWh)
@@ -707,7 +707,7 @@ export default function BrieData({ handlePageChange }) {
                       )}
                     </th>
                     <th 
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
+                      className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
                       onClick={() => requestSort('solarEnergy.gridEnergy')}
                     >
                       Grid Energy (kWh)
@@ -718,7 +718,7 @@ export default function BrieData({ handlePageChange }) {
                       )}
                     </th>
                     <th 
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
+                      className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
                       onClick={() => requestSort('solarEnergy.inverterEnergy')}
                     >
                       load consumption (kWh)
@@ -729,28 +729,28 @@ export default function BrieData({ handlePageChange }) {
                       )}
                     </th>
                     <th 
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
+                      className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
                       onClick={() => requestSort('solarEnergy.batteryVoltage')}
                     >
-                      Battery Voltage
+                      Battery Voltage(V)
                       {sortConfig.key === 'solarEnergy.batteryVoltage' && (
                         <span className="ml-2">
                           {sortConfig.direction === 'ascending' ? '↑' : '↓'}
                         </span>
                       )}
                     </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-1/6">
+                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider w-1/6">
                       Last Update
                     </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-1/12">
+                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider w-1/12">
                       Status
                     </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-1/12">
+                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 tracking-wider w-1/12">
                       System Type
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white text-center divide-y divide-gray-200">
                   {sortedSites.length > 0 ? (
                     sortedSites.map((site) => {
                       const voltageCategory = getVoltageCategoryFromName(site.siteName);
@@ -759,7 +759,7 @@ export default function BrieData({ handlePageChange }) {
                       
                       return (
                         <tr key={site.siteId} className="hover:bg-gray-50 cursor-pointer" onClick={() => changeLocation(site)}>
-                          <td className="px-3 py-4 whitespace-nowrap text-sm">
+                          <td className="px-3 py-4 text-left whitespace-nowrap text-sm">
                             <div className="font-medium text-gray-900">{site.siteName || 'Unknown'}</div>
                           </td>
                           <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -776,7 +776,7 @@ export default function BrieData({ handlePageChange }) {
                             {site.solarEnergy?.inverterEnergy ? parseFloat(site.solarEnergy.inverterEnergy).toFixed(2) : 'N/A'}
                           </td>
                           <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {site.solarEnergy?.batteryVoltage ? `${parseFloat(site.solarEnergy.batteryVoltage).toFixed(2)} V` : 'N/A'}
+                            {site.solarEnergy?.batteryVoltage ? `${parseFloat(site.solarEnergy.batteryVoltage).toFixed(2)} ` : 'N/A'}
                           </td>
                           <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                             {site.latestValues?.tValue ? formatDate(site.latestValues.tValue * 1000) : 'N/A'}
