@@ -8,7 +8,7 @@ import { Calendar, Download, CircleAlert,  MapPin, CheckCircle } from "lucide-re
 import axios from "axios"
 import { useSelector } from 'react-redux';
 
-export default function StatusCard({device, alert,type,  lastupdate, updatedEngergies}) {
+export default function StatusCard({device, alert,type, capacity,  lastupdate, updatedEngergies}) {
  
   const devicelocation = useSelector((state) => state.location.device);
   
@@ -327,11 +327,16 @@ export default function StatusCard({device, alert,type,  lastupdate, updatedEnge
       <div className=" inline-flex flex-row justify-center items-center gap-1 md:gap-2 bg-white px-3 md:px-5 py-1.5 md:py-2 rounded-full text-sm md:text-base  border border-gray-300 max-w-full">
   <MapPin className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
   <span className="font-sm text-gray-700 text-md  sm:text-sm md:text-md lg:text-xl md:font-bold font-bold  truncate">
-    {device}
+    {device}-
+   {capacity}Kwp
+
+   
    
   </span>
+  
 
 </div>
+
 
     <WeatherInfo lat={devicelocation.geocode[0]} lon={devicelocation.geocode[1]} />
 

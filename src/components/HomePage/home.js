@@ -129,6 +129,14 @@ const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
 
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.location.isSidebarOpen);
+  const allLocations = useSelector((state) => state.location.locations);
+
+  const getDeviceCapacity = () => {
+  if (!device?.name || !Array.isArray(allLocations)) return 'N/A';
+  const match = allLocations.find((loc) => loc.name === device.name);
+  return match?.capacity || 'N/A';
+};
+
 
   const handleToggle = () => {
     dispatch(toggleSidebar());
@@ -206,14 +214,15 @@ const updatedEngergies=(solargen, gridgen,loadconsumption )=>{
           <div className="mt-4">
             {activeTab === 'Overview' && (
               <div>
-                <StatusCard 
-                  device={device?.name || 'kollar'} 
-                  type={device?.type || 'unknown'}
-                  alert={alert} 
-                  lastupdate={liveData.data.snapshot.tValue}
-                  updatedEngergies={updatedEngergies}
-                 
-                />
+              <StatusCard 
+  device={device?.name || 'kollar'} 
+  type={device?.type || 'unknown'}
+  alert={alert} 
+  lastupdate={liveData.data.snapshot.tValue}
+  updatedEngergies={updatedEngergies}
+  capacity={getDeviceCapacity()}
+/>
+
                 <EnergyConsumption generation={energies}  />
                 <ParameterRepresentation parameters={liveData.data.snapshot}  device={device?.name || 'kollar'} 
                   type={device?.type || 'unknown'} />

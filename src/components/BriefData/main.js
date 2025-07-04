@@ -391,6 +391,17 @@ export default function BrieData({ handlePageChange }) {
     }
   };
 
+  const getCapacityForSite = (siteName) => {
+  try {
+    const match = additionalData.find((loc) => loc.name === siteName);
+    return match?.capacity || 'N/A';
+  } catch (err) {
+    console.error('Error fetching capacity:', err.message);
+    return 'N/A';
+  }
+};
+
+
   // Calculate counts
   const getFilteredCounts = () => {
     try {
@@ -681,6 +692,9 @@ export default function BrieData({ handlePageChange }) {
                         </span>
                       )}
                     </th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-1/8">
+  Kwp
+</th>
                     <th 
                       className="px-3 py-3 text-left text-xs font-medium text-gray-500 tracking-wider cursor-pointer hover:bg-gray-100 w-1/8"
                       onClick={() => requestSort('solarEnergy.solarEnergy')}
@@ -748,6 +762,10 @@ export default function BrieData({ handlePageChange }) {
                           <td className="px-3 py-4 whitespace-nowrap text-sm">
                             <div className="font-medium text-gray-900">{site.siteName || 'Unknown'}</div>
                           </td>
+                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+  {getCapacityForSite(site.siteName)}
+</td>
+
                           <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                             {site.solarEnergy?.solarEnergy ? parseFloat(site.solarEnergy.solarEnergy).toFixed(2) : 'N/A'}
                           </td>
