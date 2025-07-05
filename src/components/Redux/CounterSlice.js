@@ -38,10 +38,10 @@ const initialSpecificPage = getCookie('specificPage') || 'mainPage';
 
 // Additional site location list
 const additionalData = [
-  { name: "Kollar-TN-24V", path: "ftb001", board: "rms35_004", type: "24v", geocode: [12.245914085514979, 79.59611009470636], timeInterval: 1, capacity:1 },
+  { name: "Kollar-TN-24V", path: "ftb001", board: "rms35_004", type: "24v", geocode: [12.245914085514979, 79.59611009470636], timeInterval: 5, capacity:1 },
   { name: "Modaiyur-TN-24V", path: "stb001", board: "stb001", type: "24v", geocode: [12.232884092747348, 79.49285273483387], timeInterval: 1, capacity:1 },
   { name: "Ananthapuram-TN-24V", path: "nrmsv2f001", board: "nrmsv2f001", type: "24v", geocode: [12.119422441362495, 79.38236576551719], timeInterval: 5, capacity:1 },
-  { name: "Vengur-TN-24V", path: "rmsv3_001", board: "rmsv34_004", type: "24v", geocode: [10.812364895087802, 78.77200842316836], timeInterval: 1, capacity:1 },
+  { name: "Vengur-TN-24V", path: "rmsv3_001", board: "rmsv34_004", type: "24v", geocode: [10.812364895087802, 78.77200842316836], timeInterval: 5, capacity:1 },
   { name: "Sithalingamadam-TN-24V", path: "rmsv3_002", board: "rmsv34_004", type: "24v", geocode: [11.931114941309213, 79.28076590969235], timeInterval: 1, capacity:1 },
   { name: "Keelathalanur-TN-24V", path: "rmsv32_001", board: "rmsv32_001", type: "24v", geocode: [11.927369429691284, 79.1959115366784], timeInterval: 5, capacity:1 },
   { name: "Perumukkal-TN-24V", path: "rmsv33_001", board: "rmsv35_012", type: "24v", geocode: [12.2053318865419, 79.7426921929505], timeInterval: 5, capacity:1 },

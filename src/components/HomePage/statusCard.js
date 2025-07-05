@@ -343,11 +343,11 @@ export default function StatusCard({device, alert,type, capacity,  lastupdate, u
 
       </div>
 {alert !== "success" ? (
-  <button className="flex flex-row items-center w-full m-auto justify-center gap-1 md:gap-2 bg-red-500 text-white px-2 md:px-2 py-1.5 md:py-2 rounded-full text-sm md:text-base shadow-md">
+  <button className="flex flex-row items-center w-full md:w-[50%] m-r-auto justify-center gap-1 md:gap-2 bg-red-500 text-white px-2 md:px-2 py-1.5 md:py-2 rounded-full text-sm md:text-base shadow-md">
     <CircleAlert  className="w-4 h-4 md:w-5 md:h-5" /> Offline
   </button>
 ) : (
-  <button className="flex flex-row items-center w-full m-auto justify-center gap-1 md:gap-2 bg-green-500 text-white px-2 md:px-2 py-1.5 md:py-2 rounded-full text-sm md:text-base shadow-md">
+  <button className="flex flex-row items-center w-full md:w-[50%]  m-r-auto  justify-center gap-1 md:gap-2 bg-green-500 text-white px-2 md:px-2 py-1.5 md:py-2 rounded-full text-sm md:text-base shadow-md">
     <CheckCircle className="w-4 h-4 md:w-5 md:h-5" /> Online
   </button>
 )}
