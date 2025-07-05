@@ -30,7 +30,7 @@ const initialDevice = {
   board: getCookie('locationBoard') || 'ftb001',
   type: getCookie('locationType') || '24v',
   geocode: parsedGeocode,
-  timeInterval: getCookie('locationTimeInterval') || '1'
+  timeInterval: getCookie('locationTimeInterval') || '5'
 };
 
 // Initial specificPage from cookie
