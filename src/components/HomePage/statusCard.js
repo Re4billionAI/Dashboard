@@ -336,7 +336,7 @@ export default function StatusCard({device, alert,type, capacity,  lastupdate, u
 
 </div>
  <div className="text-md text-gray-800 border font-bold border-gray-300 rounded-full px-3 md:px-5 py-2 md:py-3">
-  Capacity:{capacity}kWp
+  saolar PV Capacity:{capacity}kWp
 </div>
 
     <WeatherInfo lat={devicelocation.geocode[0]} lon={devicelocation.geocode[1]} />
