@@ -336,7 +336,7 @@ export default function StatusCard({device, alert,type, capacity,  lastupdate, u
 
 </div>
  <div className="text-md text-gray-800 mt-2 border text-center font-bold border-gray-300 rounded-full px-3 md:px-1 py-2 md:py-3">
-  solar PV Capacity:{capacity} kWp
+  Solar PV Capacity:{capacity} kWp
 </div>
 </div>
 
