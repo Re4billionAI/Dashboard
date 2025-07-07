@@ -322,9 +322,9 @@ export default function StatusCard({device, alert,type, capacity,  lastupdate, u
   return (
     <div className="h-full mb-4 mx-4 md:mx-0 bg-white px-2 md:px-8 shadow-md p-2 rounded-xl md:rounded-3xl flex flex-row md:flex-row-2 items-center justify-between gap-4 md:gap-2">
       <div className="text-center  md:w-auto md:text-left flex flex-col justify-center md:justify-center gap-2 md:gap-4 ">
-      <div className="flex   flex-col md:flex-row items-center gap-2 md:gap-4">
-
-      <div className=" inline-flex flex-row justify-center items-center gap-1 md:gap-2 bg-white px-3 md:px-5 py-1.5 md:py-2 rounded-full text-sm md:text-base  border border-gray-300 max-w-full">
+      <div className="flex   flex-col md:flex-row items-start gap-2 md:gap-4">
+<div>
+      <div className=" inline-flex flex-row justify-center items-center gap-1 md:gap-2 bg-white px-3 w-full md:px-5 py-1.5 md:py-2 rounded-full text-sm md:text-base  border border-gray-300 max-w-full">
   <MapPin className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
   <span className="font-sm text-gray-700 text-md  sm:text-sm md:text-md lg:text-xl md:font-bold font-bold  truncate">
     {device}  
@@ -335,9 +335,11 @@ export default function StatusCard({device, alert,type, capacity,  lastupdate, u
  
 
 </div>
- <div className="text-md text-gray-800 border font-bold border-gray-300 rounded-full px-3 md:px-5 py-2 md:py-3">
-  solar PV Capacity:{capacity}kWp
+ <div className="text-md text-gray-800 mt-2 border text-center font-bold border-gray-300 rounded-full px-3 md:px-1 py-2 md:py-3">
+  solar PV Capacity:{capacity} kWp
 </div>
+</div>
+
 
     <WeatherInfo lat={devicelocation.geocode[0]} lon={devicelocation.geocode[1]} />
 
