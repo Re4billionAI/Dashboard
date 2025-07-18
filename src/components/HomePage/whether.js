@@ -40,7 +40,7 @@ const WeatherInfo = ({ lat, lon }) => {
   if (!weather) return null;
 
   return (
-    <div className="bg-white  rounded-full md:p-2 p-1 px-4 w-full  border border-gray-300 space-y-4 transition-transform transform ">
+    <div className="bg-white  rounded-full md:p-2 p-1 px-4 w-full  space-y-4 transition-transform transform ">
     {/* Temperature & Condition */}
     <div className="flex md:flex-row flex-row  item-center gap-2 justify-center items-center">
     <div className="flex md:flex-row items-center gap-2  rounded-lg ">
