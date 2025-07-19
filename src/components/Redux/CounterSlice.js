@@ -177,8 +177,8 @@ const additionalData = [
     "board": "rmsv35_003",
     "type": "24v",
     "geocode": [11.5548451303901, 79.5544782238362],
-    "timeInterval": 1,
-    "capacity": 5,
+    "timeInterval": 5,
+    "capacity": 1,
     "siteId": "Vadalur-TN-24V-rmsv35_003"
   },
   {
