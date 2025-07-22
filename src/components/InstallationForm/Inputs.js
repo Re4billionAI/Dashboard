@@ -215,7 +215,7 @@ const PlantInstallationModal = () => {
       console.log('Submitting form data...');
       
       const response = await fetch(
-        'http://127.0.0.1:5001/rmstesting-d5aa6/us-central1/firebackend/admin/installationForms',
+        `${process.env.REACT_APP_HOST}/admin/installationForms`,
         {
           method: 'POST',
           body: data,

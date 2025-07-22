@@ -174,7 +174,7 @@ const SiteInstallationForm = () => {
 
   const device = useSelector((state) => state.location.device) || mockStore.location.device;
   const cleanSiteId = device.siteId.replace(/[^a-zA-Z0-9-_]/g, '');
-  const API_URL = `http://127.0.0.1:5001/rmstesting-d5aa6/us-central1/firebackend/admin/installationForms/${cleanSiteId}`;
+  const API_URL = `${process.env.REACT_APP_HOST}/admin/installationForms/${cleanSiteId}`;
 
   const handleImageUrlUpdate = useCallback(({ imageUrl, fileName, imageFile }) => {
     setTempFormData(prev => ({
