@@ -21,8 +21,8 @@ const tooltipProps = {
   BatteryVoltage3: { color: "red" },
   BatteryVoltage4: { color: "purple" },
   BatteryCurrent: { color: "orange" },
-  BatteryChrgCurrent: { color: "teal" },
-  BatteryDisCurrent: { color: "brown" },
+  BatteryChargeCurrent: { color: "teal" },
+  BatteryDischargeCurrent: { color: "brown" },
 };
 
 // Format the X-axis ticks (time labels)
@@ -45,8 +45,8 @@ const units = {
   BatteryVoltage3: "V",
   BatteryVoltage4: "V",
   BatteryCurrent: "A",
-  BatteryChrgCurrent: "A",
-  BatteryDisCurrent: "A",
+  BatteryChargeCurrent: "A",
+  BatteryDischargeCurrent: "A",
 };
 
 // Custom Tooltip component displaying Battery units
@@ -74,6 +74,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const BatteryGraph = ({ graphValues }) => {
   const site = useSelector((state) => state.location.device);
+  console.log(graphValues)
 
   // Define site-specific parameters
   const getParameters = (siteType, siteName) => {
@@ -83,24 +84,23 @@ const BatteryGraph = ({ graphValues }) => {
         { label: "Voltage2", key: "showVoltage2", dataKey: "BatteryVoltage2" },
         { label: "Voltage3", key: "showVoltage3", dataKey: "BatteryVoltage3" },
         { label: "Voltage4", key: "showVoltage4", dataKey: "BatteryVoltage4" },
-        { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
-        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
-        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChargeCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDischargeCurrent" },
       ];
     } else if (siteType === "testing 2") {
       return [
         { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
         { label: "Voltage2", key: "showVoltage2", dataKey: "BatteryVoltage2" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
-        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
-        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChargeCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDischargeCurrent" },
       ];
     } else if (siteType === "testing 3" || siteName === "Saram-TN") {
       return [
         { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
-        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
-        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChargeCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDischargeCurrent" },
       ];
     } else if (siteType === "48v") {
       return [
@@ -109,23 +109,23 @@ const BatteryGraph = ({ graphValues }) => {
         { label: "Voltage3", key: "showVoltage3", dataKey: "BatteryVoltage3" },
         { label: "Voltage4", key: "showVoltage4", dataKey: "BatteryVoltage4" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
-        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
-        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChargeCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDischargeCurrent" },
       ];
     } else if (siteType === "24v") {
       return [
         { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
         { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
-        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
-        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
+        { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChargeCurrent" },
+        { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDischargeCurrent" },
       ];
     }
     // Default case
     return [
       { label: "Voltage1", key: "showVoltage", dataKey: "BatteryVoltage" },
       { label: "Current", key: "showCurrent", dataKey: "BatteryCurrent" },
-      { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChrgCurrent" },
-      { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDisCurrent" },
+      { label: "Charge Current", key: "showChrgCurrent", dataKey: "BatteryChargeCurrent" },
+      { label: "Discharge Current", key: "showDisCurrent", dataKey: "BatteryDischargeCurrent" },
     ];
   };
 

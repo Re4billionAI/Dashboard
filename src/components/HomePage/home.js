@@ -130,11 +130,11 @@ const Home = ({ handlePageChange }) => {
   return (
     <div className="h flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
       <div>
-        <button onClick={handleToggle} className="p-2 bg-blue-600 text-white m-2 rounded-md shadow-md flex items-center">
+        <button onClick={handleToggle} className="p-2 bg-blue-600 text-white m-1   shadow-md flex items-center">
           <Menu size={20} />
         </button>
-        <button className="bg-blue-500 text-white rounded-full hover:bg-blue-600 py-1 px-3" onClick={() => handlePageChange("mainPage")}>
-          <ArrowLeft size={24} color="white" />
+        <button className="p-2 bg-blue-600 text-white m-1   shadow-md flex items-center" onClick={() => handlePageChange("mainPage")}>
+          <ArrowLeft size={20} color="white" />
         </button>
 
         {/* Tab Navigation */}

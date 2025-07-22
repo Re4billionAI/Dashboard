@@ -153,55 +153,57 @@ const Graph = ({  dataCharts }) => {
     return [0, max + 20];
   };
 
-  const changeDate = async () => {
+ const changeDate = async () => {
     if (loading) {
-      setLoading(false);
+        setLoading(false);
     }
-
     try {
-      const token = Cookies.get("token");
-      const response = await axios.post(
-        `${process.env.REACT_APP_HOST}/admin/date`,
-        {
-          selectedItem: device?.path || '',
-          date: format(selectedDate, "yyyy-MM-dd"),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    
-      if (response.status === 200 && response.data?.data?.dataCharts) {
-        const newDataArray = response.data.data.dataCharts.map((chart) => ({
-          ccAxisXValue: formatTick(chart.ccAxisXValue),
-          SolarVoltage: chart.SolarVoltage || 0,
-          SolarCurrent: chart.SolarCurrent || 0,
-          SolarPower: ((chart.SolarCurrent || 0) * (chart.SolarVoltage || 0)).toFixed(2),
-          InverterVoltage: chart.InverterVoltage || 0,
-          InverterCurrent: chart.InverterCurrent || 0,
-          InverterPower: ((chart.InverterCurrent || 0) * (chart.InverterVoltage || 0)).toFixed(2),
-          GridVoltage: chart.GridVoltage || 0,
-          GridCurrent: chart.GridCurrent || 0,
-          GridPower: ((chart.GridCurrent || 0) * (chart.GridVoltage || 0)).toFixed(2),
-          BatteryCurrent: chart.BatteryCurrent || 0,
-          BatteryVoltage: chart.BatteryVoltage || 0,
-          BatteryVoltage2: chart.BatteryVoltage2 || 0,
-          BatteryVoltage3: chart.BatteryVoltage3 || 0,
-          BatteryVoltage4: chart.BatteryVoltage4 || 0,
-          BatteryChrgCurrent: chart.BatteryChrgCurrent || 0,
-          BatteryDisCurrent: chart.BatteryDiscurrent ,
+        const token = Cookies.get("token");
+        const response = await axios.post(
+            `${process.env.REACT_APP_HOST}/admin/date`,
+            {
+                selectedItem: device?.path || '',
+                date: format(selectedDate, "yyyy-MM-dd"),
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
-        }));
-        setGraphValues(newDataArray);
-      }
+        if (response.status === 200 && response.data?.data?.dataCharts) {
+            const newDataArray = response.data.data.dataCharts.map((chart) => ({
+                ccAxisXValue: formatTick(chart.ccAxisXValue),
+                SolarVoltage: chart.SolarVoltage || 0,
+                SolarCurrent: chart.SolarCurrent || 0,
+                SolarPower: ((chart.SolarCurrent || 0) * (chart.SolarVoltage || 0)).toFixed(2),
+                InverterVoltage: chart.InverterVoltage || 0,
+                InverterCurrent: chart.InverterCurrent || 0,
+                InverterPower: ((chart.InverterCurrent || 0) * (chart.InverterVoltage || 0)).toFixed(2),
+                GridVoltage: chart.GridVoltage || 0,
+                GridCurrent: chart.GridCurrent || 0,
+                GridPower: ((chart.GridCurrent || 0) * (chart.GridVoltage || 0)).toFixed(2),
+                BatteryCurrent: chart.BatteryCurrent || 0,
+                BatteryVoltage: chart.BatteryVoltage || 0,
+                BatteryVoltage2: chart.BatteryVoltage2 || 0,
+                BatteryVoltage3: chart.BatteryVoltage3 || 0,
+                BatteryVoltage4: chart.BatteryVoltage4 || 0,
+                BatteryChargeCurrent: chart.BatteryChrgCurrent || 0,
+                // Fixed: Don't use || 0 which converts negative values to 0
+                BatteryDischargeCurrent: chart.BatteryDisCurrent !== null && chart.BatteryDisCurrent !== undefined 
+                    ? chart.BatteryDisCurrent 
+                    : 0,
+            }));
+            console.log("New Data Array:", newDataArray);
+            setGraphValues(newDataArray);
+        }
     } catch (error) {
-      console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   useEffect(() => {
     
