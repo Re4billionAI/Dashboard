@@ -280,7 +280,7 @@ const additionalData = [
     "geocode": [10.8430395757423, 78.5849487198463],
     "timeInterval": 5,
     "capacity": 2,
-    "siteId": "AyilapetaiKoppu-TN-24V-rmsv36_007"
+    "siteId": "TN24V36013"
   },
   {
     "name": "Perumugai-TN-48V",
