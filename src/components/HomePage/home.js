@@ -7,12 +7,14 @@ import { ArrowLeft, Menu } from 'lucide-react';
 import StatusCard from './statusCard';
 import EnergyConsumption from './EnergyConsumptions';
 import Graph from './graphs';
+import { Home, BarChart2, Info } from 'lucide-react'; // or your preferred icon library
+
 import ParameterRepresentation from './parameter';
 
 import SiteDetails from '../InstallationForm/siteInfo.js';
 import { toggleSidebar } from '../Redux/CounterSlice';
 
-const Home = ({ handlePageChange }) => {
+const HomePage = ({ handlePageChange }) => {
   const device = useSelector((state) => state.location.device);
   const [activeTab, setActiveTab] = useState('Overview');
   const [loading, setLoading] = useState(true);
@@ -68,6 +70,7 @@ const Home = ({ handlePageChange }) => {
           if (checkDateTime > currentDateTime) checkDateTime.setDate(checkDateTime.getDate() - 1);
 
           const diffInMinutes = Math.abs((currentDateTime - checkDateTime) / (1000 * 60));
+
           showAlert(diffInMinutes <= 30 ? "success" : "danger");
         } else {
           showAlert("danger");
@@ -93,9 +96,7 @@ const Home = ({ handlePageChange }) => {
     return match?.capacity || 'N/A';
   };
 
-  const handleToggle = () => {
-    dispatch(toggleSidebar());
-  };
+
 
   useEffect(() => {
     if (device?.path) fetchData(device.path, device.timeInterval);
@@ -128,33 +129,52 @@ const Home = ({ handlePageChange }) => {
   );
 
   return (
-    <div className="h flex flex-col md:px-6 gap-0 pb-[100px] md:pb-0">
-      <div>
-        <button onClick={handleToggle} className="p-2 bg-blue-600 text-white m-1   shadow-md flex items-center">
-          <Menu size={20} />
-        </button>
-        <button className="p-2 bg-blue-600 text-white m-1   shadow-md flex items-center" onClick={() => handlePageChange("mainPage")}>
-          <ArrowLeft size={20} color="white" />
-        </button>
+    <div className="h flex flex-col md:px-6 gap-0 pb-[10px] md:pb-0">
+      
+   
+     
+       
+<div className="relative p-1  flex items-center justify-center">
+  {/* Arrow button fixed to the left */}
+  <button
+    className="absolute left-4 p-2  text-black  flex hover:bg-gray-300 hover:text-black items-center"
+    onClick={() => handlePageChange("mainPage")}
+  >
+    <ArrowLeft size={24} />
+  </button>
 
-        {/* Tab Navigation */}
-        <div className='flex justify-center'>
-          <div className="inline-flex border items-center rounded bg-white justify-center border-gray-300">
-            {['Overview', 'Analytics', 'Information'].map((tab) => (
-              <button
-                key={tab}
-                className={`px-4 py-2 focus:outline-none ${
-                  activeTab === tab
-                    ? 'border-b-4 border-blue-500  text-black  font-semibold'
-                    : 'text-gray-500 font-bold'
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
+  {/* Tab Navigation centered */}
+ <div className="inline-flex  items-center rounded ">
+  {['Overview', 'Analytics', 'Information'].map((tab) => {
+    const icons = {
+      Overview: <Home size={20} />,
+      Analytics: <BarChart2 size={20} />,
+      Information: <Info size={20} />
+    };
+
+    return (
+      <button
+        key={tab}
+        className={`px-4 py-1 focus:outline-none flex items-center justify-center ${
+          activeTab === tab
+            ? 'border-b-2 border-blue-500 text-black font-semibold'
+            : 'text-gray-500 font-bold'
+        }`}
+        onClick={() => setActiveTab(tab)}
+      >
+        {/* Icon for mobile, hidden on sm+ */}
+        <span className="sm:hidden">{icons[tab]}</span>
+
+        {/* Text for sm+ screens, hidden on xs */}
+        <span className="hidden sm:inline">{tab}</span>
+      </button>
+    );
+  })}
+</div>
+
+
+</div>
+
 
         {loading && <Spinner />}
         {error && <ErrorDisplay message={error} />}
@@ -186,8 +206,8 @@ const Home = ({ handlePageChange }) => {
           </div>
         )}
       </div>
-    </div>
+  
   );
 };
 
-export default Home;
+export default HomePage;

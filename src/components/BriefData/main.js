@@ -133,7 +133,7 @@ export default function BrieData({ handlePageChange }) {
         throw new Error('Failed to format date');
       }
 
-      // console.log('Sending payload:', { date: formattedDate }); // Debug: Log payload
+      
 
       const response = await fetch(DATA_URL, {
         method: 'POST',
@@ -162,7 +162,7 @@ export default function BrieData({ handlePageChange }) {
       }
 
       const jsonData = await response.json();
-      // console.log('API Response:', jsonData); // Debug: Log response
+     
 
       // Basic response validation
       if (!jsonData || typeof jsonData !== 'object') {
@@ -186,7 +186,7 @@ export default function BrieData({ handlePageChange }) {
 
   const changeLocation = (site) => {
     try {
-      console.log('Changing location to:', site); // Debug
+     
       if (!site || !site.siteName) {
         throw new Error('Invalid site data');
       }

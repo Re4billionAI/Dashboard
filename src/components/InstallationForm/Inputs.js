@@ -202,17 +202,17 @@ const PlantInstallationModal = () => {
     }
 
     // Log form data for debugging
-    console.log('Form data being submitted:');
+ 
     for (let [key, value] of data.entries()) {
       if (value instanceof File) {
-        console.log(`${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+       
       } else {
-        console.log(`${key}: ${value}`);
+        
       }
     }
 
     try {
-      console.log('Submitting form data...');
+    
       
       const response = await fetch(
         `${process.env.REACT_APP_HOST}/admin/installationForms`,
@@ -224,7 +224,7 @@ const PlantInstallationModal = () => {
       );
       
       const result = await response.json();
-      console.log('Response:', result);
+
       
       if (response.ok && result.success) {
         setSuccess('Form submitted successfully!');
@@ -689,13 +689,14 @@ const PlantInstallationModal = () => {
 
   return (
     <div>
-      <button
-        onClick={openModal}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 font-medium transition shadow flex items-center"
-      >
-        <Plus className="w-5 h-5 mr-2" />
-        Add Plant
-      </button>
+  <button
+  onClick={openModal}
+  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 font-medium transition shadow flex items-center gap-2"
+>
+  <Plus className="w-5 h-5" />
+  <span className="hidden md:inline">Add Plant</span>
+</button>
+
 
       {isModalOpen && (
         <div

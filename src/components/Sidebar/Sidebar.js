@@ -40,15 +40,15 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col p-6 gap-2">
+        <div className="flex-1 flex flex-col p-6 px-0 gap-2">
           {[{ icon: Home, label: "Home", link: "" },{ icon: Bell, label: "Alerts", link: "Alerts" }, { icon: MapPin, label: "Location", link: "Location" }].map(
             (item, index) => (
               <button
                 key={item.label}
                 onClick={() => handleNavigation(item.label, item.link)}
-                className={`flex items-center gap-3 px-6 py-3.5 rounded-full text-sm font-medium w-full transition-all ${
+                className={`flex items-center gap-3 px-6 py-3.5  text-md  font-medium w-full transition-all ${
                   currentTab === item.label
-                    ? "bg-blue-600 text-white shadow-lg"
+                    ? "bg-blue-600 text-white shadow-lg border-l-8 border-l-gray-500"
                     : "text-gray-600 hover:bg-white  hover:text-blue-600"
                 }`}
               >
@@ -64,7 +64,7 @@ const Sidebar = () => {
 
       {/* Mobile Navbar */}
       <div className="md:hidden  bottom-0 fixed z-10 left-0  bg-white shadow-lg flex flex-row-1 p-2 justify-around py-3 border-t border-gray-200 transition-transform duration-300 w-full">
-        {[{ icon: Home, label: "Home", active: true, link: "" }, { icon: Grid, label: "Dashboard", link: "Dashboard" }, { icon: Bell, label: "Alerts", link: "Alerts" }, { icon: MapPin, label: "Location", link: "Location" }].map(
+        {[{ icon: Home, label: "Home", active: true, link: "" }, { icon: Bell, label: "Alerts", link: "Alerts" }, { icon: MapPin, label: "Location", link: "Location" }].map(
           (item, index) => (
             <button
               key={item.label}

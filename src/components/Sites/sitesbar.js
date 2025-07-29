@@ -56,7 +56,7 @@ export default function Sitesbar() {
 
 
 const changeLocation = (data) => {
-  console.log(data);
+
   dispatch(updateLocation(data));
   setSelectedLocation(data);
   dispatch(toggleSidebar()); // ✅ properly close the sidebar

@@ -104,9 +104,9 @@ const App = () => {
   );
 
   const DeviceStatus = ({ workingLocations, notWorkingLocations }) => {
-    console.log({"workingLocations":workingLocations} )
+  
     const setHomepage = (location) => {
-      console.log(additionalData);
+     
       const setlocation = additionalData.find((loc) => loc.name.split("-")[0] === location.split("-")[1]); 
       
       dispatch(updateLocation(setlocation));
@@ -462,7 +462,7 @@ const App = () => {
   
     // Populate data rows
     const data = allDevices;
-    console.log(data);
+   
     data.forEach((item, index) => {
       const rowIndex = index + 3; // Start data from the third row
       const siteName = item.key.split("-")[1];

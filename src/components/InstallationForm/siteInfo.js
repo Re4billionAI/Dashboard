@@ -10,7 +10,7 @@ const mockStore = {
 };
 
 const InputField = React.memo(({ label, value, field, type = 'text', placeholder, icon: Icon, required = false, handleInputChange, isEditingMode }) => {
-  console.log(`Rendering InputField: ${field}`);
+
   return (
     <div className="space-y-1.5">
       <label className="block text-sm font-semibold text-gray-800">
@@ -26,8 +26,7 @@ const InputField = React.memo(({ label, value, field, type = 'text', placeholder
                 e.stopPropagation();
                 handleInputChange(field, e.target.value);
               }}
-              onFocus={() => console.log(`Input ${field} focused`)}
-              onBlur={() => console.log(`Input ${field} blurred`)}
+             
               placeholder={placeholder}
               className={`w-full min-h-[100px] p-3 ${Icon ? 'pl-10' : ''} border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none shadow-sm text-gray-900 placeholder-gray-400`}
             />
@@ -39,8 +38,7 @@ const InputField = React.memo(({ label, value, field, type = 'text', placeholder
                 e.stopPropagation();
                 handleInputChange(field, e.target.value);
               }}
-              onFocus={() => console.log(`Input ${field} focused`)}
-              onBlur={() => console.log(`Input ${field} blurred`)}
+             
               placeholder={placeholder}
               className={`w-full p-3 ${Icon ? 'pl-10' : ''} border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-sm text-gray-900 placeholder-gray-400`}
             />
@@ -78,7 +76,13 @@ const SiteImageUploader = ({ siteId, apiUrl, onImageUrlUpdate, isEditingMode, sa
   return (
     <div className="relative group text-center">
       {imagePreview ? (
-        <img src={imagePreview} alt="Site" className="w-1/2 w-auto h-1/2 h-full object-contain rounded-md shadow-md" />
+
+<div className="relative w-full h-auto">
+   <img src={imagePreview} alt="Site" className="w-full h-full object-cover" />
+  <div className="absolute top-0 left-0 w-full h-56 bg-gradient-to-b from-black/80 to-transparent pointer-events-none rounded-t-md" />
+</div>
+
+
       ) : (
         <div className="w-full h-72 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-md">
           <Camera className="w-12 h-12 text-white opacity-80" />
@@ -329,7 +333,7 @@ const SiteInstallationForm = () => {
           saving={saving}
           tempFormData={tempFormData}
         />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-gray-700 to-gray-10 p-4 rounded-t-md backdrop-blur-sm shadow-md">
+        <div className="absolute top-0 left-0 right-0 p-4 rounded-t-md backdrop-blur-sm shadow-md">
           <h1 className="text-xl font-semibold text-white truncate">
             {formData.siteName || "Site Name"}
           </h1>

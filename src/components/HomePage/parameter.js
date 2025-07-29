@@ -2,7 +2,7 @@
 import { Sun, Zap, Battery, PlugZap } from "lucide-react";
 
 const getColorAndWidth = (name, type, value) => {
-  console.log(name, type, value)
+
   let color = "bg-gray-500";
   let widthPercentage = "0%";
 

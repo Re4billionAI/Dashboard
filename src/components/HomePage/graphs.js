@@ -195,7 +195,7 @@ const Graph = ({  dataCharts }) => {
                     ? chart.BatteryDisCurrent 
                     : 0,
             }));
-            console.log("New Data Array:", newDataArray);
+           
             setGraphValues(newDataArray);
         }
     } catch (error) {

@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Menu, Search, LogOut } from "lucide-react";
 import { useSelector, useDispatch } from 'react-redux'
-import { updateLocation } from "../Redux/CounterSlice"
+import { updateLocation, toggleSidebar } from "../Redux/CounterSlice"
 import { toggleSpecificPage, setSpecificPage } from "../Redux/CounterSlice"
-
 
 
 import { useNavigate } from "react-router-dom";
@@ -42,7 +41,9 @@ const dispatch=useDispatch()
     
     }
 
-
+  const handleToggle = () => {
+    dispatch(toggleSidebar());
+  };
 const desktopSearchRef = useRef(null);
 const mobileSearchRef = useRef(null);
 
@@ -130,7 +131,10 @@ const mobileSearchRef = useRef(null);
       {/* Left Section - Company Logo & Sidebar Toggle */}
       <div className="flex items-center gap-2">
           {/* Sidebar Toggle Button */}
-         
+           <button onClick={handleToggle} className={`p-2 bg-blue-600  md:hidden text-white m-0  ${specificPage!=="specificPage"?"hidden":"block"}  shadow-md flex items-center`}>
+          <Menu size={20} />
+        </button>
+
         {/* Company Logo */}
         <img 
           src="https://res.cloudinary.com/dky72aehn/image/upload/v1746253013/Layer_2_pvgh9s.png" // Replace with your logo's path
@@ -145,33 +149,51 @@ const mobileSearchRef = useRef(null);
       
       <div className="flex items-center gap-0 flex-grow justify-end md:justify-start w-[20%] ">
         {/* Desktop Search Bar (always visible on desktop) */}
+<button
+  onClick={handleToggle}
+  className={`p-2 bg-blue-600 text-white m-0 shadow-md items-center ${
+    specificPage === "specificPage" ? "hidden md:flex" : "hidden"
+  }`}
+>
+  <Menu size={24} />
+</button>
+
+
+
         <div className="hidden md:flex flex-row justify-center items-center gap-0">
-<div className=" mr-3">
-      <input
-        type="text"
-        value={query}
-        onChange={handleChange}
-        
-        placeholder="Search Site"
-        className="p-2 rounded-full border border-gray-300 pl-2"
-      />
-      {filteredLocations.length > 0 && (
-        <ul className="absolute   bg-white border rounded  shadow">
-          {filteredLocations.map((location, index) => (
-            <li key={index} className="p-2 hover:bg-gray-200 cursor-pointer"  onClick={() => {changeLocation(location); handlePageChange();}}>
-              {location.name}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+<div className="relative mr-3 w-64"> {/* Set fixed width or use w-full with a parent constraint */}
+  <input
+    type="text"
+    value={query}
+    onChange={handleChange}
+    placeholder="Search Site"
+    className="p-2 border border-gray-300 pl-2 w-full"
+  />
+  {filteredLocations.length > 0 && (
+    <ul className="absolute z-10 w-full bg-white border rounded shadow">
+      {filteredLocations.map((location, index) => (
+        <li
+          key={index}
+          className="p-2 hover:bg-gray-200 cursor-pointer"
+          onClick={() => {
+            changeLocation(location);
+            handlePageChange();
+          }}
+        >
+          {location.name}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
 
 
 
 
 
-          <button className="border border-gray-200 bg-white p-2 rounded-full">
+
+          <button className="border border-gray-300 bg-white p-2 ">
             <Search />
           </button>
         </div>
@@ -210,13 +232,10 @@ const mobileSearchRef = useRef(null);
       </div>
  <PlantInstallationModal  />
       {/* Right Section - Logout Button */}
-      <div className="flex items-center" onClick={handleLogout}>
-        
-        <button className="md:px-4 md:py-2 px-2 py-2 bg-blue-600 text-white shadow-md flex items-center gap-2" >
-          <LogOut /> 
-          <span className="hidden sm:block">Logout</span>
-        </button>
-      </div>
+   <button className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 font-medium transition shadow flex items-center gap-2">
+  <LogOut className="w-5 h-5" />
+  <span className="hidden md:inline">Logout</span>
+</button>
     </div>
   );
 };
